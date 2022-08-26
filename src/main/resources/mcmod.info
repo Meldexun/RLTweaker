@@ -4,13 +4,8 @@
   "name": "RLTweaker",
   "description": "Pack specific tweaks for RLCraft",
   "version": "${version}",
-  "mcversion": "${mcversion}",
-  "url": "",
-  "updateUrl": "",
-  "authorList": ["Charles445"],
-  "credits": "",
-  "logoFile": "",
-  "screenshots": [],
-  "dependencies": []
+  "mcversion": "1.12.2",
+  "url": "https://github.com/Meldexun/RLTweaker",
+  "authorList": ["Charles445", "Meldexun"]
 }
 ]
