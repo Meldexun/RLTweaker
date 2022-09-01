@@ -5,12 +5,10 @@ buildscript {
     }
     dependencies {
         classpath group: 'net.minecraftforge.gradle', name: 'ForgeGradle', version: "${forge_gradle_version}", changing: true
-        classpath group: 'org.spongepowered', name: 'mixingradle', version: "${mixin_gradle_version}"
     }
 }
 apply plugin: 'net.minecraftforge.gradle'
 apply plugin: 'eclipse'
-apply plugin: 'org.spongepowered.mixin'
 
 version = "${mc_version}-${mod_version}-${mod_stage}"
 group = "meldexun.${mod_id}"
@@ -44,8 +42,6 @@ repositories {
 
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
-    implementation "org.spongepowered:mixin:${mixin_version}"
-    annotationProcessor "org.spongepowered:mixin:${mixin_version}:processor"
 }
 
 minecraft {
@@ -76,11 +72,6 @@ minecraft {
     }
 }
 
-mixin {
-    add sourceSets.main, "mixins.${mod_id}.refmap.json"
-    config "mixins.${mod_id}.json"
-}
-
 processResources {
     inputs.property('version', "${mod_stage}" != "" ? "${mod_version}-${mod_stage}" : "${mod_version}")
 
@@ -103,10 +94,6 @@ jar {
         // attributes 'FMLAT': 'accesstransformer.cfg'
         attributes 'FMLCorePlugin': "${mod_plugin_class}"
         attributes 'FMLCorePluginContainsFMLMod': 'true'
-        attributes 'ForceLoadAsMod': 'true'
-        attributes 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
-        attributes 'TweakOrder': '0'
-        attributes 'MixinConfigs': "mixins.${mod_id}.json"
     }
 }
 

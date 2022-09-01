@@ -2,9 +2,6 @@ package com.charles445.rltweaker.asm;
 
 import java.util.Map;
 
-import org.spongepowered.asm.launch.MixinBootstrap;
-import org.spongepowered.asm.mixin.MixinEnvironment;
-
 import com.charles445.rltweaker.asm.helper.ObfHelper;
 
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
@@ -31,11 +28,6 @@ public class CoreLoader implements IFMLLoadingPlugin
 	{
 		ObfHelper.setObfuscated((Boolean) data.get("runtimeDeobfuscationEnabled"));
 		ObfHelper.setRunsAfterDeobfRemapper(true);
-		if (Boolean.FALSE.equals(data.get("runtimeDeobfuscationEnabled")))
-		{
-			MixinBootstrap.init();
-			MixinEnvironment.getDefaultEnvironment().setObfuscationContext("searge");
-		}
 	}
 
 	@Override
