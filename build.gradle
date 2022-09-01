@@ -105,7 +105,7 @@ jar {
         attributes 'FMLCorePluginContainsFMLMod': 'true'
         attributes 'ForceLoadAsMod': 'true'
         attributes 'TweakClass': 'org.spongepowered.asm.launch.MixinTweaker'
-        attributes 'TweakOrder': '1002'
+        attributes 'TweakOrder': '0'
         attributes 'MixinConfigs': "mixins.${mod_id}.json"
     }
 }
