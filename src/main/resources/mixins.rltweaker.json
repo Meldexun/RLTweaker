@@ -5,7 +5,6 @@
   "compatibilityLevel": "JAVA_8",
   "refmap": "mixins.rltweaker.refmap.json",
   "mixins": [
-    "MixinASMHooks"
   ],
   "injectors": {
     "defaultRequire": 1
