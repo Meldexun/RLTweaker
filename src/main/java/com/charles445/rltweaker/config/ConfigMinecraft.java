@@ -1,7 +1,11 @@
 package com.charles445.rltweaker.config;
 
 import com.charles445.rltweaker.config.annotation.RLConfig;
+import com.charles445.rltweaker.entity.ai.InvestigateAIConfig;
+import com.charles445.rltweaker.util.ClassResourceLocationMap;
 
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.RangeDouble;
 
@@ -178,4 +182,33 @@ public class ConfigMinecraft
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean watchdog = true;
+
+	@Config.Comment("Enables investigate AI for all entities defined in the whitelist.")
+	@Config.Name("Investigate AI")
+	@Config.RequiresMcRestart
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean investigateAi = true;
+
+	@Config.Comment("Enables investigate AI and defines investigate AI priority for specific entities. (Supports 'modid=priority' and 'modid:entityname=priority')")
+	@Config.Name("Investigate AI Whitelist")
+	@RLConfig.ImprovementsOnly("")
+	@RLConfig.RLCraftTwoEightTwo("")
+	@RLConfig.RLCraftTwoNine("")
+	public String[] investigateAiWhitelist = {"minecraft:zombie=3,1.0,1.0"};
+	@Config.Ignore
+	public final ClassResourceLocationMap<Entity, InvestigateAIConfig> investigateAiImpl = new ClassResourceLocationMap.Builder<InvestigateAIConfig>()
+			.requiredValue(Integer::parseInt, InvestigateAIConfig::setPriority)
+			.optionalValue(Float::parseFloat, InvestigateAIConfig::setHealthThreshold, 1.0F)
+			.optionalValue(Float::parseFloat, InvestigateAIConfig::setExecutionChance, 1.0F)
+			.build(EntityList::getKey, null, InvestigateAIConfig::new);
+
+	@Config.Comment("Movement speed when an entity is investigating.")
+	@Config.Name("Investigate AI Speed")
+	@RLConfig.ImprovementsOnly("1.0")
+	@RLConfig.RLCraftTwoEightTwo("1.0")
+	@RLConfig.RLCraftTwoNine("1.0")
+	public double investigateAiSpeed = 1.0D;
+
 }

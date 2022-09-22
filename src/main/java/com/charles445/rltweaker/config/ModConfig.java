@@ -185,6 +185,11 @@ public class ModConfig
 		public ConfigReskillableClient reskillable = new ConfigReskillableClient();
 	}
 	
+	public static void onConfigChanged()
+	{
+		ModConfig.server.minecraft.investigateAiImpl.load(ModConfig.server.minecraft.investigateAiWhitelist);
+	}
+	
 	@Mod.EventBusSubscriber(modid = RLTweaker.MODID)
 	private static class EventHandler
 	{
@@ -195,6 +200,7 @@ public class ModConfig
 			if(event.getModID().equals(RLTweaker.MODID))
 			{
 				ConfigManager.sync(RLTweaker.MODID, Config.Type.INSTANCE);
+				ModConfig.onConfigChanged();
 			}
 		}
 	}

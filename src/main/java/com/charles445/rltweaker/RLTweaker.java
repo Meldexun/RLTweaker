@@ -18,6 +18,7 @@ import com.charles445.rltweaker.command.CommandRLTweakerConfig;
 import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
+import com.charles445.rltweaker.entity.ai.InvestigateAI;
 import com.charles445.rltweaker.handler.AquacultureHandler;
 import com.charles445.rltweaker.handler.BattleTowersHandler;
 import com.charles445.rltweaker.handler.BaublesHandler;
@@ -29,6 +30,7 @@ import com.charles445.rltweaker.handler.DynamicSurroundingsHandler;
 import com.charles445.rltweaker.handler.GrapplemodHandler;
 import com.charles445.rltweaker.handler.IceAndFireHandler;
 import com.charles445.rltweaker.handler.InfernalMobsHandler;
+import com.charles445.rltweaker.handler.InvestigateAIHandler;
 import com.charles445.rltweaker.handler.LevelUpTwoHandler;
 import com.charles445.rltweaker.handler.LostCitiesHandler;
 import com.charles445.rltweaker.handler.LycanitesHandler;
@@ -112,11 +114,18 @@ public class RLTweaker
 		
 		jsonDirectory = new File(event.getModConfigurationDirectory(), RLTweaker.MODID);
 		
+		ModConfig.onConfigChanged();
+		
 		PacketHandler.init();
 		
 		CapabilityManager.INSTANCE.register(ITweakerCapability.class, new TweakerStorage(), TweakerCapability::new);
 		
 		handlers.put(ModNames.MINECRAFT, new MinecraftHandler());
+		
+		if(ModConfig.server.minecraft.investigateAi)
+		{
+			handlers.put("investigate_ai", new InvestigateAIHandler());
+		}
 		
 		if(Loader.isModLoaded(ModNames.RESKILLABLE) && ModConfig.server.reskillable.enabled)
 		{
