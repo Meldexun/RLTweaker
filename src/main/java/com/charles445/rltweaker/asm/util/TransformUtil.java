@@ -13,6 +13,8 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.charles445.rltweaker.asm.helper.ASMHelper;
 
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
+
 public class TransformUtil
 {
 	/** Search for a FieldInsnNode after the provided anchor. May specify multiple names for obfuscation purposes */
@@ -240,5 +242,39 @@ public class TransformUtil
 	public static AbstractInsnNode gotoLabel(final MethodNode methodNode, LabelNode label)
 	{
 		return ASMHelper.find(methodNode.instructions.getFirst(), label);
+	}
+	
+	@Nullable
+	public static <T extends AbstractInsnNode> T findNextInsnWithType(AbstractInsnNode anchor, Class<T> type)
+	{
+		return findInsnWithType(anchor, type, false);
+	}
+	
+	@Nullable
+	public static <T extends AbstractInsnNode> T findPreviousInsnWithType(AbstractInsnNode anchor, Class<T> type)
+	{
+		return findInsnWithType(anchor, type, true);
+	}
+	
+	@SuppressWarnings("unchecked")
+	@Nullable
+	private static <T extends AbstractInsnNode> T findInsnWithType(AbstractInsnNode anchor, Class<T> type, boolean reversed)
+	{
+		anchor = reversed ? anchor.getPrevious() : anchor.getNext();
+		while(anchor != null && !type.isInstance(anchor))
+		{
+			anchor = reversed ? anchor.getPrevious() : anchor.getNext();
+		}
+		return (T)anchor;
+	}
+	
+	public static FieldInsnNode createObfFieldInsn(int opcode, String owner, String name, String desc)
+	{
+		return new FieldInsnNode(opcode, owner, FMLDeobfuscatingRemapper.INSTANCE.mapFieldName(owner, name, desc), desc);
+	}
+	
+	public static MethodInsnNode createObfMethodInsn(int opcode, String owner, String name, String desc, boolean itf)
+	{
+		return new MethodInsnNode(opcode, owner, FMLDeobfuscatingRemapper.INSTANCE.mapMethodName(owner, name, desc), desc, itf);
 	}
 }
