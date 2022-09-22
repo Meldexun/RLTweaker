@@ -154,5 +154,25 @@ public class PatchRealBench extends PatchManager
 				this.insertBefore(m_init, toCall, inject);
 			}
 		});
+		
+		add(new Patch(this, "pw.prok.realbench.asm.ASMHooks", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
+		{
+			
+			@Override
+			public void patch(ClassNode clazzNode)
+			{
+				//RealBench doesn't clear its inventory when the contents are dropped
+				//We call splitStack similar to InventoryHelper from vanilla
+				
+				MethodNode m_dropBlockAsItem = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/world/World;IIILnet/minecraft/item/ItemStack;)V", "dropBlockAsItem");
+				
+				MethodInsnNode toCall = TransformUtil.findNextCallWithOpcodeAndName(first(m_dropBlockAsItem), Opcodes.INVOKESPECIAL, "<init>");
+				
+				InsnList inject = new InsnList();
+				inject.add(new FieldInsnNode(Opcodes.GETSTATIC, "java/lang/Integer", "MAX_VALUE", "I"));
+				inject.add(TransformUtil.createObfMethodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/item/ItemStack", "func_77979_a", "(I)Lnet/minecraft/item/ItemStack;", false));
+				this.insertBefore(m_dropBlockAsItem, toCall, inject);
+			}
+		});
 	}
 }
