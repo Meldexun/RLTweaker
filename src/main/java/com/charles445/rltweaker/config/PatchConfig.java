@@ -22,6 +22,13 @@ public class PatchConfig
 	public boolean ENABLED = true;
 	
 	@Config.RequiresMcRestart
+	@Config.Comment("Enable to write modified classes to disk.")
+	@RLConfig.ImprovementsOnly("false")
+	@RLConfig.RLCraftTwoEightTwo("false")
+	@RLConfig.RLCraftTwoNine("false")
+	public boolean export = false;
+	
+	@Config.RequiresMcRestart
 	@Config.Comment("Makes the particle queue threaded. Fixes concurrency issue with logical server creating physical client particles.")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")

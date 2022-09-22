@@ -1,5 +1,7 @@
 package com.charles445.rltweaker.asm;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -169,6 +171,24 @@ public class RLTweakerASM implements IClassTransformer
 			if(ranAnyPatch)
 			{
 				ASMLogger.info("Writing class "+transformedName+" with flags "+flagsAsString(flags));
+				if(ASMConfig.getBoolean("general.patches.export", false))
+				{
+					try
+					{
+						File file = new File(".rltweaker/" + transformedName.replace('.', '/') + ".class");
+						file.getParentFile().mkdirs();
+						if(file.exists())
+						{
+							file.delete();
+						}
+						file.createNewFile();
+						ASMHelper.writeClassToFile(clazzNode, file);
+					}
+					catch(IOException e)
+					{
+						ASMLogger.error("Failed writing class to file!", e);
+					}
+				}
 				return ASMHelper.writeClassToBytes(clazzNode, flags);
 				//return ASMHelper.writeClassToBytes(clazzNode, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS);
 			}
