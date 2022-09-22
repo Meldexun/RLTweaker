@@ -190,4 +190,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean chunkTicks = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Enable to make potion sickness and effects applied by potion sickness incurable")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean incurablePotionSickness = true;
 }

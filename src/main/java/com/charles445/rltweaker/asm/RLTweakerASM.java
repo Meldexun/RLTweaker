@@ -17,7 +17,6 @@ import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
 import com.charles445.rltweaker.asm.patch.PatchBroadcastSounds;
 import com.charles445.rltweaker.asm.patch.PatchChunkTicks;
 import com.charles445.rltweaker.asm.patch.PatchConcurrentParticles;
-import com.charles445.rltweaker.asm.patch.PatchDebug;
 import com.charles445.rltweaker.asm.patch.PatchDoorPathfinding;
 import com.charles445.rltweaker.asm.patch.PatchEnchant;
 import com.charles445.rltweaker.asm.patch.PatchEntityBlockDestroy;
@@ -30,6 +29,7 @@ import com.charles445.rltweaker.asm.patch.PatchLycanitesDupe;
 import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
 import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
+import com.charles445.rltweaker.asm.patch.PatchPotionSickness;
 import com.charles445.rltweaker.asm.patch.PatchPushReaction;
 import com.charles445.rltweaker.asm.patch.PatchRealBench;
 import com.charles445.rltweaker.asm.patch.PatchReducedSearchSize;
@@ -373,6 +373,12 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.chunkTicks", true))
 		{
 			new PatchChunkTicks();
+		}
+		
+		//incurablePotionSickness
+		if(ASMConfig.getBoolean("general.patches.incurablePotionSickness", true))
+		{
+			new PatchPotionSickness();
 		}
 		
 		//new PatchForgeNetwork();
