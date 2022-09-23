@@ -191,7 +191,7 @@ public class ConfigMinecraft
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean investigateAi = true;
 
-	@Config.Comment("Enables investigate AI and defines investigate AI priority for specific entities. (Supports 'modid=priority' and 'modid:entityname=priority')")
+	@Config.Comment("Enables investigate AI and defines investigate AI priority for specific entities. (Supports 'modid=priority(,healthThreshold,executionChance)' and 'modid:entityname=priority(,healthThreshold,executionChance)'. Health threshold is 1.0 by default. Execution chance is 1.0 by default.)")
 	@Config.Name("Investigate AI Whitelist")
 	@RLConfig.ImprovementsOnly("")
 	@RLConfig.RLCraftTwoEightTwo("")
