@@ -204,4 +204,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean incurablePotionSickness = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Enable to make wine potion effect modifications configurable through RLTweaker")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchRusticWineEffects = true;
 }
