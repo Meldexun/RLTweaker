@@ -218,4 +218,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchModifierBooks = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes Chest of Drawers from BetterNether not dropping its content when broken")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchChestOfDrawers = true;
 }

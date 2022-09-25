@@ -16,6 +16,7 @@ import com.charles445.rltweaker.asm.patch.PatchAggressiveMotionChecker;
 import com.charles445.rltweaker.asm.patch.PatchAnvilDupe;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatCriticalsFix;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
+import com.charles445.rltweaker.asm.patch.PatchBetterNether;
 import com.charles445.rltweaker.asm.patch.PatchBountifulBaubles;
 import com.charles445.rltweaker.asm.patch.PatchBroadcastSounds;
 import com.charles445.rltweaker.asm.patch.PatchChunkTicks;
@@ -411,6 +412,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchModifierBooks", true))
 		{
 			new PatchBountifulBaubles();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchChestOfDrawers", true))
+		{
+			new PatchBetterNether();
 		}
 		
 		//new PatchForgeNetwork();
