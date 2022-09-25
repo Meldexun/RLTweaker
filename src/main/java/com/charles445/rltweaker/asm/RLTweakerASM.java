@@ -16,6 +16,7 @@ import com.charles445.rltweaker.asm.patch.PatchAggressiveMotionChecker;
 import com.charles445.rltweaker.asm.patch.PatchAnvilDupe;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatCriticalsFix;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
+import com.charles445.rltweaker.asm.patch.PatchBountifulBaubles;
 import com.charles445.rltweaker.asm.patch.PatchBroadcastSounds;
 import com.charles445.rltweaker.asm.patch.PatchChunkTicks;
 import com.charles445.rltweaker.asm.patch.PatchConcurrentParticles;
@@ -405,6 +406,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchRusticWineEffects", true))
 		{
 			new PatchRustic();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchModifierBooks", true))
+		{
+			new PatchBountifulBaubles();
 		}
 		
 		//new PatchForgeNetwork();

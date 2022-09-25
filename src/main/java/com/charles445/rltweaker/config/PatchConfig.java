@@ -211,4 +211,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchRusticWineEffects = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes modifier books from BountifulBaubles changing the original item when put into an anvil")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchModifierBooks = true;
 }
