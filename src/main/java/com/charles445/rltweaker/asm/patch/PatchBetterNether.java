@@ -30,7 +30,7 @@ public class PatchBetterNether extends PatchManager {
 						new VarInsnNode(Opcodes.ALOAD, 1),
 						new VarInsnNode(Opcodes.ALOAD, 2),
 						new VarInsnNode(Opcodes.ALOAD, 3),
-						new MethodInsnNode(Opcodes.INVOKESPECIAL, "paulevs/betternether/blocks/BlockChestOfDrawers", m_breakBlock_name, "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)V", false),
+						new MethodInsnNode(Opcodes.INVOKESPECIAL, clazzNode.superName, m_breakBlock_name, "(Lnet/minecraft/world/World;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/state/IBlockState;)V", false),
 						new InsnNode(Opcodes.RETURN)));
 				clazzNode.methods.add(m_breakBlock);
 			}
