@@ -1,7 +1,12 @@
 package com.charles445.rltweaker.config;
 
+import java.util.Collection;
+import java.util.function.Function;
+import java.util.stream.Stream;
+
 import com.charles445.rltweaker.RLTweaker;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.ConfigManager;
 import net.minecraftforge.fml.client.event.ConfigChangedEvent;
@@ -188,6 +193,13 @@ public class ModConfig
 	public static void onConfigChanged()
 	{
 		ModConfig.server.minecraft.investigateAiImpl.load(ModConfig.server.minecraft.investigateAiWhitelist);
+		load(ModConfig.server.potioncore.incurablePotionEffectsImpl, ModConfig.server.potioncore.incurablePotionEffects, ResourceLocation::new);
+	}
+	
+	private static <T> void load(Collection<T> collection, String[] data, Function<String, T> parser)
+	{
+		collection.clear();
+		Stream.of(data).map(parser).forEach(collection::add);
 	}
 	
 	@Mod.EventBusSubscriber(modid = RLTweaker.MODID)

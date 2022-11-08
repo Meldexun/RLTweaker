@@ -1,7 +1,11 @@
 package com.charles445.rltweaker.config;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import com.charles445.rltweaker.config.annotation.RLConfig;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 
 public class ConfigPotionCore
@@ -21,4 +25,20 @@ public class ConfigPotionCore
 	@RLConfig.RLCraftTwoEightTwo("false")
 	@RLConfig.RLCraftTwoNine("false")
 	public boolean capJumpBoost = false;
+	
+	@Config.Comment("Enable to make potion sickness and effects applied by potion sickness incurable")
+	@Config.Name("Incurable Potion Sickness")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean incurablePotionSickness = true;
+	
+	@Config.Comment("Potion effects that are incurable")
+	@Config.Name("Incurable Potion Effects")
+	@RLConfig.ImprovementsOnly("rustic:tipsy")
+	@RLConfig.RLCraftTwoEightTwo("rustic:tipsy")
+	@RLConfig.RLCraftTwoNine("rustic:tipsy")
+	public String[] incurablePotionEffects = {"rustic:tipsy"};
+	@Config.Ignore
+	public final Set<ResourceLocation> incurablePotionEffectsImpl = new HashSet<>();
 }

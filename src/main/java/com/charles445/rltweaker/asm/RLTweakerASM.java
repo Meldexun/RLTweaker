@@ -33,7 +33,7 @@ import com.charles445.rltweaker.asm.patch.PatchLycanitesDupe;
 import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
 import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
-import com.charles445.rltweaker.asm.patch.PatchPotionSickness;
+import com.charles445.rltweaker.asm.patch.PatchCurePotion;
 import com.charles445.rltweaker.asm.patch.PatchPushReaction;
 import com.charles445.rltweaker.asm.patch.PatchRealBench;
 import com.charles445.rltweaker.asm.patch.PatchReducedSearchSize;
@@ -398,10 +398,9 @@ public class RLTweakerASM implements IClassTransformer
 			new PatchChunkTicks();
 		}
 		
-		//incurablePotionSickness
-		if(ASMConfig.getBoolean("general.patches.incurablePotionSickness", true))
+		if(ASMConfig.getBoolean("general.patches.patchCurePotion", true))
 		{
-			new PatchPotionSickness();
+			new PatchCurePotion();
 		}
 		
 		if(ASMConfig.getBoolean("general.patches.patchRusticWineEffects", true))

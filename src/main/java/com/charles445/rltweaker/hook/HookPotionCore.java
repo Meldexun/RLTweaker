@@ -2,6 +2,8 @@ package com.charles445.rltweaker.hook;
 
 import java.util.List;
 
+import com.charles445.rltweaker.config.ModConfig;
+
 import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
@@ -22,12 +24,24 @@ public class HookPotionCore
 	{
 		Potion potion = possibleEffects.get(entity.getRNG().nextInt(possibleEffects.size()));
 		PotionEffect potionEffect = potion.isInstant() ? new PotionEffect(potion, 1) : new PotionEffect(potion, 1200);
-		((Incurable)potionEffect).setIncurable(true);
+		if(ModConfig.server.potioncore.incurablePotionSickness)
+		{
+			((Incurable)potionEffect).setIncurable(true);
+		}
 		entity.addPotionEffect(potionEffect);
 	}
 	
 	public static boolean isCurable(PotionEffect potionEffect)
 	{
-		return !potionEffect.getPotion().getRegistryName().equals(POTION_SICKNESS) && !((Incurable)potionEffect).isIncurable();
+		ResourceLocation registryName = potionEffect.getPotion().getRegistryName();
+		if(ModConfig.server.potioncore.incurablePotionSickness && registryName.equals(POTION_SICKNESS))
+		{
+			return false;
+		}
+		if(((Incurable)potionEffect).isIncurable())
+		{
+			return false;
+		}
+		return !ModConfig.server.potioncore.incurablePotionEffectsImpl.contains(registryName);
 	}
 }

@@ -199,11 +199,11 @@ public class PatchConfig
 	public boolean chunkTicks = true;
 	
 	@Config.RequiresMcRestart
-	@Config.Comment("Enable to make potion sickness and effects applied by potion sickness incurable")
+	@Config.Comment("Enables config options to tweak what effects are incurable")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
-	public boolean incurablePotionSickness = true;
+	public boolean patchCurePotion = true;
 	
 	@Config.RequiresMcRestart
 	@Config.Comment("Enable to make wine potion effect modifications configurable through RLTweaker")

@@ -20,11 +20,11 @@ import org.objectweb.asm.tree.VarInsnNode;
 import com.charles445.rltweaker.asm.helper.ASMHelper;
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
-public class PatchPotionSickness extends PatchManager
+public class PatchCurePotion extends PatchManager
 {
-	public PatchPotionSickness()
+	public PatchCurePotion()
 	{
-		super("Patch Potion Sickness");
+		super("Patch Cure Potion");
 		
 		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionPotionSickness", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
 		{
@@ -49,16 +49,17 @@ public class PatchPotionSickness extends PatchManager
 			@Override
 			public void patch(ClassNode clazzNode)
 			{
+				MethodNode m_clearNegativeEffects = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/EntityLivingBase;)V", "clearNegativeEffects");
+				
 				//Don't remove potion sickness or incurable effects
 				
-				MethodNode m_clearNegativeEffects = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/EntityLivingBase;)V", "clearNegativeEffects");
 				JumpInsnNode toCall = TransformUtil.findNextInsnWithType(TransformUtil.findNextCallWithOpcodeAndName(first(m_clearNegativeEffects), Opcodes.INVOKEVIRTUAL, "isBadEffect", "func_76398_f"), JumpInsnNode.class);
 				
-				InsnList inject = new InsnList();
-				inject.add(new VarInsnNode(Opcodes.ALOAD, 5));
-				inject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "isCurable", "(Lnet/minecraft/potion/PotionEffect;)Z", false));
-				inject.add(new JumpInsnNode(Opcodes.IFEQ, toCall.label));
-				this.insert(m_clearNegativeEffects, toCall, inject);
+				InsnList inject1 = new InsnList();
+				inject1.add(new VarInsnNode(Opcodes.ALOAD, 5));
+				inject1.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "isCurable", "(Lnet/minecraft/potion/PotionEffect;)Z", false));
+				inject1.add(new JumpInsnNode(Opcodes.IFEQ, toCall.label));
+				this.insert(m_clearNegativeEffects, toCall, inject1);
 			}
 		});
 		
