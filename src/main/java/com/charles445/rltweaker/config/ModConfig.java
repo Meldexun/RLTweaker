@@ -192,7 +192,6 @@ public class ModConfig
 	
 	public static void onConfigChanged()
 	{
-		ModConfig.server.minecraft.investigateAiImpl.load(ModConfig.server.minecraft.investigateAiWhitelist);
 		load(ModConfig.server.potioncore.incurablePotionEffectsImpl, ModConfig.server.potioncore.incurablePotionEffects, ResourceLocation::new);
 		load(ModConfig.server.potioncore.cureDisablingPotionEffectsImpl, ModConfig.server.potioncore.cureDisablingPotionEffects, ResourceLocation::new);
 	}

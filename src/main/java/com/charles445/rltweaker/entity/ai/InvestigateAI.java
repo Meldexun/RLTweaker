@@ -1,13 +1,15 @@
 package com.charles445.rltweaker.entity.ai;
 
-import com.charles445.rltweaker.config.ModConfig;
+import java.util.Random;
 
 import meldexun.reflectionutil.ReflectionField;
 import meldexun.reflectionutil.ReflectionMethod;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
+import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.math.BlockPos;
@@ -25,24 +27,22 @@ public class InvestigateAI extends EntityAIBase {
 		}
 		c_EntityDragonBase = c;
 	}
-	private static final ReflectionMethod<Boolean> IS_FLYING = new ReflectionMethod<>("com.github.alexthe666.iceandfire.entity.EntityDragonBase", "isFlying", null);
-	private static final ReflectionField<BlockPos> AIR_TARGET = new ReflectionField<>("com.github.alexthe666.iceandfire.entity.EntityDragonBase", "airTarget", null);
+	private static final ReflectionMethod<Boolean> IS_FLYING = new ReflectionMethod<>("com.github.alexthe666.iceandfire.entity.EntityDragonBase", "isFlying", "isFlying");
+	private static final ReflectionField<BlockPos> AIR_TARGET = new ReflectionField<>("com.github.alexthe666.iceandfire.entity.EntityDragonBase", "airTarget", "airTarget");
 
 	private static final ReflectionMethod<Boolean> CAN_NAVIGATE = new ReflectionMethod<>(PathNavigate.class, "func_75485_k", "canNavigate");
 	private static final ReflectionField<Path> CURRENT_PATH = new ReflectionField<>(PathNavigate.class, "field_75514_c", "currentPath");
 
 	private final EntityLiving entity;
-	private final float healthThreshold;
-	private final float executionChance;
+	private final InvestigateAIConfig config;
 	private BlockPos target;
 	private int ticksAtLastPos;
 	private Vec3d lastPosCheck;
 	private int lastTimeWithPath;
 
-	public InvestigateAI(EntityLiving entity, float healthThreshold, float executionChance) {
+	public InvestigateAI(EntityLiving entity, InvestigateAIConfig config) {
 		this.entity = entity;
-		this.healthThreshold = healthThreshold;
-		this.executionChance = executionChance;
+		this.config = config;
 		this.setMutexBits(1);
 	}
 
@@ -55,7 +55,7 @@ public class InvestigateAI extends EntityAIBase {
 		if (path == null) {
 			return false;
 		}
-		entity.getNavigator().setPath(path, ModConfig.server.minecraft.investigateAiSpeed);
+		entity.getNavigator().setPath(path, config.getMovementSpeed());
 		return true;
 	}
 
@@ -73,12 +73,12 @@ public class InvestigateAI extends EntityAIBase {
 			lastPosCheck = entity.getPositionVector();
 		}
 
-		if (CAN_NAVIGATE.invoke(entity.getNavigator()) && (entity.getNavigator().noPath() || entity.getRNG().nextInt(5) == 0)) {
+		if (CAN_NAVIGATE.invoke(entity.getNavigator()) && (entity.getNavigator().noPath() || entity.getRNG().nextInt(10) == 0)) {
 			Path path = getPathToTarget();
 			if (path == null) {
 				return false;
 			}
-			entity.getNavigator().setPath(path, ModConfig.server.minecraft.investigateAiSpeed);
+			entity.getNavigator().setPath(path, config.getMovementSpeed());
 		}
 
 		if (!entity.getNavigator().noPath()) {
@@ -100,26 +100,38 @@ public class InvestigateAI extends EntityAIBase {
 		entity.getNavigator().clearPath();
 	}
 
-	public void setTarget(BlockPos pos) {
+	public void setTarget(Entity entity) {
 		if (this.entity.getAttackTarget() != null) {
 			return;
 		}
-		if (this.entity.getHealth() / this.entity.getMaxHealth() > this.healthThreshold) {
+		if (this.entity.getHealth() / this.entity.getMaxHealth() > this.config.getHealthThreshold()) {
 			return;
 		}
-		if (this.entity.getRNG().nextFloat() >= this.executionChance) {
+		if (this.entity.getRNG().nextFloat() >= this.config.getExecutionChance()) {
 			return;
 		}
-		if (c_EntityDragonBase != null && c_EntityDragonBase.isInstance(this.entity) && IS_FLYING.invoke(this.entity)) {
+
+		Random rand = this.entity.getRNG();
+		double dist = this.entity.getDistance(entity);
+		double horizontalOffset = Math.min(config.getHorizontalOffsetBase() + dist * config.getHorizontalOffsetScale(), config.getHorizontalOffsetMax());
+		double verticalOffset = Math.min(config.getVerticalOffsetBase() + dist * config.getVerticalOffsetScale(), config.getVerticalOffsetMax());
+		double x = entity.posX + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+		double y = entity.posY + (rand.nextDouble() - 0.5D) * 2.0D * verticalOffset;
+		double z = entity.posZ + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+		BlockPos pos = new BlockPos(x, y, z);
+
+		if (c_EntityDragonBase != null && c_EntityDragonBase.isInstance(this.entity) && IS_FLYING.isPresent() && IS_FLYING.invoke(this.entity) && AIR_TARGET.isPresent()) {
 			AIR_TARGET.set(this.entity, pos);
-			return;
+		} else {
+			this.target = pos;
 		}
-		this.target = pos;
 	}
 
 	private Path getPathToTarget() {
-		AttributeModifier mod = new AttributeModifier("temp", 128.0D, 0);
-		Path currentPath = entity.getNavigator().getPath();
+		IAttributeInstance followRangeAttribute = entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE);
+		double amount = (Math.sqrt(entity.getDistanceSqToCenter(target)) + 8.0D) / followRangeAttribute.getAttributeValue();
+		AttributeModifier mod = new AttributeModifier("RLTweaker Investigate AI Bonus", amount, 2).setSaved(false);
+		Path currentPath = CURRENT_PATH.get(entity.getNavigator());
 
 		entity.getEntityAttribute(SharedMonsterAttributes.FOLLOW_RANGE).applyModifier(mod);
 		CURRENT_PATH.set(entity.getNavigator(), null);

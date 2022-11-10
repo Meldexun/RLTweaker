@@ -3,7 +3,8 @@ package com.charles445.rltweaker.config.json;
 public enum JsonFileName
 {
 	lessCollisions("lessCollisions.json"),
-	reskillableTransmutation("reskillableTransmutation.json");
+	reskillableTransmutation("reskillableTransmutation.json"),
+	investigateAI("investigateAI.json");
 	
 	private String fileName;
 	

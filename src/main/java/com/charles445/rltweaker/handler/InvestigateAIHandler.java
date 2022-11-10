@@ -1,12 +1,13 @@
 package com.charles445.rltweaker.handler;
 
-import com.charles445.rltweaker.config.ModConfig;
+import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.entity.ai.InvestigateAI;
 import com.charles445.rltweaker.entity.ai.InvestigateAIConfig;
 
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.util.math.BlockPos;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
@@ -28,9 +29,9 @@ public class InvestigateAIHandler {
 			return;
 		}
 		EntityLiving entity = (EntityLiving) event.getEntity();
-		InvestigateAIConfig config = ModConfig.server.minecraft.investigateAiImpl.get(entity);
+		InvestigateAIConfig config = JsonConfig.investigateAI.get(EntityList.getKey(entity));
 		if (config != null) {
-			entity.tasks.addTask(config.getPriority(), new InvestigateAI(entity, config.getHealthThreshold(), config.getExecutionChance()));
+			entity.tasks.addTask(config.getPriority(), new InvestigateAI(entity, config));
 		}
 	}
 
@@ -42,7 +43,7 @@ public class InvestigateAIHandler {
 		if (!(event.getEntity() instanceof EntityLiving)) {
 			return;
 		}
-		if (!(event.getSource().getTrueSource() instanceof EntityLivingBase)) {
+		if (!(event.getSource().getTrueSource() instanceof EntityPlayer)) {
 			return;
 		}
 		EntityLiving entity = (EntityLiving) event.getEntity();
@@ -52,7 +53,7 @@ public class InvestigateAIHandler {
 				.filter(InvestigateAI.class::isInstance)
 				.map(InvestigateAI.class::cast)
 				.findFirst()
-				.ifPresent(investigateAi -> investigateAi.setTarget(new BlockPos(source)));
+				.ifPresent(investigateAi -> investigateAi.setTarget(source));
 	}
 
 }

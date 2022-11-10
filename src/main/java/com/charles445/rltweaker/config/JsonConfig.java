@@ -19,6 +19,7 @@ import com.charles445.rltweaker.config.init.JsonConfigLessCollisions;
 import com.charles445.rltweaker.config.json.JsonDoubleBlockState;
 import com.charles445.rltweaker.config.json.JsonFileName;
 import com.charles445.rltweaker.config.json.JsonTypeToken;
+import com.charles445.rltweaker.entity.ai.InvestigateAIConfig;
 import com.charles445.rltweaker.handler.ReskillableHandler;
 import com.charles445.rltweaker.util.CollisionUtil;
 import com.charles445.rltweaker.util.ErrorUtil;
@@ -28,6 +29,7 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
 public class JsonConfig
@@ -36,6 +38,7 @@ public class JsonConfig
 	
 	public static Map<String, Double> lessCollisions = new HashMap<>();
 	public static Map<String, List<JsonDoubleBlockState>> reskillableTransmutation = new HashMap<>();
+	public static Map<ResourceLocation, InvestigateAIConfig> investigateAI = new HashMap<>();
 	
 	public static void init()
 	{
@@ -80,6 +83,9 @@ public class JsonConfig
 			}
 		}
 		
+		investigateAI.clear();
+		investigateAI.put(new ResourceLocation("minecraft", "zombie"), new InvestigateAIConfig());
+		investigateAI = processJson(JsonFileName.investigateAI, investigateAI, false);
 	}
 	
 	/** Nullable when forMerging is true */
