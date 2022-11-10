@@ -29,7 +29,7 @@ public class InvestigateAIHandler {
 			return;
 		}
 		EntityLiving entity = (EntityLiving) event.getEntity();
-		InvestigateAIConfig config = JsonConfig.investigateAI.get(EntityList.getKey(entity));
+		InvestigateAIConfig config = JsonConfig.investigateAI.get(EntityList.getKey(entity).toString());
 		if (config != null) {
 			entity.tasks.addTask(config.getPriority(), new InvestigateAI(entity, config));
 		}

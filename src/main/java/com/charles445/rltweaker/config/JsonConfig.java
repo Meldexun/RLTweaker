@@ -29,7 +29,6 @@ import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
 
-import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.fml.common.Loader;
 
 public class JsonConfig
@@ -38,7 +37,7 @@ public class JsonConfig
 	
 	public static Map<String, Double> lessCollisions = new HashMap<>();
 	public static Map<String, List<JsonDoubleBlockState>> reskillableTransmutation = new HashMap<>();
-	public static Map<ResourceLocation, InvestigateAIConfig> investigateAI = new HashMap<>();
+	public static Map<String, InvestigateAIConfig> investigateAI = new HashMap<>();
 	
 	public static void init()
 	{
@@ -84,7 +83,7 @@ public class JsonConfig
 		}
 		
 		investigateAI.clear();
-		investigateAI.put(new ResourceLocation("minecraft", "zombie"), new InvestigateAIConfig());
+		investigateAI.put("minecraft:zombie", new InvestigateAIConfig());
 		investigateAI = processJson(JsonFileName.investigateAI, investigateAI, false);
 	}
 	

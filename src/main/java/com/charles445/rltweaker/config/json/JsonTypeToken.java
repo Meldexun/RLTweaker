@@ -17,7 +17,7 @@ public class JsonTypeToken
 		{
 			case lessCollisions: return new TypeToken<Map<String, Double>>(){}.getType();
 			case reskillableTransmutation: return new TypeToken<Map<String, List<JsonDoubleBlockState>>>(){}.getType();
-			case investigateAI: return new TypeToken<Map<ResourceLocation, InvestigateAIConfig>>(){}.getType();
+			case investigateAI: return new TypeToken<Map<String, InvestigateAIConfig>>(){}.getType();
 		
 			default:
 				return null;
