@@ -41,4 +41,13 @@ public class ConfigPotionCore
 	public String[] incurablePotionEffects = {"rustic:tipsy"};
 	@Config.Ignore
 	public final Set<ResourceLocation> incurablePotionEffectsImpl = new HashSet<>();
+	
+	@Config.Comment("Potion effects that disable the cure potion effect")
+	@Config.Name("Cure Disabling Potion Effects")
+	@RLConfig.ImprovementsOnly("")
+	@RLConfig.RLCraftTwoEightTwo("")
+	@RLConfig.RLCraftTwoNine("")
+	public String[] cureDisablingPotionEffects = {""};
+	@Config.Ignore
+	public final Set<ResourceLocation> cureDisablingPotionEffectsImpl = new HashSet<>();
 }

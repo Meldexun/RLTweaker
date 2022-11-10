@@ -44,4 +44,12 @@ public class HookPotionCore
 		}
 		return !ModConfig.server.potioncore.incurablePotionEffectsImpl.contains(registryName);
 	}
+	
+	public static boolean isCureDisabled(EntityLivingBase entity)
+	{
+		return entity.getActivePotionEffects().stream()
+				.map(PotionEffect::getPotion)
+				.map(Potion::getRegistryName)
+				.anyMatch(ModConfig.server.potioncore.cureDisablingPotionEffectsImpl::contains);
+	}
 }

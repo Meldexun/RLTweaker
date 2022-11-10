@@ -194,6 +194,7 @@ public class ModConfig
 	{
 		ModConfig.server.minecraft.investigateAiImpl.load(ModConfig.server.minecraft.investigateAiWhitelist);
 		load(ModConfig.server.potioncore.incurablePotionEffectsImpl, ModConfig.server.potioncore.incurablePotionEffects, ResourceLocation::new);
+		load(ModConfig.server.potioncore.cureDisablingPotionEffectsImpl, ModConfig.server.potioncore.cureDisablingPotionEffects, ResourceLocation::new);
 	}
 	
 	private static <T> void load(Collection<T> collection, String[] data, Function<String, T> parser)

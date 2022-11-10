@@ -51,6 +51,18 @@ public class PatchCurePotion extends PatchManager
 			{
 				MethodNode m_clearNegativeEffects = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/EntityLivingBase;)V", "clearNegativeEffects");
 				
+				//Check if cure is disabled
+				
+				LabelNode label = new LabelNode();
+				
+				InsnList inject = new InsnList();
+				inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
+				inject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "isCureDisabled", "(Lnet/minecraft/entity/EntityLivingBase;)Z", false));
+				inject.add(new JumpInsnNode(Opcodes.IFEQ, label));
+				inject.add(new InsnNode(Opcodes.RETURN));
+				inject.add(label);
+				TransformUtil.insertBeforeFirst(m_clearNegativeEffects, inject);
+				
 				//Don't remove potion sickness or incurable effects
 				
 				JumpInsnNode toCall = TransformUtil.findNextInsnWithType(TransformUtil.findNextCallWithOpcodeAndName(first(m_clearNegativeEffects), Opcodes.INVOKEVIRTUAL, "isBadEffect", "func_76398_f"), JumpInsnNode.class);
