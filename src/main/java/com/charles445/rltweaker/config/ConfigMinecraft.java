@@ -187,4 +187,11 @@ public class ConfigMinecraft
 	@RLConfig.RLCraftTwoNine("false")
 	public boolean investigateAi = false;
 
+	@Config.Comment("Enables investigate AI for non-player attacks. Might cause lags.")
+	@Config.Name("Investigate non-player Attacks")
+	@RLConfig.ImprovementsOnly("false")
+	@RLConfig.RLCraftTwoEightTwo("false")
+	@RLConfig.RLCraftTwoNine("false")
+	public boolean investigateNonPlayerAttacks = false;
+
 }

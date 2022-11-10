@@ -1,6 +1,7 @@
 package com.charles445.rltweaker.handler;
 
 import com.charles445.rltweaker.config.JsonConfig;
+import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.entity.ai.InvestigateAI;
 import com.charles445.rltweaker.entity.ai.InvestigateAIConfig;
 
@@ -43,8 +44,14 @@ public class InvestigateAIHandler {
 		if (!(event.getEntity() instanceof EntityLiving)) {
 			return;
 		}
-		if (!(event.getSource().getTrueSource() instanceof EntityPlayer)) {
-			return;
+		if (ModConfig.server.minecraft.investigateNonPlayerAttacks) {
+			if (!(event.getSource().getTrueSource() instanceof EntityLivingBase)) {
+				return;
+			}
+		} else {
+			if (!(event.getSource().getTrueSource() instanceof EntityPlayer)) {
+				return;
+			}
 		}
 		EntityLiving entity = (EntityLiving) event.getEntity();
 		EntityLivingBase source = (EntityLivingBase) event.getSource().getTrueSource();
