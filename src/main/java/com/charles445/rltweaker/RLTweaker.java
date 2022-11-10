@@ -1,6 +1,6 @@
 package com.charles445.rltweaker;
 
-import java.io.File;
+import java.nio.file.Path;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -18,7 +18,6 @@ import com.charles445.rltweaker.command.CommandRLTweakerConfig;
 import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
-import com.charles445.rltweaker.entity.ai.InvestigateAI;
 import com.charles445.rltweaker.handler.AquacultureHandler;
 import com.charles445.rltweaker.handler.BattleTowersHandler;
 import com.charles445.rltweaker.handler.BaublesHandler;
@@ -100,7 +99,7 @@ public class RLTweaker
 	
 	public static Logger logger = LogManager.getLogger("RLTweaker");
 	
-	public static File jsonDirectory;
+	public static Path jsonDirectory;
 	
 	public static Map<String, Object> handlers = new HashMap<>();
 	public static Map<String, Object> clientHandlers = new HashMap<>();
@@ -112,7 +111,7 @@ public class RLTweaker
 	{
 		FMLCommonHandler.instance().registerCrashCallable(new ErrorUtil.CrashCallable());
 		
-		jsonDirectory = new File(event.getModConfigurationDirectory(), RLTweaker.MODID);
+		jsonDirectory = event.getModConfigurationDirectory().toPath().resolve(RLTweaker.MODID);
 		
 		ModConfig.onConfigChanged();
 		
@@ -317,13 +316,13 @@ public class RLTweaker
 		event.registerServerCommand(new CommandErrorReport());
 		event.registerServerCommand(new CommandRLTweakerConfig());
 		
-		this.serverRunnables.values().forEach(runnable -> runnable.onServerStarting());
+		serverRunnables.values().forEach(runnable -> runnable.onServerStarting());
 	}
 	
 	@Mod.EventHandler
 	public void serverStopping(FMLServerStoppingEvent event)
 	{
-		this.serverRunnables.values().forEach(runnable -> runnable.onServerStopping());
+		serverRunnables.values().forEach(runnable -> runnable.onServerStopping());
 	}
 	
 	@NetworkCheckHandler

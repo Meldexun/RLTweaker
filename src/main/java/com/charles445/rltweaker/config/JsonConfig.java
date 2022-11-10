@@ -1,18 +1,18 @@
 package com.charles445.rltweaker.config;
 
-import java.io.File;
-import java.io.FileReader;
-import java.lang.reflect.Modifier;
+import java.io.IOException;
+import java.io.Reader;
+import java.io.Writer;
 import java.lang.reflect.Type;
-import java.util.ArrayList;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import javax.annotation.Nullable;
-
-import org.apache.commons.io.FileUtils;
 
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.init.JsonConfigLessCollisions;
@@ -25,12 +25,14 @@ import com.charles445.rltweaker.util.ErrorUtil;
 import com.charles445.rltweaker.util.ModNames;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.google.gson.JsonIOException;
+import com.google.gson.JsonSyntaxException;
 
 import net.minecraftforge.fml.common.Loader;
 
 public class JsonConfig
 {
-	public static List<String> jsonErrors = new ArrayList<String>();
+	private static final Gson GSON = new GsonBuilder().setPrettyPrinting().create();
 	
 	public static Map<String, Double> lessCollisions = new HashMap<>();
 	public static Map<String, List<JsonDoubleBlockState>> reskillableTransmutation = new HashMap<>();
@@ -91,7 +93,6 @@ public class JsonConfig
 		catch(Exception e)
 		{
 			RLTweaker.logger.error("Error managing JSON File: "+jfn.get(), e);
-			jsonErrors.add("config/rltweaker/"+jfn.get()+" failed to load!");
 			ErrorUtil.logSilent("JSON Error: "+jfn.get());
 			if(forMerging)
 			{
@@ -110,19 +111,17 @@ public class JsonConfig
 		String jsonFileName = jfn.get();
 		Type type = JsonTypeToken.get(jfn);
 		
-		File jsonFile = new File(RLTweaker.jsonDirectory,jsonFileName);
-		if(jsonFile.exists())
+		Path jsonFile = RLTweaker.jsonDirectory.resolve(jsonFileName);
+		if(Files.exists(jsonFile))
 		{
-			Gson gson = buildNewGson();
 			//Read
-			return (T) gson.fromJson(new FileReader(jsonFile), type);
+			return readJsonFromFile(jsonFile, type);
 		}
 		else
 		{
-			Gson gson = buildNewGson();
 			//Write
+			writeJsonToFile(jsonFile, type, container);
 			
-			FileUtils.write(jsonFile,gson.toJson(container, type),(String)null);
 			if(forMerging)
 			{
 				return null;
@@ -139,14 +138,24 @@ public class JsonConfig
 		String jsonFileName = jfn.get();
 		Type type = JsonTypeToken.get(jfn);
 		
-		Gson gson = buildNewGson();
-		File jsonFile = new File(RLTweaker.jsonDirectory,jsonFileName);
-		FileUtils.write(jsonFile, gson.toJson(container, type),(String)null);
+		Path jsonFile = RLTweaker.jsonDirectory.resolve(jsonFileName);
+		writeJsonToFile(jsonFile, type, container);
 	}
 	
-	private static Gson buildNewGson()
+	private static <T> T readJsonFromFile(Path path, Type type) throws JsonIOException, JsonSyntaxException, IOException
 	{
-		//Pretty printing, and private modifiers are not serialized
-		return new GsonBuilder().setPrettyPrinting().excludeFieldsWithModifiers(Modifier.PRIVATE, Modifier.STATIC).create();
+		try(Reader in = Files.newBufferedReader(path))
+		{
+			return GSON.fromJson(in, type);
+		}
+	}
+	
+	private static void writeJsonToFile(Path path, Type type, Object src) throws JsonIOException, IOException
+	{
+		Files.createDirectories(path.getParent());
+		try(Writer out = Files.newBufferedWriter(path, StandardOpenOption.CREATE))
+		{
+			GSON.toJson(src, type, out);
+		}
 	}
 }
