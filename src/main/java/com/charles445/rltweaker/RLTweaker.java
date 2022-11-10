@@ -15,6 +15,7 @@ import com.charles445.rltweaker.command.CommandAdvisor;
 import com.charles445.rltweaker.command.CommandDebug;
 import com.charles445.rltweaker.command.CommandErrorReport;
 import com.charles445.rltweaker.command.CommandRLTweakerConfig;
+import com.charles445.rltweaker.command.CommandReloadInvestigateAIConfig;
 import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
@@ -315,6 +316,7 @@ public class RLTweaker
 		event.registerServerCommand(new CommandDebug());
 		event.registerServerCommand(new CommandErrorReport());
 		event.registerServerCommand(new CommandRLTweakerConfig());
+		event.registerServerCommand(new CommandReloadInvestigateAIConfig());
 		
 		serverRunnables.values().forEach(runnable -> runnable.onServerStarting());
 	}

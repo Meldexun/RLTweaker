@@ -82,6 +82,11 @@ public class JsonConfig
 			}
 		}
 		
+		loadInvestigateAIConfig();
+	}
+	
+	public static void loadInvestigateAIConfig()
+	{
 		investigateAI.clear();
 		investigateAI.put("minecraft:zombie", new InvestigateAIConfig());
 		investigateAI = processJson(JsonFileName.investigateAI, investigateAI, false);
