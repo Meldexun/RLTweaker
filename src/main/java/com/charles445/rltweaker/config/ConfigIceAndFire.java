@@ -64,4 +64,11 @@ public class ConfigIceAndFire
 	@RLConfig.RLCraftTwoEightTwo("false")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean rlcraftTradeBalancing = false;
+	
+	@Config.Comment("Requires patchAmphithereTameDamage patch! Damage that Amphitheres deal when a player tries to tame them.")
+	@Config.Name("Amphithere Tame Damage")
+	@RLConfig.ImprovementsOnly("1.0")
+	@RLConfig.RLCraftTwoEightTwo("1.0")
+	@RLConfig.RLCraftTwoNine("1.0")
+	public float amphithereTameDamage = 1.0F;
 }

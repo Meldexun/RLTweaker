@@ -13,6 +13,7 @@ import com.charles445.rltweaker.asm.helper.ASMHelper;
 import com.charles445.rltweaker.asm.patch.IPatch;
 import com.charles445.rltweaker.asm.patch.Patch;
 import com.charles445.rltweaker.asm.patch.PatchAggressiveMotionChecker;
+import com.charles445.rltweaker.asm.patch.PatchAmphithereTameDamage;
 import com.charles445.rltweaker.asm.patch.PatchAnvilDupe;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatCriticalsFix;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
@@ -416,6 +417,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchChestOfDrawers", true))
 		{
 			new PatchBetterNether();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchAmphithereTameDamage", false))
+		{
+			new PatchAmphithereTameDamage();
 		}
 		
 		//new PatchForgeNetwork();

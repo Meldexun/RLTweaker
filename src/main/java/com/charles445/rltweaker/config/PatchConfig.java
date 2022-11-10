@@ -225,4 +225,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchChestOfDrawers = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Enables config option to tweak amphithere tame damage")
+	@RLConfig.ImprovementsOnly("false")
+	@RLConfig.RLCraftTwoEightTwo("false")
+	@RLConfig.RLCraftTwoNine("false")
+	public boolean patchAmphithereTameDamage = false;
 }
