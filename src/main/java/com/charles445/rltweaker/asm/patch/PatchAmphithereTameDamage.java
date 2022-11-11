@@ -21,8 +21,8 @@ public class PatchAmphithereTameDamage extends PatchManager {
 
 				this.insert(m_updatePassenger, ASMUtil.findInsnWithOpcode(m_updatePassenger, Opcodes.FCONST_1, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
-						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ServerConfig;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ServerConfig", "iceandfire", "Lcom/charles445/rltweaker/config/ConfigIceAndFire;"),
+						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "iceandfire", "Lcom/charles445/rltweaker/config/ConfigIceAndFire;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigIceAndFire", "amphithereTameDamage", "F")));
 			}
 		});
