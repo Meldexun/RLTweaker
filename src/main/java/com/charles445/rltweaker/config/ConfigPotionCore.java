@@ -35,10 +35,10 @@ public class ConfigPotionCore
 	
 	@Config.Comment("Potion effects that are incurable")
 	@Config.Name("Incurable Potion Effects")
-	@RLConfig.ImprovementsOnly("rustic:tipsy")
-	@RLConfig.RLCraftTwoEightTwo("rustic:tipsy")
-	@RLConfig.RLCraftTwoNine("rustic:tipsy")
-	public String[] incurablePotionEffects = {"rustic:tipsy"};
+	@RLConfig.ImprovementsOnly("")
+	@RLConfig.RLCraftTwoEightTwo("")
+	@RLConfig.RLCraftTwoNine("")
+	public String[] incurablePotionEffects = {};
 	@Config.Ignore
 	public final Set<ResourceLocation> incurablePotionEffectsImpl = new HashSet<>();
 	
@@ -47,7 +47,14 @@ public class ConfigPotionCore
 	@RLConfig.ImprovementsOnly("")
 	@RLConfig.RLCraftTwoEightTwo("")
 	@RLConfig.RLCraftTwoNine("")
-	public String[] cureDisablingPotionEffects = {""};
+	public String[] cureDisablingPotionEffects = {};
 	@Config.Ignore
 	public final Set<ResourceLocation> cureDisablingPotionEffectsImpl = new HashSet<>();
+	
+	@Config.Comment("Enable to make tipsy and effects applied by tipsy incurable")
+	@Config.Name("Incurable Tipsy")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean incurableTipsy = true;
 }

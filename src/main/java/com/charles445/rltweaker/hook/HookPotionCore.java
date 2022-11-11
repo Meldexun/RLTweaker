@@ -19,8 +19,9 @@ public class HookPotionCore
 	}
 	
 	private static final ResourceLocation POTION_SICKNESS = new ResourceLocation("potioncore", "potion_sickness");
+	private static final ResourceLocation TIPSY = new ResourceLocation("rustic", "tipsy");
 	
-	public static void addIncurableEffect(EntityLivingBase entity, List<Potion> possibleEffects)
+	public static void addPotionSicknessEffect(EntityLivingBase entity, List<Potion> possibleEffects)
 	{
 		Potion potion = possibleEffects.get(entity.getRNG().nextInt(possibleEffects.size()));
 		PotionEffect potionEffect = potion.isInstant() ? new PotionEffect(potion, 1) : new PotionEffect(potion, 1200);
@@ -38,6 +39,10 @@ public class HookPotionCore
 		{
 			return false;
 		}
+		if(ModConfig.server.potioncore.incurableTipsy && registryName.equals(TIPSY))
+		{
+			return false;
+		}
 		if(((Incurable)potionEffect).isIncurable())
 		{
 			return false;
@@ -51,5 +56,14 @@ public class HookPotionCore
 				.map(PotionEffect::getPotion)
 				.map(Potion::getRegistryName)
 				.anyMatch(ModConfig.server.potioncore.cureDisablingPotionEffectsImpl::contains);
+	}
+	
+	public static PotionEffect onAddTipsyEffect(PotionEffect potionEffect)
+	{
+		if(ModConfig.server.potioncore.incurableTipsy)
+		{
+			((Incurable)potionEffect).setIncurable(true);
+		}
+		return potionEffect;
 	}
 }
