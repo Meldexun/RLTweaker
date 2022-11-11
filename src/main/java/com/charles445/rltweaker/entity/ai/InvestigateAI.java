@@ -2,9 +2,14 @@ package com.charles445.rltweaker.entity.ai;
 
 import java.util.Random;
 
+import com.charles445.rltweaker.entity.ai.InvestigateAIConfig.CallForHelpEntry;
+import com.charles445.rltweaker.handler.InvestigateAIHandler;
+import com.charles445.rltweaker.util.LazyValue;
+
 import meldexun.reflectionutil.ReflectionField;
 import meldexun.reflectionutil.ReflectionMethod;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
@@ -12,6 +17,8 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
+import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
 
@@ -100,26 +107,66 @@ public class InvestigateAI extends EntityAIBase {
 		entity.getNavigator().clearPath();
 	}
 
-	public void setTarget(Entity entity) {
-		if (this.entity.getAttackTarget() != null) {
-			return;
-		}
-		if (this.entity.getHealth() / this.entity.getMaxHealth() > this.config.getHealthThreshold()) {
-			return;
-		}
-		if (this.entity.getRNG().nextFloat() >= this.config.getExecutionChance()) {
-			return;
+	public void setTarget(Entity targetEntity) {
+		LazyValue<BlockPos> pos = new LazyValue<>(() -> {
+			Random rand = this.entity.getRNG();
+			double dist = this.entity.getDistance(targetEntity);
+			double horizontalOffset = Math.min(config.getHorizontalOffsetBase() + dist * config.getHorizontalOffsetScale(), config.getHorizontalOffsetMax());
+			double verticalOffset = Math.min(config.getVerticalOffsetBase() + dist * config.getVerticalOffsetScale(), config.getVerticalOffsetMax());
+			double x = targetEntity.posX + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+			double y = targetEntity.posY + (rand.nextDouble() - 0.5D) * 2.0D * verticalOffset;
+			double z = targetEntity.posZ + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+			return new BlockPos(x, y, z);
+		});
+
+		boolean inCombat = entity.getAttackTarget() == null;
+		boolean aboveHealthThreshold = entity.getHealth() / entity.getMaxHealth() > config.getHealthThreshold();
+		boolean chanceTestFailed = entity.getRNG().nextFloat() >= config.getExecutionChance();
+
+		if (!inCombat && !aboveHealthThreshold && !chanceTestFailed) {
+			this.setTarget(pos.get());
 		}
 
-		Random rand = this.entity.getRNG();
-		double dist = this.entity.getDistance(entity);
-		double horizontalOffset = Math.min(config.getHorizontalOffsetBase() + dist * config.getHorizontalOffsetScale(), config.getHorizontalOffsetMax());
-		double verticalOffset = Math.min(config.getVerticalOffsetBase() + dist * config.getVerticalOffsetScale(), config.getVerticalOffsetMax());
-		double x = entity.posX + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
-		double y = entity.posY + (rand.nextDouble() - 0.5D) * 2.0D * verticalOffset;
-		double z = entity.posZ + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
-		BlockPos pos = new BlockPos(x, y, z);
+		config.getCallForHelpEntries().forEach(callForHelpEntry -> {
+			if (!callForHelpEntry.ignoreParentInCombat() && inCombat) {
+				return;
+			}
+			if (!callForHelpEntry.ignoreParentAboveHealthThreshold() && aboveHealthThreshold) {
+				return;
+			}
+			if (!callForHelpEntry.ignoreParentChanceTestFailed() && chanceTestFailed) {
+				return;
+			}
+			callForHelp(callForHelpEntry, pos);
+		});
+	}
 
+	private void callForHelp(CallForHelpEntry callForHelpEntry, LazyValue<BlockPos> pos) {
+		Class<? extends Entity> entityClass = EntityList.getClass(new ResourceLocation(callForHelpEntry.getEntityName()));
+		AxisAlignedBB aabb = new AxisAlignedBB(
+				entity.posX - callForHelpEntry.getHorizontalRange(), entity.posY - callForHelpEntry.getVerticalRange(), entity.posZ - callForHelpEntry.getHorizontalRange(),
+				entity.posX + callForHelpEntry.getHorizontalRange(), entity.posY + callForHelpEntry.getVerticalRange(), entity.posZ + callForHelpEntry.getHorizontalRange());
+		this.entity.world.getEntitiesWithinAABB(EntityLiving.class, aabb).forEach(entity1 -> {
+			if (entity1 == entity) {
+				return;
+			}
+			if (entity1.getClass() != entityClass) {
+				return;
+			}
+			if (entity1.getAttackTarget() != null) {
+				return;
+			}
+			if (entity1.getRNG().nextFloat() >= callForHelpEntry.getChance()) {
+				return;
+			}
+			if (callForHelpEntry.requiresVision() && !entity.canEntityBeSeen(entity1)) {
+				return;
+			}
+			InvestigateAIHandler.getInvestigateAI(entity1).ifPresent(investigateAI -> investigateAI.setTarget(pos.get()));
+		});
+	}
+
+	private void setTarget(BlockPos pos) {
 		if (c_EntityDragonBase != null && c_EntityDragonBase.isInstance(this.entity) && IS_FLYING.isPresent() && IS_FLYING.invoke(this.entity) && AIR_TARGET.isPresent()) {
 			AIR_TARGET.set(this.entity, pos);
 		} else {

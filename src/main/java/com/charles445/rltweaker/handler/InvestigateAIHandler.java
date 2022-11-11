@@ -1,5 +1,7 @@
 package com.charles445.rltweaker.handler;
 
+import java.util.Optional;
+
 import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.entity.ai.InvestigateAI;
@@ -55,12 +57,15 @@ public class InvestigateAIHandler {
 		}
 		EntityLiving entity = (EntityLiving) event.getEntity();
 		EntityLivingBase source = (EntityLivingBase) event.getSource().getTrueSource();
-		entity.tasks.taskEntries.stream()
+		getInvestigateAI(entity).ifPresent(investigateAi -> investigateAi.setTarget(source));
+	}
+
+	public static Optional<InvestigateAI> getInvestigateAI(EntityLiving entity) {
+		return entity.tasks.taskEntries.stream()
 				.map(taskEntry -> taskEntry.action)
 				.filter(InvestigateAI.class::isInstance)
 				.map(InvestigateAI.class::cast)
-				.findFirst()
-				.ifPresent(investigateAi -> investigateAi.setTarget(source));
+				.findFirst();
 	}
 
 }
