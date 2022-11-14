@@ -119,7 +119,7 @@ public class InvestigateAI extends EntityAIBase {
 			return new BlockPos(x, y, z);
 		});
 
-		boolean inCombat = entity.getAttackTarget() == null;
+		boolean inCombat = entity.getAttackTarget() != null;
 		boolean aboveHealthThreshold = entity.getHealth() / entity.getMaxHealth() > config.getHealthThreshold();
 		boolean chanceTestFailed = entity.getRNG().nextFloat() >= config.getExecutionChance();
 
