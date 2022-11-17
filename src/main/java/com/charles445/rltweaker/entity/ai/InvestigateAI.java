@@ -1,10 +1,15 @@
 package com.charles445.rltweaker.entity.ai;
 
+import java.util.List;
+import java.util.Optional;
 import java.util.Random;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
-import com.charles445.rltweaker.entity.ai.InvestigateAIConfig.CallForHelpEntry;
+import javax.annotation.Nullable;
+
 import com.charles445.rltweaker.handler.InvestigateAIHandler;
-import com.charles445.rltweaker.util.LazyValue;
 
 import meldexun.reflectionutil.ReflectionField;
 import meldexun.reflectionutil.ReflectionMethod;
@@ -17,7 +22,6 @@ import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
-import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Vec3d;
@@ -43,6 +47,7 @@ public class InvestigateAI extends EntityAIBase {
 	private final EntityLiving entity;
 	private final InvestigateAIConfig config;
 	private BlockPos target;
+	private InvestigateAIConfig.Entry configEntry;
 	private int ticksAtLastPos;
 	private Vec3d lastPosCheck;
 	private int lastTimeWithPath;
@@ -62,7 +67,7 @@ public class InvestigateAI extends EntityAIBase {
 		if (path == null) {
 			return false;
 		}
-		entity.getNavigator().setPath(path, config.getMovementSpeed());
+		entity.getNavigator().setPath(path, configEntry.movementSpeed);
 		return true;
 	}
 
@@ -85,7 +90,7 @@ public class InvestigateAI extends EntityAIBase {
 			if (path == null) {
 				return false;
 			}
-			entity.getNavigator().setPath(path, config.getMovementSpeed());
+			entity.getNavigator().setPath(path, configEntry.movementSpeed);
 		}
 
 		if (!entity.getNavigator().noPath()) {
@@ -108,70 +113,80 @@ public class InvestigateAI extends EntityAIBase {
 	}
 
 	public void setTarget(Entity targetEntity) {
-		LazyValue<BlockPos> pos = new LazyValue<>(() -> {
-			Random rand = this.entity.getRNG();
-			double dist = this.entity.getDistance(targetEntity);
-			double horizontalOffset = Math.min(config.getHorizontalOffsetBase() + dist * config.getHorizontalOffsetScale(), config.getHorizontalOffsetMax());
-			double verticalOffset = Math.min(config.getVerticalOffsetBase() + dist * config.getVerticalOffsetScale(), config.getVerticalOffsetMax());
-			double x = targetEntity.posX + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
-			double y = targetEntity.posY + (rand.nextDouble() - 0.5D) * 2.0D * verticalOffset;
-			double z = targetEntity.posZ + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
-			return new BlockPos(x, y, z);
-		});
+		setTarget(targetEntity.getPositionVector());
+	}
 
-		boolean inCombat = entity.getAttackTarget() != null;
-		boolean aboveHealthThreshold = entity.getHealth() / entity.getMaxHealth() > config.getHealthThreshold();
-		boolean chanceTestFailed = entity.getRNG().nextFloat() >= config.getExecutionChance();
+	public void setTarget(Vec3d target) {
+		setTarget(target, null, Stream.of(entity).collect(Collectors.toSet()));
+	}
 
-		if (!inCombat && !aboveHealthThreshold && !chanceTestFailed) {
-			this.setTarget(pos.get());
-		}
-
-		config.getCallForHelpEntries().forEach(callForHelpEntry -> {
-			if (!callForHelpEntry.ignoreParentInCombat() && inCombat) {
-				return;
+	private void setTarget(Vec3d target, @Nullable Entity parent, Set<Entity> checked) {
+		config.entries.stream().filter(entry -> {
+			if (parent != null) {
+				if (!entry.executeOnCalled) {
+					return false;
+				}
+			} else {
+				if (!entry.executeOnAttacked) {
+					return false;
+				}
 			}
-			if (!callForHelpEntry.ignoreParentAboveHealthThreshold() && aboveHealthThreshold) {
-				return;
+			return entity.getHealth() / entity.getMaxHealth() <= entry.healthThreshold;
+		}).findFirst().ifPresent(entry -> {
+			boolean inCombat = entity.getAttackTarget() != null;
+			boolean chanceTestFailed = entity.getRNG().nextFloat() >= entry.executionChance;
+			if (!inCombat && !chanceTestFailed) {
+				this.setTarget(calculateTarget(target, entry), entry);
 			}
-			if (!callForHelpEntry.ignoreParentChanceTestFailed() && chanceTestFailed) {
-				return;
-			}
-			callForHelp(callForHelpEntry, pos);
+			this.callForHelp(target, parent, inCombat, chanceTestFailed, checked, entry);
 		});
 	}
 
-	private void callForHelp(CallForHelpEntry callForHelpEntry, LazyValue<BlockPos> pos) {
-		Class<? extends Entity> entityClass = EntityList.getClass(new ResourceLocation(callForHelpEntry.getEntityName()));
-		AxisAlignedBB aabb = new AxisAlignedBB(
-				entity.posX - callForHelpEntry.getHorizontalRange(), entity.posY - callForHelpEntry.getVerticalRange(), entity.posZ - callForHelpEntry.getHorizontalRange(),
-				entity.posX + callForHelpEntry.getHorizontalRange(), entity.posY + callForHelpEntry.getVerticalRange(), entity.posZ + callForHelpEntry.getHorizontalRange());
-		this.entity.world.getEntitiesWithinAABB(EntityLiving.class, aabb).forEach(entity1 -> {
-			if (entity1 == entity) {
-				return;
+	private void callForHelp(Vec3d target, @Nullable Entity parent, boolean parentInCombat, boolean parentChanceTestFailed, Set<Entity> checked, InvestigateAIConfig.Entry entry) {
+		entry.callForHelpEntries.stream().filter(callForHelpEntry -> {
+			if (!callForHelpEntry.ignoreParentInCombat && parentInCombat) {
+				return false;
 			}
-			if (entity1.getClass() != entityClass) {
-				return;
-			}
-			if (entity1.getAttackTarget() != null) {
-				return;
-			}
-			if (entity1.getRNG().nextFloat() >= callForHelpEntry.getChance()) {
-				return;
-			}
-			if (callForHelpEntry.requiresVision() && !entity.canEntityBeSeen(entity1)) {
-				return;
-			}
-			InvestigateAIHandler.getInvestigateAI(entity1).ifPresent(investigateAI -> investigateAI.setTarget(pos.get()));
+			return callForHelpEntry.ignoreParentChanceTestFailed || !parentChanceTestFailed;
+		}).forEach(callForHelpEntry -> {
+			AxisAlignedBB aabb = new AxisAlignedBB(
+					entity.posX - callForHelpEntry.horizontalRange, entity.posY - callForHelpEntry.verticalRange, entity.posZ - callForHelpEntry.horizontalRange,
+					entity.posX + callForHelpEntry.horizontalRange, entity.posY + callForHelpEntry.verticalRange, entity.posZ + callForHelpEntry.horizontalRange);
+			List<EntityLiving> entities = this.entity.world.getEntitiesWithinAABB(EntityLiving.class, aabb, entity1 -> {
+				if (!callForHelpEntry.entityNames.contains(EntityList.getKey(entity1))) {
+					return false;
+				}
+				if (callForHelpEntry.requiresVision && !entity.canEntityBeSeen(entity1)) {
+					return false;
+				}
+				return checked.add(entity1);
+			});
+			entities.stream()
+					.map(InvestigateAIHandler::getInvestigateAI)
+					.filter(Optional::isPresent)
+					.map(Optional::get)
+					.forEach(investigateAI -> investigateAI.setTarget(target, entity, checked));
 		});
 	}
 
-	private void setTarget(BlockPos pos) {
+	private BlockPos calculateTarget(Vec3d target, InvestigateAIConfig.Entry entry) {
+		Random rand = this.entity.getRNG();
+		double dist = this.entity.getDistance(target.x, target.y, target.z);
+		double horizontalOffset = Math.min(entry.horizontalOffsetBase + dist * entry.horizontalOffsetScale, entry.horizontalOffsetMax);
+		double verticalOffset = Math.min(entry.verticalOffsetBase + dist * entry.verticalOffsetScale, entry.verticalOffsetMax);
+		double x = target.x + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+		double y = target.y + (rand.nextDouble() - 0.5D) * 2.0D * verticalOffset;
+		double z = target.z + (rand.nextDouble() - 0.5D) * 2.0D * horizontalOffset;
+		return new BlockPos(x, y, z);
+	}
+
+	private void setTarget(BlockPos pos, InvestigateAIConfig.Entry entry) {
 		if (c_EntityDragonBase != null && c_EntityDragonBase.isInstance(this.entity) && IS_FLYING.isPresent() && IS_FLYING.invoke(this.entity) && AIR_TARGET.isPresent()) {
 			AIR_TARGET.set(this.entity, pos);
 		} else {
 			this.target = pos;
 		}
+		this.configEntry = entry;
 	}
 
 	private Path getPathToTarget() {
