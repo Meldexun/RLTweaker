@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.FutureTask;
 
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.capability.RLCapabilities;
@@ -18,6 +19,7 @@ import com.charles445.rltweaker.network.NetworkHandler;
 import com.charles445.rltweaker.network.PacketHandler;
 import com.charles445.rltweaker.network.TaskScheduler;
 
+import meldexun.reflectionutil.ReflectionMethod;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
@@ -29,17 +31,16 @@ import net.minecraft.init.PotionTypes;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.structure.MapGenStructureData;
-import net.minecraft.world.gen.structure.StructureBoundingBox;
 import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -63,6 +64,7 @@ import net.minecraftforge.fml.relauncher.SideOnly;
 
 public class MinecraftHandler
 {
+	private static final ReflectionMethod<Void> WRITE_PLAYER_DATA = new ReflectionMethod<>(PlayerList.class, "func_72391_b", "writePlayerData", EntityPlayerMP.class);
 	public static Map<String, IContainerValidator> containerValidators = new ConcurrentHashMap<>();
 	
 	public Map<UUID, BlockPos> containerEnforcedPlayers = new ConcurrentHashMap<>();
@@ -599,5 +601,18 @@ public class MinecraftHandler
 	public static interface IContainerValidator
 	{
 		public boolean isValid(Container container);
+	}
+
+	@SubscribeEvent
+	public void fixDropDisconnectLagDupe(PlayerLoggedOutEvent event) {
+		if (!ModConfig.server.minecraft.fixDropDisconnectLagDupe)
+			return;
+		if (event.player.world.isRemote)
+			return;
+		MinecraftServer server = event.player.getServer();
+		server.futureTaskQueue.add(new FutureTask<>(() -> {
+			WRITE_PLAYER_DATA.invoke(server.getPlayerList(), (EntityPlayerMP) event.player);
+			return null;
+		}));
 	}
 }
