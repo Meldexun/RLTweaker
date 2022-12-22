@@ -5,6 +5,7 @@ import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.FieldInsnNode;
 import org.objectweb.asm.tree.InsnNode;
+import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import com.charles445.rltweaker.asm.util.ASMUtil;
@@ -17,6 +18,9 @@ public class PatchRustic extends PatchManager {
 			@Override
 			public void patch(ClassNode clazzNode) {
 				MethodNode m_affectPlayer = this.findMethod(clazzNode, "affectPlayer");
+
+				this.insert(m_affectPlayer, ASMUtil.findMethodInsn(m_affectPlayer, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70651_bq", "getActivePotionEffects", "()Ljava/util/Collection;", 0), ASMUtil.listOf(
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)));
 
 				this.insert(m_affectPlayer, ASMUtil.findInsnWithOpcode(m_affectPlayer, Opcodes.ICONST_2, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
@@ -43,6 +47,9 @@ public class PatchRustic extends PatchManager {
 			@Override
 			public void patch(ClassNode clazzNode) {
 				MethodNode m_affectPlayer = this.findMethod(clazzNode, "affectPlayer");
+
+				this.insert(m_affectPlayer, ASMUtil.findMethodInsn(m_affectPlayer, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70651_bq", "getActivePotionEffects", "()Ljava/util/Collection;", 0), ASMUtil.listOf(
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)));
 
 				this.insert(m_affectPlayer, ASMUtil.findIntInsn(m_affectPlayer, Opcodes.SIPUSH, 12000, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
