@@ -14,6 +14,7 @@ import java.util.Map;
 import javax.annotation.Nullable;
 
 import com.charles445.rltweaker.RLTweaker;
+import com.charles445.rltweaker.config.JsonConfig.JsonFileException;
 import com.charles445.rltweaker.config.init.JsonConfigLessCollisions;
 import com.charles445.rltweaker.config.json.JsonDoubleBlockState;
 import com.charles445.rltweaker.config.json.JsonFileName;
@@ -33,6 +34,8 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.util.text.TextComponentString;
+import net.minecraft.util.text.TextFormatting;
 import net.minecraftforge.fml.common.Loader;
 
 public class JsonConfig
@@ -103,13 +106,17 @@ public class JsonConfig
 		{
 			loadInvestigateAIConfig();
 		}
-		catch(JsonIOException | JsonSyntaxException | IOException e)
+		catch(JsonFileException e)
 		{
-			RLTweaker.logger.error("Failed to load investigate AI config files: ", e);
+			RLTweaker.logger.error("Failed to load investigate AI file '{}'", e.getFile(), e);
+		}
+		catch(IOException e)
+		{
+			RLTweaker.logger.error("Failed to load investigate AI config files", e);
 		}
 	}
 	
-	public static void loadInvestigateAIConfig() throws JsonIOException, JsonSyntaxException, IOException
+	public static void loadInvestigateAIConfig() throws JsonFileException, IOException
 	{
 		investigateAI = readJsons(RLTweaker.jsonDirectory.resolve("investigateAI"), InvestigateAIConfig.class);
 	}
@@ -199,7 +206,7 @@ public class JsonConfig
 		}
 	}
 	
-	private static <V> Map<ResourceLocation, V> readJsons(Path dir, Class<V> type) throws JsonIOException, JsonSyntaxException, IOException
+	private static <V> Map<ResourceLocation, V> readJsons(Path dir, Class<V> type) throws JsonFileException, IOException
 	{
 		Map<ResourceLocation, V> map = new HashMap<>();
 		if(!Files.exists(dir))
@@ -213,10 +220,37 @@ public class JsonConfig
 			{
 				String fileName = file.getFileName().toString();
 				ResourceLocation key = new ResourceLocation(modid, fileName.substring(0, fileName.lastIndexOf('.')));
-				V value = readJsonFromFile(file, type);
+				V value;
+				try
+				{
+					value = readJsonFromFile(file, type);
+				}
+				catch(JsonIOException | JsonSyntaxException e)
+				{
+					throw new JsonFileException(dir.relativize(file), e);
+				}
 				map.put(key, value);
 			}
 		}
 		return map;
+	}
+	
+	@SuppressWarnings("serial")
+	public static class JsonFileException extends Exception
+	{
+		
+		private final Path file;
+		
+		public JsonFileException(Path file, Throwable cause)
+		{
+			super(cause);
+			this.file = file;
+		}
+		
+		public Path getFile()
+		{
+			return file;
+		}
+		
 	}
 }

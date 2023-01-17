@@ -4,8 +4,7 @@ import java.io.IOException;
 
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.JsonConfig;
-import com.google.gson.JsonIOException;
-import com.google.gson.JsonSyntaxException;
+import com.charles445.rltweaker.config.JsonConfig.JsonFileException;
 
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
@@ -31,13 +30,16 @@ public class CommandReloadInvestigateAIConfig extends CommandBase {
 		try {
 			JsonConfig.loadInvestigateAIConfig();
 			sender.sendMessage(new TextComponentString(String.format("Loaded %d investigate AI entries", JsonConfig.investigateAI.size())));
-		} catch (JsonIOException | JsonSyntaxException | IOException e) {
+		} catch (JsonFileException e) {
 			Throwable t = e;
 			while (t.getCause() != null) {
 				t = t.getCause();
 			}
-			sender.sendMessage(new TextComponentString(String.format("%sFailed loading investigate AI: %s: %s", TextFormatting.RED, t.getClass().getSimpleName(), t.getMessage())));
-			RLTweaker.logger.error("Failed to load investigate AI config files: ", e);
+			sender.sendMessage(new TextComponentString(String.format("%sFailed to load investigate AI file '%s': %s: %s", TextFormatting.RED, e.getFile(), t.getClass().getSimpleName(), t.getMessage())));
+			RLTweaker.logger.error("Failed to load investigate AI file '{}'", e.getFile(), e);
+		} catch (IOException e) {
+			sender.sendMessage(new TextComponentString(String.format("%sFailed to load investigate AI config files", TextFormatting.RED)));
+			RLTweaker.logger.error("Failed to load investigate AI config files", e);
 		}
 	}
 
