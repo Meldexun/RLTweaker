@@ -232,4 +232,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("false")
 	@RLConfig.RLCraftTwoNine("false")
 	public boolean patchAmphithereTameDamage = false;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes Potion Core Resistance calculations")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchPotionCoreResistance = true;
 }

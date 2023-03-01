@@ -34,6 +34,7 @@ import com.charles445.rltweaker.asm.patch.PatchLycanitesDupe;
 import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
 import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
+import com.charles445.rltweaker.asm.patch.PatchPotionCoreResistance;
 import com.charles445.rltweaker.asm.patch.PatchCurePotion;
 import com.charles445.rltweaker.asm.patch.PatchPushReaction;
 import com.charles445.rltweaker.asm.patch.PatchRealBench;
@@ -422,6 +423,12 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchAmphithereTameDamage", false))
 		{
 			new PatchAmphithereTameDamage();
+		}
+
+		
+		if(ASMConfig.getBoolean("general.patches.patchPotionCoreResistance", false))
+		{
+			new PatchPotionCoreResistance();
 		}
 		
 		//new PatchForgeNetwork();
