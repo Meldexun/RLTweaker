@@ -76,6 +76,30 @@ public class PatchPotionCoreResistance extends PatchManager {
 						new VarInsnNode(Opcodes.FSTORE, 2)));
 			}
 		});
+
+		add(new Patch(this, "ichttt.mods.firstaid.common.util.ArmorUtils",
+				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+			@Override
+			public void patch(ClassNode clazzNode) {
+				MethodNode m_applyPotionDamageCalculations = this.findMethodWithDesc(clazzNode,
+						"(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/DamageSource;F)F",
+						"applyGlobalPotionModifiers");
+
+				AbstractInsnNode target = ASMUtil.findMethodInsn(m_applyPotionDamageCalculations, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z", 0);
+				target = TransformUtil.findPreviousInsnWithType(target, LabelNode.class);
+				AbstractInsnNode target1 = ASMUtil.findInsnWithOpcode(m_applyPotionDamageCalculations, Opcodes.IFGT, 0);
+				target1 = TransformUtil.findPreviousInsnWithType(target1, LabelNode.class);
+
+				insert(m_applyPotionDamageCalculations, target, ASMUtil.listOf(
+						new VarInsnNode(Opcodes.FLOAD, 2),
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "preResistancePotionCalculation", "(F)V", false)));
+				insert(m_applyPotionDamageCalculations, target1, ASMUtil.listOf(
+						new VarInsnNode(Opcodes.ALOAD, 0),
+						new VarInsnNode(Opcodes.FLOAD, 2),
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
+						new VarInsnNode(Opcodes.FSTORE, 2)));
+			}
+		});
 	}
 
 }
