@@ -64,4 +64,19 @@ public class ConfigPotionCore
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean additiveResistanceStacking = true;
+
+	@Config.Comment("Requires patchPotionCoreResistance patch! Resistance of the resistance potion attribute modifier.")
+	@Config.Name("Resistance Potion Modifier Amount")
+	@RLConfig.ImprovementsOnly("0.2")
+	@RLConfig.RLCraftTwoEightTwo("0.2")
+	@RLConfig.RLCraftTwoNine("0.2")
+	public double resistanceAmount = 0.2D;
+
+	@Config.Comment("Requires patchPotionCoreResistance patch! Operation of the resistance potion attribute modifier.")
+	@Config.Name("Resistance Potion Modifier Operation")
+	@RLConfig.ImprovementsOnly("2")
+	@RLConfig.RLCraftTwoEightTwo("2")
+	@RLConfig.RLCraftTwoNine("2")
+	public int resistanceOperation = 2;
+
 }

@@ -76,8 +76,9 @@ public class HookPotionCore
 
 	public static Potion resistance_registerPotionAttributeModifier(Potion potion, IAttribute attribute,
 			String uniqueId, double ammount, int operation) {
-		// skip registration of attribute modifier
-		return potion;
+		// override registration of attribute modifier
+		return potion.registerPotionAttributeModifier(attribute, uniqueId, ModConfig.server.potioncore.resistanceAmount,
+				ModConfig.server.potioncore.resistanceOperation);
 	}
 
 	public static double getAdjustedDamageResistanceAttribute(EntityLivingBase entity) {
