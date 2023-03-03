@@ -28,10 +28,8 @@ public class PatchPotionCoreResistance extends PatchManager {
 						"(Z)Lnet/minecraft/entity/ai/attributes/BaseAttribute;", 3);
 				target = target.getPrevious();
 
-				m_clinit.instructions.insertBefore(target, ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC,
-						"com/charles445/rltweaker/hook/HookPotionCore", "resistance_createAttribute",
-						"(Lnet/minecraft/entity/ai/attributes/RangedAttribute;)Lnet/minecraft/entity/ai/attributes/RangedAttribute;",
-						false)));
+				m_clinit.instructions.insertBefore(target, ASMUtil.listOf(
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "resistance_createAttribute", "(Lnet/minecraft/entity/ai/attributes/RangedAttribute;)Lnet/minecraft/entity/ai/attributes/RangedAttribute;", false)));
 			}
 		});
 
@@ -116,6 +114,24 @@ public class PatchPotionCoreResistance extends PatchManager {
 						new VarInsnNode(Opcodes.FLOAD, 2),
 						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
 						new VarInsnNode(Opcodes.FSTORE, 2)));
+			}
+		});
+
+		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEventHandlerClient",
+				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+			@Override
+			public void patch(ClassNode clazzNode) {
+				MethodNode m_renderOverlaysPre = this.findMethodWithDesc(clazzNode,
+						"(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Pre;)V", "renderOverlaysPre");
+
+				AbstractInsnNode target = ASMUtil.findMethodInsn(m_renderOverlaysPre, Opcodes.INVOKEVIRTUAL,
+						"net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue",
+						"()D", 0);
+				target = target.getNext();
+				target = target.getNext();
+
+				insert(m_renderOverlaysPre, target, ASMUtil.listOf(
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)));
 			}
 		});
 	}

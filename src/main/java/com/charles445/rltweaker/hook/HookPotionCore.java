@@ -122,4 +122,8 @@ public class HookPotionCore
 		}
 	}
 
+	public static double getActualResistance(double resistance) {
+		return ModConfig.server.potioncore.alternativeResistanceMode ? -resistance : resistance;
+	}
+
 }
