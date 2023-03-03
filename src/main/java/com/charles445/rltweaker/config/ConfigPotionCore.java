@@ -57,13 +57,13 @@ public class ConfigPotionCore
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean incurableTipsy = true;
-	
-	@Config.Comment("Requires patchPotionCoreResistance patch! Enable to make resistance potion and resistance attribute to stack additively (otherwise they are stacked multiplicatively)")
-	@Config.Name("Additive Resistance Stacking")
+
+	@Config.Comment("Requires patchPotionCoreResistance patch!")
+	@Config.Name("Alternative Resistance Mode")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
-	public boolean additiveResistanceStacking = true;
+	public boolean alternativeResistanceMode = true;
 
 	@Config.Comment("Requires patchPotionCoreResistance patch! Resistance of the resistance potion attribute modifier.")
 	@Config.Name("Resistance Potion Modifier Amount")

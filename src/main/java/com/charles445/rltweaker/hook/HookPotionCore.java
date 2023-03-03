@@ -3,11 +3,15 @@ package com.charles445.rltweaker.hook;
 import java.util.List;
 
 import com.charles445.rltweaker.config.ModConfig;
+import com.charles445.rltweaker.entity.attribute.ExtendedRangedAttribute;
+import com.charles445.rltweaker.entity.attribute.InversedAttributeInstance;
 
 import meldexun.reflectionutil.ReflectionField;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.AbstractAttributeMap;
 import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.ai.attributes.RangedAttribute;
 import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.util.ResourceLocation;
@@ -74,6 +78,22 @@ public class HookPotionCore
 			"com.tmtravlr.potioncore.PotionCoreAttributes", "DAMAGE_RESISTANCE", "DAMAGE_RESISTANCE");
 	private static float originalDamage;
 
+	public static RangedAttribute resistance_createAttribute(RangedAttribute originalAttribute) {
+		if (!ModConfig.server.potioncore.alternativeResistanceMode) {
+			return originalAttribute;
+		}
+		// override resistance attribute when alternativeResistanceMode is enabled
+		return new ExtendedRangedAttribute(null, originalAttribute.getName(), originalAttribute.getDefaultValue(), 0.0D,
+				Double.MAX_VALUE) {
+
+			@Override
+			public IAttributeInstance createInstance(AbstractAttributeMap attributeMap, IAttribute attribute) {
+				return new InversedAttributeInstance(attributeMap, attribute);
+			}
+
+		};
+	}
+
 	public static Potion resistance_registerPotionAttributeModifier(Potion potion, IAttribute attribute,
 			String uniqueId, double ammount, int operation) {
 		// override registration of attribute modifier
@@ -95,10 +115,10 @@ public class HookPotionCore
 			return damage;
 		}
 		IAttributeInstance attribute = entity.getEntityAttribute(DAMAGE_RESISTANCE.get(null));
-		if (ModConfig.server.potioncore.additiveResistanceStacking) {
-			return (float) (originalDamage * (damage / originalDamage - (attribute.getAttributeValue() - 1.0D)));
+		if (ModConfig.server.potioncore.alternativeResistanceMode) {
+			return (float) (originalDamage * attribute.getAttributeValue());
 		} else {
-			return (float) (damage * (1.0D - (attribute.getAttributeValue() - 1.0D)));
+			return (float) (originalDamage * (1.0D - (attribute.getAttributeValue() - 1.0D)));
 		}
 	}
 

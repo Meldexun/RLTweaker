@@ -234,7 +234,7 @@ public class PatchConfig
 	public boolean patchAmphithereTameDamage = false;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Fixes Potion Core Resistance calculations")
+	@Config.Comment("Requires patchCustomAttributeInstances patch! Fixes Potion Core Resistance calculations")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")

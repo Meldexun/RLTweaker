@@ -17,6 +17,24 @@ public class PatchPotionCoreResistance extends PatchManager {
 	public PatchPotionCoreResistance() {
 		super("Patch Potion Core Resistance");
 
+		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreAttributes",
+				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+			@Override
+			public void patch(ClassNode clazzNode) {
+				MethodNode m_clinit = this.findMethodWithDesc(clazzNode, "()V", "<clinit>");
+
+				AbstractInsnNode target = ASMUtil.findMethodInsn(m_clinit, Opcodes.INVOKEVIRTUAL,
+						"net/minecraft/entity/ai/attributes/RangedAttribute", "func_111112_a", "setShouldWatch",
+						"(Z)Lnet/minecraft/entity/ai/attributes/BaseAttribute;", 3);
+				target = target.getPrevious();
+
+				m_clinit.instructions.insertBefore(target, ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC,
+						"com/charles445/rltweaker/hook/HookPotionCore", "resistance_createAttribute",
+						"(Lnet/minecraft/entity/ai/attributes/RangedAttribute;)Lnet/minecraft/entity/ai/attributes/RangedAttribute;",
+						false)));
+			}
+		});
+
 		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEffects",
 				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override

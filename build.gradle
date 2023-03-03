@@ -48,11 +48,11 @@ dependencies {
 minecraft {
     mappings channel: "${mappings_channel}", version: "${mappings_version}"
 
-    // def atDepFileTree = files(configurations.atDependencies.collect { zipTree(it) }).getAsFileTree()
-    // accessTransformer = files(
-    //     'src/main/resources/META-INF/accesstransformer.cfg',
-    //     atDepFileTree.matching { include 'META-INF/accesstransformer.cfg' }
-    // )
+    def atDepFileTree = files(configurations.atDependencies.collect { zipTree(it) }).getAsFileTree()
+    accessTransformer = files(
+        'src/main/resources/META-INF/accesstransformer.cfg',
+        atDepFileTree.matching { include 'META-INF/accesstransformer.cfg' }
+    )
 
     runs {
         client {
@@ -92,7 +92,7 @@ jar {
     }
 
     manifest {
-        // attributes 'FMLAT': 'accesstransformer.cfg'
+        attributes 'FMLAT': 'accesstransformer.cfg'
         attributes 'FMLCorePlugin': "${mod_plugin_class}"
         attributes 'FMLCorePluginContainsFMLMod': 'true'
     }
