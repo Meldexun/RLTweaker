@@ -239,4 +239,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchPotionCoreResistance = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Enables custom attribute instances. Required by other patches.")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchCustomAttributeInstances = true;
 }

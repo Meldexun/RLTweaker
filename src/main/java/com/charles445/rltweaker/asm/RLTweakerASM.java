@@ -36,6 +36,7 @@ import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
 import com.charles445.rltweaker.asm.patch.PatchPotionCoreResistance;
 import com.charles445.rltweaker.asm.patch.PatchCurePotion;
+import com.charles445.rltweaker.asm.patch.PatchCustomAttributeInstances;
 import com.charles445.rltweaker.asm.patch.PatchPushReaction;
 import com.charles445.rltweaker.asm.patch.PatchRealBench;
 import com.charles445.rltweaker.asm.patch.PatchReducedSearchSize;
@@ -424,11 +425,15 @@ public class RLTweakerASM implements IClassTransformer
 		{
 			new PatchAmphithereTameDamage();
 		}
-
 		
 		if(ASMConfig.getBoolean("general.patches.patchPotionCoreResistance", false))
 		{
 			new PatchPotionCoreResistance();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchCustomAttributeInstances", false))
+		{
+			new PatchCustomAttributeInstances();
 		}
 		
 		//new PatchForgeNetwork();
