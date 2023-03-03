@@ -6,12 +6,16 @@ import com.charles445.rltweaker.util.CompatUtil;
 import com.charles445.rltweaker.util.CriticalException;
 import com.charles445.rltweaker.util.ErrorUtil;
 
+import meldexun.reflectionutil.ReflectionField;
 import net.minecraft.entity.EntityLivingBase;
+import net.minecraft.entity.ai.attributes.IAttribute;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.MobEffects;
+import net.minecraft.potion.Potion;
 import net.minecraft.potion.PotionEffect;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.PotionEvent.PotionApplicableEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -26,6 +30,7 @@ public class PotionCoreHandler
 	
 	public PotionCoreHandler()
 	{
+		MinecraftForge.EVENT_BUS.register(this);
 		try
 		{
 			if(ModConfig.server.potioncore.capJumpBoost)
@@ -141,4 +146,31 @@ public class PotionCoreHandler
 			}
 		}
 	}
+
+	public static final ReflectionField<IAttribute> DAMAGE_RESISTANCE = new ReflectionField<>(
+			"com.tmtravlr.potioncore.PotionCoreAttributes", "DAMAGE_RESISTANCE", "DAMAGE_RESISTANCE");
+
+	@SubscribeEvent
+	public void onEntityJoinWorldEvent(EntityJoinWorldEvent event) {
+		if (!DAMAGE_RESISTANCE.isPresent()) {
+			return;
+		}
+		if (!ModConfig.patches.patchPotionCoreResistance) {
+			return;
+		}
+		if (event.getEntity().world.isRemote) {
+			return;
+		}
+		if (!(event.getEntity() instanceof EntityLivingBase)) {
+			return;
+		}
+		EntityLivingBase entity = (EntityLivingBase) event.getEntity();
+		PotionEffect potionEffect = entity.getActivePotionEffect(MobEffects.RESISTANCE);
+		if (potionEffect != null) {
+			Potion potion = potionEffect.getPotion();
+			potion.removeAttributesModifiersFromEntity(entity, entity.getAttributeMap(), potionEffect.getAmplifier());
+			potion.applyAttributesModifiersToEntity(entity, entity.getAttributeMap(), potionEffect.getAmplifier());
+		}
+	}
+
 }
