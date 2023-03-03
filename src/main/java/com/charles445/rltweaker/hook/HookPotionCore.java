@@ -74,15 +74,15 @@ public class HookPotionCore
 			"com.tmtravlr.potioncore.PotionCoreAttributes", "DAMAGE_RESISTANCE", "DAMAGE_RESISTANCE");
 	private static float originalDamage;
 
-	public static double getAdjustedDamageResistanceAttribute(EntityLivingBase entity) {
-		// skip potion core damage resistance handler
-		return 0.0D;
-	}
-
 	public static Potion resistance_registerPotionAttributeModifier(Potion potion, IAttribute attribute,
 			String uniqueId, double ammount, int operation) {
 		// skip registration of attribute modifier
 		return potion;
+	}
+
+	public static double getAdjustedDamageResistanceAttribute(EntityLivingBase entity) {
+		// skip potion core damage resistance handler
+		return 0.0D;
 	}
 
 	public static void preResistancePotionCalculation(float damage) {
