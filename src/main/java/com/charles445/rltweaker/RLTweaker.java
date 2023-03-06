@@ -89,7 +89,7 @@ public class RLTweaker
 	public static final String MODID = "rltweaker";
 	public static final String NAME = "RLTweaker";
 	public static final String VERSION = "0.5.8";
-	public static final VersionDelimiter VERSION_DELIMITER = new VersionDelimiter(VERSION);
+	public static final VersionDelimiter VERSION_DELIMITER = VersionDelimiter.parse(VERSION);
 	
 	@Mod.Instance(RLTweaker.MODID)
 	public static RLTweaker instance;
@@ -339,11 +339,11 @@ public class RLTweaker
 			//System.out.println("checkVersion SERVER");
 			if(StringUtils.isEmpty(version))
 			{
-				NetworkHandler.serverVersion = new VersionDelimiter("0.0.0");
+				NetworkHandler.serverVersion = VersionDelimiter.UNKOWN;
 			}
 			else
 			{
-				VersionDelimiter servervd = new VersionDelimiter(version);
+				VersionDelimiter servervd = VersionDelimiter.parse(version);
 				NetworkHandler.serverVersion = servervd;
 				if(servervd.isSameOrNewerVersion(0, 4))
 				{
@@ -362,11 +362,11 @@ public class RLTweaker
 			//System.out.println("checkVersion CLIENT");
 			if(StringUtils.isEmpty(version))
 			{
-				RLTweaker.logger.trace("Client Version: "+new VersionDelimiter("0.0.0"));
+				RLTweaker.logger.trace("Client Version: "+VersionDelimiter.UNKOWN);
 			}
 			else
 			{
-				RLTweaker.logger.trace("Client Version: "+new VersionDelimiter(version));
+				RLTweaker.logger.trace("Client Version: "+VersionDelimiter.parse(version));
 			}
 			
 			RLTweaker.logger.trace("Local Version: "+VERSION_DELIMITER);

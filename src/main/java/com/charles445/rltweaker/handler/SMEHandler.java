@@ -58,7 +58,7 @@ public class SMEHandler
 			//Get the version to decide what to do next
 			Class c_somanyenchantments = Class.forName("com.Shultrea.Rin.Main_Sector.somanyenchantments");
 			Field f_version = ReflectUtil.findField(c_somanyenchantments, "VERSION");
-			VersionDelimiter vd = new VersionDelimiter((String)f_version.get(null));
+			VersionDelimiter vd = VersionDelimiter.parse((String)f_version.get(null));
 			
 			if(vd.isSameOrNewerVersion(0, 5))
 			{

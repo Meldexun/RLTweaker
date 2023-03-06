@@ -17,7 +17,7 @@ import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 public class NetworkHandler
 {
 	public static boolean serverHasVersioning = false;
-	public static VersionDelimiter serverVersion = new VersionDelimiter("0.0.0");
+	public static VersionDelimiter serverVersion = VersionDelimiter.UNKOWN;
 	
 	//Accessed by Netty a lot
 	private static Map<UUID, VersionDelimiter> clients = new ConcurrentHashMap<>();
