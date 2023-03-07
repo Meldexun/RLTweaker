@@ -123,15 +123,24 @@ public class PatchPotionCoreResistance extends PatchManager {
 			public void patch(ClassNode clazzNode) {
 				MethodNode m_renderOverlaysPre = this.findMethodWithDesc(clazzNode,
 						"(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Pre;)V", "renderOverlaysPre");
+				MethodNode m_renderOverlaysPost = this.findMethodWithDesc(clazzNode,
+						"(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Post;)V", "renderOverlaysPost");
 
-				AbstractInsnNode target = ASMUtil.findMethodInsn(m_renderOverlaysPre, Opcodes.INVOKEVIRTUAL,
+				AbstractInsnNode target = ASMUtil.findMethodInsn(m_renderOverlaysPre, Opcodes.INVOKEINTERFACE,
 						"net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue",
 						"()D", 0);
 				target = target.getNext();
 				target = target.getNext();
+				AbstractInsnNode target1 = ASMUtil.findMethodInsn(m_renderOverlaysPost, Opcodes.INVOKEINTERFACE,
+						"net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue",
+						"()D", 1);
+				target1 = target1.getNext();
+				target1 = target1.getNext();
 
-				insert(m_renderOverlaysPre, target, ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)));
+				insert(m_renderOverlaysPre, target, ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC,
+						"com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)));
+				insert(m_renderOverlaysPost, target1, ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC,
+						"com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)));
 			}
 		});
 	}
