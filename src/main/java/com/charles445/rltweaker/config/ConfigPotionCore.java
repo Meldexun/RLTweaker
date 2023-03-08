@@ -88,7 +88,7 @@ public class ConfigPotionCore
 
 	@RequiresMcRestart
 	@Config.Comment("Requires patchPotionCoreResistance patch! Amount of the vulnerable potion attribute modifier.")
-	@Config.Name("Resistance Potion Modifier Amount")
+	@Config.Name("Vulnerable Potion Modifier Amount")
 	@RLConfig.ImprovementsOnly("-0.5")
 	@RLConfig.RLCraftTwoEightTwo("-0.5")
 	@RLConfig.RLCraftTwoNine("-0.5")
@@ -96,7 +96,7 @@ public class ConfigPotionCore
 
 	@RequiresMcRestart
 	@Config.Comment("Requires patchPotionCoreResistance patch! Operation of the vulnerable potion attribute modifier.")
-	@Config.Name("Resistance Potion Modifier Operation")
+	@Config.Name("Vulnerable Potion Modifier Operation")
 	@RLConfig.ImprovementsOnly("2")
 	@RLConfig.RLCraftTwoEightTwo("2")
 	@RLConfig.RLCraftTwoNine("2")
