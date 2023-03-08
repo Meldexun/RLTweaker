@@ -88,7 +88,7 @@ public class RLTweaker
 {
 	public static final String MODID = "rltweaker";
 	public static final String NAME = "RLTweaker";
-	public static final String VERSION = "0.5.9";
+	public static final String VERSION = "0.5.10";
 	public static final VersionDelimiter VERSION_DELIMITER = VersionDelimiter.parse(VERSION);
 	
 	@Mod.Instance(RLTweaker.MODID)
