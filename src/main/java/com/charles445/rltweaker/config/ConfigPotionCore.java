@@ -8,7 +8,6 @@ import com.charles445.rltweaker.config.annotation.RLConfig;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.RequiresMcRestart;
-import net.minecraftforge.common.config.Config.RequiresWorldRestart;
 
 public class ConfigPotionCore
 {
@@ -68,7 +67,7 @@ public class ConfigPotionCore
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean alternativeResistanceMode = true;
 
-	@RequiresWorldRestart
+	@RequiresMcRestart
 	@Config.Comment("Requires patchPotionCoreResistance patch! Resistance of the resistance potion attribute modifier.")
 	@Config.Name("Resistance Potion Modifier Amount")
 	@RLConfig.ImprovementsOnly("0.2")
@@ -76,7 +75,7 @@ public class ConfigPotionCore
 	@RLConfig.RLCraftTwoNine("0.2")
 	public double resistanceAmount = 0.2D;
 
-	@RequiresWorldRestart
+	@RequiresMcRestart
 	@Config.Comment("Requires patchPotionCoreResistance patch! Operation of the resistance potion attribute modifier.")
 	@Config.Name("Resistance Potion Modifier Operation")
 	@RLConfig.ImprovementsOnly("2")
