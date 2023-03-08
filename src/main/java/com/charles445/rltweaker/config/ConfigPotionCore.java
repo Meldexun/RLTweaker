@@ -60,7 +60,10 @@ public class ConfigPotionCore
 	public boolean incurableTipsy = true;
 
 	@RequiresMcRestart
-	@Config.Comment("Requires patchPotionCoreResistance patch!")
+	@Config.Comment("Requires patchPotionCoreResistance patch! Alternative mode to calculate resistance when having multiple modifiers.\n"
+			+ "For example having two attribute modifiers both with amount=0.3 and operation=2 will result in\n"
+			+ " Normal mode:      '(1 * (1 + 0.3) * (1 + 0.3)) - 1 = (1 * 1.3 * 1.3) - 1 = 0.69 = 69%' damage reduction\n"
+			+ " Alternative mode: '1 - (1 * (1 - 0.3) * (1 - 0.3)) = 1 - (1 * 0.7 * 0.7) = 0.51 = 51%' damage reduction")
 	@Config.Name("Alternative Resistance Mode")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
