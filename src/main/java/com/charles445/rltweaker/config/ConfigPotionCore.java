@@ -71,7 +71,7 @@ public class ConfigPotionCore
 	public boolean alternativeResistanceMode = true;
 
 	@RequiresMcRestart
-	@Config.Comment("Requires patchPotionCoreResistance patch! Resistance of the resistance potion attribute modifier.")
+	@Config.Comment("Requires patchPotionCoreResistance patch! Amount of the resistance potion attribute modifier.")
 	@Config.Name("Resistance Potion Modifier Amount")
 	@RLConfig.ImprovementsOnly("0.2")
 	@RLConfig.RLCraftTwoEightTwo("0.2")
