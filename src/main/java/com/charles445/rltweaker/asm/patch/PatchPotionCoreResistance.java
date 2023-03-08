@@ -53,6 +53,27 @@ public class PatchPotionCoreResistance extends PatchManager {
 			}
 		});
 
+		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionVulnerable",
+				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+			@Override
+			public void patch(ClassNode clazzNode) {
+				MethodNode m_registerPotionAttributeModifiers = this.findMethodWithDesc(clazzNode, "()V",
+						"registerPotionAttributeModifiers");
+
+				MethodInsnNode i_registerPotionAttributeModifier = ASMUtil.findMethodInsn(
+						m_registerPotionAttributeModifiers, Opcodes.INVOKEVIRTUAL,
+						"com/tmtravlr/potioncore/potion/PotionVulnerable", "func_111184_a",
+						"registerPotionAttributeModifier",
+						"(Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;",
+						0);
+				MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC,
+						"com/charles445/rltweaker/hook/HookPotionCore", "vulnerable_registerPotionAttributeModifier",
+						"(Lnet/minecraft/potion/Potion;Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;",
+						false);
+				m_registerPotionAttributeModifiers.instructions.set(i_registerPotionAttributeModifier, redirect);
+			}
+		});
+
 		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEventHandler",
 				ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override

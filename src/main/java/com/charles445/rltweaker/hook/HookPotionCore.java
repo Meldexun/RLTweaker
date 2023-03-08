@@ -101,6 +101,13 @@ public class HookPotionCore
 				ModConfig.server.potioncore.resistanceOperation);
 	}
 
+	public static Potion vulnerable_registerPotionAttributeModifier(Potion potion, IAttribute attribute,
+			String uniqueId, double ammount, int operation) {
+		// override registration of attribute modifier
+		return potion.registerPotionAttributeModifier(attribute, uniqueId, ModConfig.server.potioncore.vulnerableAmount,
+				ModConfig.server.potioncore.vulnerableOperation);
+	}
+
 	public static double getAdjustedDamageResistanceAttribute(EntityLivingBase entity) {
 		// skip potion core damage resistance handler
 		return 0.0D;
