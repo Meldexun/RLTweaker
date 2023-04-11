@@ -25,6 +25,7 @@ import com.charles445.rltweaker.asm.patch.PatchConcurrentParticles;
 import com.charles445.rltweaker.asm.patch.PatchDoorPathfinding;
 import com.charles445.rltweaker.asm.patch.PatchEnchant;
 import com.charles445.rltweaker.asm.patch.PatchEntityBlockDestroy;
+import com.charles445.rltweaker.asm.patch.PatchFallingBlockPortalDupe;
 import com.charles445.rltweaker.asm.patch.PatchFixOldGorgon;
 import com.charles445.rltweaker.asm.patch.PatchFixOldHippocampus;
 import com.charles445.rltweaker.asm.patch.PatchHopper;
@@ -434,6 +435,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchCustomAttributeInstances", false))
 		{
 			new PatchCustomAttributeInstances();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchFallingBlockPortalDupe", false))
+		{
+			new PatchFallingBlockPortalDupe();
 		}
 		
 		//new PatchForgeNetwork();

@@ -246,4 +246,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchCustomAttributeInstances = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes falling block portal dupe.")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchFallingBlockPortalDupe = true;
 }
