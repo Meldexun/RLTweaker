@@ -253,4 +253,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchFallingBlockPortalDupe = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fix for item linking from Quark.")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchItemLinking = true;
 }

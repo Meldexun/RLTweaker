@@ -20,4 +20,11 @@ public class ConfigQuark
 	@RLConfig.RLCraftTwoEightTwo("false")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean ancientTomesAlternateBehavior = false;
+	
+	@Config.Comment("Server side item linking cooldown (in ticks). Requires 'patchItemLinking' to be true!")
+	@Config.Name("Item Linking Cooldown")
+	@RLConfig.ImprovementsOnly("100")
+	@RLConfig.RLCraftTwoEightTwo("100")
+	@RLConfig.RLCraftTwoNine("100")
+	public int itemLinkingCooldown = 100;
 }

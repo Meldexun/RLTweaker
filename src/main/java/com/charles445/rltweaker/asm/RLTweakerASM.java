@@ -30,6 +30,7 @@ import com.charles445.rltweaker.asm.patch.PatchFixOldGorgon;
 import com.charles445.rltweaker.asm.patch.PatchFixOldHippocampus;
 import com.charles445.rltweaker.asm.patch.PatchHopper;
 import com.charles445.rltweaker.asm.patch.PatchItemFrameDupe;
+import com.charles445.rltweaker.asm.patch.PatchItemLinking;
 import com.charles445.rltweaker.asm.patch.PatchLessCollisions;
 import com.charles445.rltweaker.asm.patch.PatchLycanitesDupe;
 import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
@@ -440,6 +441,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchFallingBlockPortalDupe", false))
 		{
 			new PatchFallingBlockPortalDupe();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchItemLinking", false))
+		{
+			new PatchItemLinking();
 		}
 		
 		//new PatchForgeNetwork();
