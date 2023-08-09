@@ -260,4 +260,11 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchItemLinking = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Optimizes World#getCollisionBoxes which often requires a lot of cpu time on servers.")
+	@RLConfig.ImprovementsOnly("true")
+	@RLConfig.RLCraftTwoEightTwo("true")
+	@RLConfig.RLCraftTwoNine("true")
+	public boolean patchFasterBlockCollision = true;
 }
