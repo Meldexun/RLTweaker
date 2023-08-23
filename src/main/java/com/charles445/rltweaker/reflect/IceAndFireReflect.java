@@ -22,8 +22,8 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 public class IceAndFireReflect
 {
 	//Ice And Fire
-	public final Class c_StoneEntityProperties;
-	public final Field f_StoneEntityProperties_isStone;
+	public final Class c_EntityEffectProperties;
+	public final Method m_EntityEffectProperties_isStone;
 	
 	public final Class c_ItemStoneStatue;
 	
@@ -61,8 +61,8 @@ public class IceAndFireReflect
 		//Ice And Fire
 		c_EntityDragonBase = Class.forName("com.github.alexthe666.iceandfire.entity.EntityDragonBase");
 		
-		c_StoneEntityProperties = Class.forName("com.github.alexthe666.iceandfire.entity.StoneEntityProperties");
-		f_StoneEntityProperties_isStone = ReflectUtil.findField(c_StoneEntityProperties, "isStone");
+		c_EntityEffectProperties = Class.forName("com.github.alexthe666.iceandfire.entity.EntityEffectProperties");
+		m_EntityEffectProperties_isStone = ReflectUtil.findMethod(c_EntityEffectProperties, "isStone");
 		
 		c_ItemStoneStatue = Class.forName("com.github.alexthe666.iceandfire.item.ItemStoneStatue");
 		
@@ -103,11 +103,11 @@ public class IceAndFireReflect
 	{
 		try
 		{
-			Object stoneProperty = getStoneProperty(entity);
+			Object stoneProperty = getEntityEffectProperties(entity);
 			if(stoneProperty == null)
 				return false;
 			
-			return f_StoneEntityProperties_isStone.getBoolean(stoneProperty);
+			return (boolean) m_EntityEffectProperties_isStone.invoke(stoneProperty);
 		}
 		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 		{
@@ -117,9 +117,9 @@ public class IceAndFireReflect
 	}
 	
 	@Nullable
-	public Object getStoneProperty(Entity entity) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
+	public Object getEntityEffectProperties(Entity entity) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
-		return getProperties(entity, c_StoneEntityProperties);
+		return getProperties(entity, c_EntityEffectProperties);
 	}
 	
 	protected Object getProperties(Entity entity, Class propertiesClazz) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
