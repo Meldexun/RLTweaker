@@ -22,8 +22,10 @@ import net.minecraft.world.storage.loot.functions.LootFunction;
 public class IceAndFireReflect
 {
 	//Ice And Fire
-	public final Class c_EntityEffectProperties;
-	public final Method m_EntityEffectProperties_isStone;
+	public final Class c_InFCapabilities;
+	public final Method m_InFCapabilities_getEntityEffectCapability;
+	public final Class c_IEntityEffectCapability;
+	public final Method m_IEntityEffectCapability_isStoned;
 	
 	public final Class c_ItemStoneStatue;
 	
@@ -43,12 +45,6 @@ public class IceAndFireReflect
 	@Nullable
 	public Class c_ItemDragonHornStatic;
 	
-	//LLibrary
-	public final Class c_EntityPropertiesHandler;
-	public final Field f_EntityPropertiesHandler_INSTANCE;
-	public final Method m_EntityPropertiesHandler_getProperties;
-	public final Object o_EntityPropertiesHandler_INSTANCE;
-	
 	//Vanilla
 	private final Field f_LootTable_pools;
 	private final Field f_LootPool_lootEntries;
@@ -61,9 +57,12 @@ public class IceAndFireReflect
 		//Ice And Fire
 		c_EntityDragonBase = Class.forName("com.github.alexthe666.iceandfire.entity.EntityDragonBase");
 		
-		c_EntityEffectProperties = Class.forName("com.github.alexthe666.iceandfire.entity.EntityEffectProperties");
-		m_EntityEffectProperties_isStone = ReflectUtil.findMethod(c_EntityEffectProperties, "isStone");
-		
+		c_InFCapabilities = Class.forName("com.github.alexthe666.iceandfire.api.InFCapabilities");
+		m_InFCapabilities_getEntityEffectCapability = ReflectUtil.findMethod(c_InFCapabilities, "getEntityEffectCapability");
+
+		c_IEntityEffectCapability = Class.forName("com.github.alexthe666.iceandfire.api.IEntityEffectCapability");
+		m_IEntityEffectCapability_isStoned = ReflectUtil.findMethod(c_IEntityEffectCapability, "isStoned");
+
 		c_ItemStoneStatue = Class.forName("com.github.alexthe666.iceandfire.item.ItemStoneStatue");
 		
 		c_EntityMyrmexQueen = Class.forName("com.github.alexthe666.iceandfire.entity.EntityMyrmexQueen");
@@ -75,12 +74,6 @@ public class IceAndFireReflect
 
 		c_EntityGorgon = Class.forName("com.github.alexthe666.iceandfire.entity.EntityGorgon");
 		c_EntityStoneStatue = Class.forName("com.github.alexthe666.iceandfire.entity.EntityStoneStatue");
-
-		//LLibrary
-		c_EntityPropertiesHandler = Class.forName("net.ilexiconn.llibrary.server.entity.EntityPropertiesHandler");
-		f_EntityPropertiesHandler_INSTANCE = ReflectUtil.findField(c_EntityPropertiesHandler, "INSTANCE");
-		m_EntityPropertiesHandler_getProperties = ReflectUtil.findMethod(c_EntityPropertiesHandler, "getProperties");
-		o_EntityPropertiesHandler_INSTANCE = f_EntityPropertiesHandler_INSTANCE.get(null); //public static final (Enum)
 		
 		//Ice And Fire
 		try
@@ -103,11 +96,11 @@ public class IceAndFireReflect
 	{
 		try
 		{
-			Object stoneProperty = getEntityEffectProperties(entity);
-			if(stoneProperty == null)
+			Object entityEffectCapability = getEntityEffectCapability(entity);
+			if(entityEffectCapability == null)
 				return false;
 			
-			return (boolean) m_EntityEffectProperties_isStone.invoke(stoneProperty);
+			return (boolean) m_IEntityEffectCapability_isStoned.invoke(entityEffectCapability);
 		}
 		catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
 		{
@@ -117,14 +110,9 @@ public class IceAndFireReflect
 	}
 	
 	@Nullable
-	public Object getEntityEffectProperties(Entity entity) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
+	public Object getEntityEffectCapability(Entity entity) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
 	{
-		return getProperties(entity, c_EntityEffectProperties);
-	}
-	
-	protected Object getProperties(Entity entity, Class propertiesClazz) throws IllegalAccessException, IllegalArgumentException, InvocationTargetException
-	{
-		return m_EntityPropertiesHandler_getProperties.invoke(o_EntityPropertiesHandler_INSTANCE, entity, propertiesClazz);
+		return m_InFCapabilities_getEntityEffectCapability.invoke(null, entity);
 	}
 	
 	@Nullable
