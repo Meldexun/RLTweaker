@@ -28,7 +28,6 @@ import com.charles445.rltweaker.handler.CharmHandler;
 import com.charles445.rltweaker.handler.ClassyHatsHandler;
 import com.charles445.rltweaker.handler.DynamicSurroundingsHandler;
 import com.charles445.rltweaker.handler.GrapplemodHandler;
-import com.charles445.rltweaker.handler.IceAndFireHandler;
 import com.charles445.rltweaker.handler.InfernalMobsHandler;
 import com.charles445.rltweaker.handler.InvestigateAIHandler;
 import com.charles445.rltweaker.handler.LevelUpTwoHandler;
@@ -156,11 +155,6 @@ public class RLTweaker
 		if(Loader.isModLoaded(ModNames.GRAPPLEMOD) && ModConfig.server.grapplemod.enabled)
 		{
 			handlers.put(ModNames.GRAPPLEMOD, new GrapplemodHandler());
-		}
-		
-		if(Loader.isModLoaded(ModNames.ICEANDFIRE) && ModConfig.server.iceandfire.enabled)
-		{
-			handlers.put(ModNames.ICEANDFIRE, new IceAndFireHandler());
 		}
 		
 		if(Loader.isModLoaded(ModNames.RECURRENTCOMPLEX) && ModConfig.server.recurrentcomplex.enabled)

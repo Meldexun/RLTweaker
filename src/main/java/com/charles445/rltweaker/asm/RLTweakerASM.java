@@ -13,7 +13,6 @@ import com.charles445.rltweaker.asm.helper.ASMHelper;
 import com.charles445.rltweaker.asm.patch.IPatch;
 import com.charles445.rltweaker.asm.patch.Patch;
 import com.charles445.rltweaker.asm.patch.PatchAggressiveMotionChecker;
-import com.charles445.rltweaker.asm.patch.PatchAmphithereTameDamage;
 import com.charles445.rltweaker.asm.patch.PatchAnvilDupe;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatCriticalsFix;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
@@ -27,14 +26,11 @@ import com.charles445.rltweaker.asm.patch.PatchEnchant;
 import com.charles445.rltweaker.asm.patch.PatchEntityBlockDestroy;
 import com.charles445.rltweaker.asm.patch.PatchFallingBlockPortalDupe;
 import com.charles445.rltweaker.asm.patch.PatchFasterBlockCollision;
-import com.charles445.rltweaker.asm.patch.PatchFixOldGorgon;
-import com.charles445.rltweaker.asm.patch.PatchFixOldHippocampus;
 import com.charles445.rltweaker.asm.patch.PatchHopper;
 import com.charles445.rltweaker.asm.patch.PatchItemFrameDupe;
 import com.charles445.rltweaker.asm.patch.PatchItemLinking;
 import com.charles445.rltweaker.asm.patch.PatchLessCollisions;
 import com.charles445.rltweaker.asm.patch.PatchLycanitesDupe;
-import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
 import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
 import com.charles445.rltweaker.asm.patch.PatchPotionCoreResistance;
@@ -264,12 +260,6 @@ public class RLTweakerASM implements IClassTransformer
 			new PatchRealBench();
 		}
 		
-		//iafFixMyrmexQueenHiveSpam
-		if(ASMConfig.getBoolean("general.patches.iafFixMyrmexQueenHiveSpam", true))
-		{
-			new PatchMyrmexQueenHiveSpam();
-		}
-		
 		//lycanitesPetDupeFix
 		if(ASMConfig.getBoolean("general.patches.lycanitesPetDupeFix", false))
 		{
@@ -348,18 +338,6 @@ public class RLTweakerASM implements IClassTransformer
 			new PatchBetterCombatCriticalsFix();
 		}
 		
-		//fixOldHippocampus
-		if(ASMConfig.getBoolean("general.patches.fixOldHippocampus", false))
-		{
-			new PatchFixOldHippocampus();
-		}
-		
-		//fixOldGorgon
-		if(ASMConfig.getBoolean("general.patches.fixOldGorgon", false))
-		{
-			new PatchFixOldGorgon();
-		}
-		
 		//fixWaystoneScrolls
 		if(ASMConfig.getBoolean("general.patches.fixWaystoneScrolls", true))
 		{
@@ -422,11 +400,6 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchChestOfDrawers", true))
 		{
 			new PatchBetterNether();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchAmphithereTameDamage", false))
-		{
-			new PatchAmphithereTameDamage();
 		}
 		
 		if(ASMConfig.getBoolean("general.patches.patchPotionCoreResistance", false))

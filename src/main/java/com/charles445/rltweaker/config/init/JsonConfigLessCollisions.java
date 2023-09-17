@@ -11,7 +11,7 @@ public class JsonConfigLessCollisions
 {
 	public static Map<String, Double> getDefaults()
 	{
-		//Np combat allies or offensive tools
+		//No combat allies or offensive tools
 		//No mountables, except for pigs.
 		//No projectiles of any kind
 		//Caution with entities that may become the owner of explosions
@@ -47,9 +47,6 @@ public class JsonConfigLessCollisions
 		
 		if(Loader.isModLoaded(ModNames.ICEANDFIRE))
 		{
-			//NOTE, these entity names are tuned for 1.7.1
-			//I don't think they got refactored at any point though
-			
 			map.put("com.github.alexthe666.iceandfire.entity.EntityCyclops", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityCyclopsEye", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityDeathWormEgg", dfv);
@@ -58,7 +55,7 @@ public class JsonConfigLessCollisions
 			map.put("com.github.alexthe666.iceandfire.entity.EntityGorgon", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityHippocampus", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityHippogryphEgg", dfv);
-			map.put("com.github.alexthe666.iceandfire.entity.EntityMultipartPart", dfv);
+			map.put("com.github.alexthe666.iceandfire.entity.EntityHydra", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityMyrmexEgg", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityMyrmexQueen", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityMyrmexRoyal", dfv);
@@ -67,11 +64,11 @@ public class JsonConfigLessCollisions
 			map.put("com.github.alexthe666.iceandfire.entity.EntityMyrmexWorker", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityPixie", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntitySeaSerpent", dfv);
-			map.put("com.github.alexthe666.iceandfire.entity.EntitySeaSerpentBubbles", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntitySiren", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntitySnowVillager", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityStymphalianBird", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityTroll", dfv);
+			map.put("com.github.alexthe666.iceandfire.entity.util.EntityMultipartPart", dfv);
 		}
 		
 		if(Loader.isModLoaded(ModNames.LYCANITESMOBS))

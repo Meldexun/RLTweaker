@@ -76,10 +76,6 @@ public class ModConfig
 		@Config.Name("Grappling Hook Mod")
 		public ConfigGrapplemod grapplemod = new ConfigGrapplemod();
 		
-		@Config.Comment("Ice and Fire tweaks")
-		@Config.Name("Ice and Fire")
-		public ConfigIceAndFire iceandfire = new ConfigIceAndFire();
-		
 		@Config.Comment("Infernal Mobs tweaks")
 		@Config.Name("Infernal Mobs")
 		public ConfigInfernalMobs infernalmobs = new ConfigInfernalMobs();

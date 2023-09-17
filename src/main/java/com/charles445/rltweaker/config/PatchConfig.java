@@ -56,14 +56,7 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean realBenchDupeBugFix = true;
-	
-	@Config.RequiresMcRestart
-	@Config.Comment("Fixes Myrmex Queen hive spam")
-	@RLConfig.ImprovementsOnly("true")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean iafFixMyrmexQueenHiveSpam = true;
-	
+
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes Lycanites Pet Dupe in older LycanitesMobs versions than 2.0.8.0, may cause crashes in newer versions.")
 	@RLConfig.ImprovementsOnly("false")
@@ -157,20 +150,6 @@ public class PatchConfig
 	public boolean betterCombatCriticalsFix = true;
 	
 	@Config.RequiresMcRestart
-	@Config.Comment("Fixes hippocampus issues in Ice and Fire 1.7.1, do not enable this patch for other versions!")
-	@RLConfig.ImprovementsOnly("false")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean fixOldHippocampus = false;
-	
-	@Config.RequiresMcRestart
-	@Config.Comment("Fixes gorgon issues in Ice and Fire 1.7.1, do not enable this patch for other versions!")
-	@RLConfig.ImprovementsOnly("false")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean fixOldGorgon = false;
-	
-	@Config.RequiresMcRestart
 	@Config.Comment("Fixes crash with bound scrolls and return scrolls, and removes their unexpected spawn setting")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
@@ -225,13 +204,6 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchChestOfDrawers = true;
-
-	@Config.RequiresMcRestart
-	@Config.Comment("Enables config option to tweak amphithere tame damage")
-	@RLConfig.ImprovementsOnly("false")
-	@RLConfig.RLCraftTwoEightTwo("false")
-	@RLConfig.RLCraftTwoNine("false")
-	public boolean patchAmphithereTameDamage = false;
 
 	@Config.RequiresMcRestart
 	@Config.Comment("Requires patchCustomAttributeInstances patch! Fixes Potion Core Resistance calculations")

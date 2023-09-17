@@ -80,12 +80,6 @@ public class CommandAdvisor extends CommandBase
 			}
 		}
 		
-		if(!Loader.isModLoaded(ModNames.ICEANDFIRE))
-		{
-			if(!ModConfig.patches.iafFixMyrmexQueenHiveSpam)
-				inform("Improvement patch, set patches / iafFixMyrmexQueenHiveSpam to true", sender);
-		}
-		
 		//lycanitesPetDupeFix //temporary, don't give advice
 		
 		if(!ModConfig.patches.doorPathfindingFix)
@@ -167,9 +161,7 @@ public class CommandAdvisor extends CommandBase
 		{
 			inform("Improvement patch, set patches / betterCombatCriticalsFix to true", sender);
 		}
-		
-		//Might not do an advisory for fixOldHippocampus...
-		
+
 		if(!ModConfig.patches.ENABLED)
 		{
 			inform("All patches disabled, set patches / ENABLED to true", sender);
