@@ -17,6 +17,14 @@ public enum StructureCleanupMode {
 			return NBTUtil.clear(structureData.getTagCompound());
 		}
 	},
+	ALWAYS_COMPONENTS_ONLY {
+		@Override
+		public boolean clean(WorldServer world, MapGenStructureData structureData) {
+			return NBTUtil.<NBTTagCompound>stream(structureData.getTagCompound())
+					.filter(structureStartTag -> NBTUtil.remove(structureStartTag, KEY_CHILDREN))
+					.count() > 0L;
+		}
+	},
 	GENERATED {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
@@ -39,6 +47,12 @@ public enum StructureCleanupMode {
 							child -> allChunksGenerated(world, child.getIntArray(KEY_BB)))
 							| NBTUtil.<NBTTagList>removeIf(structureStartTag, KEY_CHILDREN, NBTTagList::hasNoTags))
 					.count() > 0;
+		}
+	},
+	DISABLED {
+		@Override
+		public boolean clean(WorldServer world, MapGenStructureData structureData) {
+			return false;
 		}
 	};
 
