@@ -71,7 +71,7 @@ public class ConfigMinecraft
 
 	@Config.Comment("")
 	@Config.Name("Cleanup Structure Worldgen Files Mode")
-	public StructureCleanupMode cleanupStructureWorldgenFilesMode = StructureCleanupMode.GENERATED;
+	public StructureCleanupMode cleanupStructureWorldgenFilesMode = StructureCleanupMode.GENERATED_COMPONENTS_ONLY;
 
 	@Config.Comment("")
 	@Config.Name("Cleanup Structure Worldgen Files Size Limit")
