@@ -75,7 +75,7 @@ public enum StructureCleanupMode {
 		}
 		for (int x = (minX >> 4); x <= (maxX >> 4); x++) {
 			for (int z = (minZ >> 4); z <= (maxZ >> 4); z++) {
-				if (!world.isChunkGeneratedAt(x, z))
+				if (!world.getChunkProvider().isChunkGeneratedAt(x, z))
 					return false;
 
 			}
