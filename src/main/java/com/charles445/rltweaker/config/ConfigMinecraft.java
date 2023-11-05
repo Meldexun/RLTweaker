@@ -69,11 +69,17 @@ public class ConfigMinecraft
 	@Config.Name("Cleanup Structure Worldgen Files Structures")
 	public String[] cleanupStructureWorldgenFilesStructures = { "Village", "Mineshaft" };
 
-	@Config.Comment("")
+	@Config.Comment({
+			"ALWAYS: All structures get always deleted",
+			"ALWAYS_COMPONENTS_ONLY: All components get always deleted",
+			"GENERATED: Structures that are fully generated get deleted",
+			"GENERATED_COMPONENTS: Components that are fully generated and structures that have no components get deleted",
+			"GENERATED_COMPONENTS_ONLY: Components that are fully generated get deleted",
+			"DISABLED: Nothing gets deleted" })
 	@Config.Name("Cleanup Structure Worldgen Files Mode")
 	public StructureCleanupMode cleanupStructureWorldgenFilesMode = StructureCleanupMode.GENERATED_COMPONENTS_ONLY;
 
-	@Config.Comment("")
+	@Config.Comment("Structure (or structure component) bounding boxes larger than this value on one axis will be ignored.")
 	@Config.Name("Cleanup Structure Worldgen Files Size Limit")
 	public int cleanupStructureWorldgenFilesSizeLimit = 1 << 12;
 
