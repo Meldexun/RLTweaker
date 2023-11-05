@@ -1,6 +1,7 @@
 package com.charles445.rltweaker.config;
 
 import com.charles445.rltweaker.config.annotation.RLConfig;
+import com.charles445.rltweaker.hook.StructureCleanupMode;
 
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.RangeDouble;
@@ -63,14 +64,19 @@ public class ConfigMinecraft
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean lessCollisions = true;
-	
-	@Config.Comment("Cleans up Mineshaft .dat files regularly to lower RAM usage. May break mods that need to locate Mineshafts.")
-	@Config.Name("Cleanup Mineshaft Worldgen Files")
-	@RLConfig.ImprovementsOnly("true")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean cleanupMineshaftWorldgenFiles = true;
-	
+
+	@Config.Comment("Cleans up structure .dat files regularly to lower RAM usage. May break mods that use this data. (Stronghold, Village, Mineshaft, Temple, Monument, Mansion, Fortress, EndCity)")
+	@Config.Name("Cleanup Structure Worldgen Files Structures")
+	public String[] cleanupStructureWorldgenFilesStructures = { "Village", "Mineshaft" };
+
+	@Config.Comment("")
+	@Config.Name("Cleanup Structure Worldgen Files Mode")
+	public StructureCleanupMode cleanupStructureWorldgenFilesMode = StructureCleanupMode.GENERATED;
+
+	@Config.Comment("")
+	@Config.Name("Cleanup Structure Worldgen Files Size Limit")
+	public int cleanupStructureWorldgenFilesSizeLimit = 1 << 14;
+
 	@Config.Comment("Replace thrown witch potions with configured potions")
 	@Config.Name("Witch Potion Replacements")
 	@RLConfig.ImprovementsOnly("false")

@@ -1,9 +1,11 @@
 package com.charles445.rltweaker.hook;
 
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Set;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentLinkedDeque;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -23,9 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityList;
 import net.minecraft.entity.EntityLiving;
 import net.minecraft.entity.EntityLivingBase;
-import net.minecraft.entity.ai.attributes.IAttributeInstance;
 import net.minecraft.entity.item.EntityItemFrame;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.inventory.ContainerRepair;
 import net.minecraft.inventory.IInventory;
@@ -39,7 +39,10 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldServer;
 import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.gen.structure.MapGenStructureData;
+import net.minecraft.world.storage.MapStorage;
 import net.minecraftforge.items.IItemHandler;
 
 public class HookMinecraft
@@ -346,4 +349,16 @@ public class HookMinecraft
 			return world.getChunkFromChunkCoords(chunkX, chunkZ);
 		}
 	}
+
+	public static void preSaveWorld(WorldServer world) {
+		MapStorage mapStorage = world.getPerWorldStorage();
+
+		Stream.of(ModConfig.server.minecraft.cleanupStructureWorldgenFilesStructures)
+				.map(structureName -> mapStorage.getOrLoadData(MapGenStructureData.class, structureName))
+				.map(MapGenStructureData.class::cast)
+				.filter(Objects::nonNull)
+				.filter(structureData -> ModConfig.server.minecraft.cleanupStructureWorldgenFilesMode.clean(world, structureData))
+				.forEach(MapGenStructureData::markDirty);
+	}
+
 }

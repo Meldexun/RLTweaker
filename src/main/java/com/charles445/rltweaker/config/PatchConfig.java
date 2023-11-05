@@ -267,4 +267,8 @@ public class PatchConfig
 	@RLConfig.RLCraftTwoEightTwo("true")
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean patchFasterBlockCollision = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Allows cleaning up structure .dat files.")
+	public boolean patchCleanupStructureWorldgenFiles = true;
 }

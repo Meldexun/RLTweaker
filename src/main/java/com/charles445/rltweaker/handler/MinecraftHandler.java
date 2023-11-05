@@ -1,7 +1,5 @@
 package com.charles445.rltweaker.handler;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
@@ -31,16 +29,13 @@ import net.minecraft.init.PotionTypes;
 import net.minecraft.init.SoundEvents;
 import net.minecraft.inventory.Container;
 import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.potion.PotionType;
 import net.minecraft.potion.PotionUtils;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.server.management.PlayerList;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
-import net.minecraft.util.math.ChunkPos;
 import net.minecraft.world.World;
-import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraft.world.storage.loot.LootPool;
 import net.minecraft.world.storage.loot.LootTable;
 import net.minecraft.world.storage.loot.LootTableList;
@@ -54,7 +49,6 @@ import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.living.LivingEvent.LivingUpdateEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerContainerEvent;
-import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.PlayerEvent.PlayerLoggedOutEvent;
@@ -120,148 +114,6 @@ public class MinecraftHandler
 		{
 			((EntityZombie)event.getEntity()).setBreakDoorsAItask(true);
 		}
-	}
-	
-	@SubscribeEvent
-	public void onWorldUnload(WorldEvent.Save event)
-	{
-		//Cleans up after the world gets saved, not before
-		//So a dimension must be loaded when saved for this to work
-		
-		//This means cleanup will run erroneously when unloading a world, and on server start
-		
-		World world = event.getWorld();
-		
-		if(world.isRemote)
-			return;
-		
-		//TODO other worldgen
-		//Uf you enter an area for the first time, leave, world saves twice, come back, the area will be broken
-		//This is very uncommon, but it's still a possibility
-		//They seem to regenerate when the game is restarted, which is very peculiar, but could also be incredibly helpful
-		//It may be possible to run these cleanups on server stopping, or something similar
-		//
-		//Nobody uses Mineshafts, though, so that cleaner gets to stay for now
-		
-		
-		if(ModConfig.server.minecraft.cleanupMineshaftWorldgenFiles)
-		{
-			//TODO fix checkIsLoaded to handle invalid structures
-			cleanMapGenStructureData(world, "Mineshaft", false, true);
-			//cleanMapGenStructureData(world, "Village", false, true);
-			//cleanMapGenStructureData(world, "Fortress", false, true);
-		}
-	}
-	
-	private void cleanMapGenStructureData(World world, String dataName, boolean checkIsUngenerated, boolean checkIsLoaded)
-	{
-		long nanoA = System.nanoTime();
-		MapGenStructureData structureData = (MapGenStructureData)world.getPerWorldStorage().getOrLoadData(MapGenStructureData.class, dataName);
-		if(structureData == null)
-			return;
-		
-		NBTTagCompound structureDataCompound = structureData.getTagCompound();
-
-		List<String> toRemove = new ArrayList<>();
-		
-		long cleanupCount = 0L;
-		
-		for (String s : structureDataCompound.getKeySet())
-		{
-			toRemove.add(s);
-			
-			//Load check routine removed
-			/*
-			NBTBase structureNestedBase = structureDataCompound.getTag(s);
-			 if (structureNestedBase.getId() == 10)
-			 {
-				 NBTTagCompound structureNestedCompound = (NBTTagCompound)structureNestedBase;
-				 if (structureNestedCompound.hasKey("BB"))
-				 {
-					 boolean isLoaded = false;
-					 boolean shouldRemove = false;
-					 StructureBoundingBox sbb = new StructureBoundingBox(structureNestedCompound.getIntArray("BB"));
-					 List<ChunkPos> containedChunks = containedChunks(sbb.minX,sbb.minZ, sbb.maxX, sbb.maxZ);
-					 
-					 if(checkIsLoaded)
-					 {
-						 for(ChunkPos cPos : containedChunks)
-						 {
-							 if(((ChunkProviderServer)world.getChunkProvider()).chunkExists(cPos.x, cPos.z))
-							 {
-								 isLoaded = true;
-								 break;
-							 }
-						 }
-						 
-						 if(isLoaded)
-						 {
-							 //Skip this removal as it's currently loaded
-							 containedChunks.clear();
-							 continue;
-						 }
-					 }
-					 
-					 if(checkIsUngenerated)
-					 {
-						 for(ChunkPos cPos : containedChunks)
-						 {
-							 if(!world.isChunkGeneratedAt(cPos.x, cPos.z))
-							 {
-								 shouldRemove = true;
-								 break;
-							 }
-						 }
-					 }
-					 else
-					 {
-						 shouldRemove = true;
-					 }
-					 
-					 containedChunks.clear();
-					 
-					 if(shouldRemove)
-						 toRemove.add(s);
-				 }
-			 }
-			 
-			 */
-		}
-		
-		for(String remove : toRemove)
-		{
-			structureDataCompound.removeTag(remove);
-		}
-		
-		if(toRemove.size() > 0)
-			structureData.markDirty();
-		
-		long nanoB = System.nanoTime();
-		
-		//RLTweaker.logger.debug(""+dataName+" cleanup took nanoseconds: "+(nanoB - nanoA));
-		//RLTweaker.logger.debug(""+dataName+" cleanup cleaned entries: "+toRemove.size());
-		
-		toRemove.clear();
-	}
-	
-	private List<ChunkPos> containedChunks(int xIn1, int zIn1, int xIn2, int zIn2)
-	{
-		int xStart = xIn1 >> 4;
-		int zStart = zIn1 >> 4;
-		int xEnd = xIn2 >> 4;
-		int zEnd = zIn2 >> 4;
-		
-		List<ChunkPos> chunks = new ArrayList<ChunkPos>();
-		
-		for (int i = xStart; i <= xEnd; ++i)
-		{
-			for (int j = zStart; j <= zEnd; ++j)
-			{
-				chunks.add(new ChunkPos(i,j));
-			}
-		}
-		
-		return chunks;
 	}
 	
 	//Capabilities

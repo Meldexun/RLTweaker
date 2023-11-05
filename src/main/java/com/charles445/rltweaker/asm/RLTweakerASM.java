@@ -21,6 +21,7 @@ import com.charles445.rltweaker.asm.patch.PatchBetterNether;
 import com.charles445.rltweaker.asm.patch.PatchBountifulBaubles;
 import com.charles445.rltweaker.asm.patch.PatchBroadcastSounds;
 import com.charles445.rltweaker.asm.patch.PatchChunkTicks;
+import com.charles445.rltweaker.asm.patch.PatchCleanStructureFiles;
 import com.charles445.rltweaker.asm.patch.PatchConcurrentParticles;
 import com.charles445.rltweaker.asm.patch.PatchDoorPathfinding;
 import com.charles445.rltweaker.asm.patch.PatchEnchant;
@@ -452,6 +453,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchFasterBlockCollision", false))
 		{
 			new PatchFasterBlockCollision();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchCleanupStructureWorldgenFiles", false))
+		{
+			new PatchCleanStructureFiles();
 		}
 		
 		//new PatchForgeNetwork();
