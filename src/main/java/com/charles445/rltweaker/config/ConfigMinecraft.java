@@ -75,7 +75,7 @@ public class ConfigMinecraft
 
 	@Config.Comment("")
 	@Config.Name("Cleanup Structure Worldgen Files Size Limit")
-	public int cleanupStructureWorldgenFilesSizeLimit = 1 << 14;
+	public int cleanupStructureWorldgenFilesSizeLimit = 1 << 12;
 
 	@Config.Comment("Replace thrown witch potions with configured potions")
 	@Config.Name("Witch Potion Replacements")
