@@ -18,7 +18,7 @@ public class PatchCleanStructureFiles extends PatchManager {
 		this.add(new Patch(this, "net.minecraft.world.WorldServer", ClassWriter.COMPUTE_FRAMES) {
 			@Override
 			public void patch(ClassNode clazzNode) {
-				MethodNode m_saveLevel = this.findMethod(clazzNode, "saveLevel");
+				MethodNode m_saveLevel = this.findMethod(clazzNode, "func_73042_a", "saveLevel");
 
 				TransformUtil.insertBeforeFirst(m_saveLevel, ASMUtil.listOf(
 						new VarInsnNode(Opcodes.ALOAD, 0),
