@@ -1,8 +1,10 @@
 package com.charles445.rltweaker.hook;
 
 import com.charles445.rltweaker.config.ModConfig;
+import com.charles445.rltweaker.util.NBTUtil;
 
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.world.WorldServer;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraftforge.common.util.Constants.NBT;
@@ -12,86 +14,36 @@ public enum StructureCleanupMode {
 	ALWAYS {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			NBTTagCompound structureStartsNBT = structureData.getTagCompound();
-			if (structureStartsNBT.hasNoTags()) {
-				return false;
-			}
-			structureStartsNBT.getKeySet()
-					.clear();
-			return true;
+			return NBTUtil.clear(structureData.getTagCompound());
 		}
 	},
 	GENERATED {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			NBTTagCompound structureStartsNBT = structureData.getTagCompound();
-			return structureStartsNBT.getKeySet()
-					.removeIf(k -> {
-						NBTTagCompound structureStartNBT = structureStartsNBT.getCompoundTag(k);
-						int[] bb = structureStartNBT.getIntArray("BB");
-						return allChunksGenerated(world, bb);
-					});
+			return NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(),
+					structureStartTag -> allChunksGenerated(world, structureStartTag.getIntArray(KEY_BB)));
 		}
 	},
 	GENERATED_COMPONENTS {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			NBTTagCompound structureStartsNBT = structureData.getTagCompound();
-			return structureStartsNBT.getKeySet()
-					.stream()
-					.map(structureStartsNBT::getCompoundTag)
-					.map(structureStartNBT -> structureStartNBT.getTagList("Children", NBT.TAG_COMPOUND))
-					.mapToLong(children -> {
-						long childrenRemoved = 0L;
-
-						for (int i = 0; i < children.tagCount(); i++) {
-							NBTTagCompound child = children.getCompoundTagAt(i);
-							int[] bb = child.getIntArray("BB");
-
-							if (allChunksGenerated(world, bb)) {
-								children.removeTag(i);
-								i--;
-								childrenRemoved++;
-							}
-						}
-
-						return childrenRemoved;
-					})
-					.sum() > 0L | structureStartsNBT.getKeySet()
-							.removeIf(k -> {
-								NBTTagCompound structureStartNBT = structureStartsNBT.getCompoundTag(k);
-								return structureStartNBT.getTagList("Children", NBT.TAG_COMPOUND)
-										.tagCount() == 0;
-							});
+			return GENERATED_COMPONENTS_ONLY.clean(world, structureData) | NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(),
+					structureStartTag -> !structureStartTag.hasKey(KEY_CHILDREN, NBT.TAG_LIST));
 		}
 	},
 	GENERATED_COMPONENTS_ONLY {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			NBTTagCompound structureStartsNBT = structureData.getTagCompound();
-			return structureStartsNBT.getKeySet()
-					.stream()
-					.map(structureStartsNBT::getCompoundTag)
-					.map(structureStartNBT -> structureStartNBT.getTagList("Children", NBT.TAG_COMPOUND))
-					.mapToLong(children -> {
-						long childrenRemoved = 0L;
-
-						for (int i = 0; i < children.tagCount(); i++) {
-							NBTTagCompound child = children.getCompoundTagAt(i);
-							int[] bb = child.getIntArray("BB");
-
-							if (allChunksGenerated(world, bb)) {
-								children.removeTag(i);
-								i--;
-								childrenRemoved++;
-							}
-						}
-
-						return childrenRemoved;
-					})
-					.sum() > 0L;
+			return NBTUtil.<NBTTagCompound>stream(structureData.getTagCompound())
+					.filter(structureStartTag -> NBTUtil.<NBTTagCompound>removeIf(structureStartTag.getTagList(KEY_CHILDREN, NBT.TAG_COMPOUND),
+							child -> allChunksGenerated(world, child.getIntArray(KEY_BB)))
+							| NBTUtil.<NBTTagList>removeIf(structureStartTag, KEY_CHILDREN, NBTTagList::hasNoTags))
+					.count() > 0;
 		}
 	};
+
+	private static final String KEY_CHILDREN = "Children";
+	private static final String KEY_BB = "BB";
 
 	public abstract boolean clean(WorldServer world, MapGenStructureData structureData);
 
