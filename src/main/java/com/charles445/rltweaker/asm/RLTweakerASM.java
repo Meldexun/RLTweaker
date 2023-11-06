@@ -39,6 +39,7 @@ import com.charles445.rltweaker.asm.patch.PatchMyrmexQueenHiveSpam;
 import com.charles445.rltweaker.asm.patch.PatchOverlayMessage;
 import com.charles445.rltweaker.asm.patch.PatchPathfindingChunkCache;
 import com.charles445.rltweaker.asm.patch.PatchPotionCoreResistance;
+import com.charles445.rltweaker.asm.patch.PatchPotionUpdate;
 import com.charles445.rltweaker.asm.patch.PatchCurePotion;
 import com.charles445.rltweaker.asm.patch.PatchCustomAttributeInstances;
 import com.charles445.rltweaker.asm.patch.PatchPushReaction;
@@ -464,6 +465,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchSRPAI", false))
 		{
 			new PatchSRPAI();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchPotionEntityTrackerUpdate", false))
+		{
+			new PatchPotionUpdate();
 		}
 		
 		//new PatchForgeNetwork();

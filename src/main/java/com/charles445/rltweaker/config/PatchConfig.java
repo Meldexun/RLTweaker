@@ -275,4 +275,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Improves performance and fixes bugs of EntityAIInfectedSearch and EntityAINearestAttackableTargetStatus.")
 	public boolean patchSRPAI = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fix potion changes on players causing unnecessary entity tracker updates.")
+	public boolean patchPotionEntityTrackerUpdate = true;
 }
