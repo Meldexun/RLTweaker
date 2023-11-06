@@ -271,4 +271,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Allows cleaning up structure .dat files.")
 	public boolean patchCleanupStructureWorldgenFiles = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Improves performance and fixes bugs of EntityAIInfectedSearch and EntityAINearestAttackableTargetStatus.")
+	public boolean patchSRPAI = true;
 }

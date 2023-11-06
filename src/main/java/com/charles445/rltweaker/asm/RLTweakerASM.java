@@ -45,6 +45,7 @@ import com.charles445.rltweaker.asm.patch.PatchPushReaction;
 import com.charles445.rltweaker.asm.patch.PatchRealBench;
 import com.charles445.rltweaker.asm.patch.PatchReducedSearchSize;
 import com.charles445.rltweaker.asm.patch.PatchRustic;
+import com.charles445.rltweaker.asm.patch.PatchSRPAI;
 import com.charles445.rltweaker.asm.patch.PatchWaystoneScroll;
 import com.charles445.rltweaker.asm.patch.compat.PatchBrokenTransformers;
 import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
@@ -458,6 +459,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchCleanupStructureWorldgenFiles", false))
 		{
 			new PatchCleanStructureFiles();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchSRPAI", false))
+		{
+			new PatchSRPAI();
 		}
 		
 		//new PatchForgeNetwork();
