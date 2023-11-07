@@ -84,13 +84,13 @@ public class PatchSRPAI extends PatchManager {
 							new JumpInsnNode(Opcodes.IFNE, target1.label),
 							// if (mob.getAttackTarget() == null)
 							new VarInsnNode(Opcodes.ALOAD, 7),
-							new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "com/dhanantry/scapeandrunparasites/entity/ai/misc/EntityParasiteBase", "getAttackTarget", "()Lnet/minecraft/entity/EntityLivingBase;", false),
+							TransformUtil.createObfMethodInsn(Opcodes.INVOKEVIRTUAL, "com/dhanantry/scapeandrunparasites/entity/ai/misc/EntityParasiteBase", "func_70638_az", "()Lnet/minecraft/entity/EntityLivingBase;", false),
 							new JumpInsnNode(Opcodes.IFNONNULL, target1.label),
 							// if (this.parent.canEntityBeSeen(mob))
 							new VarInsnNode(Opcodes.ALOAD, 0),
 							new FieldInsnNode(Opcodes.GETFIELD, "com/dhanantry/scapeandrunparasites/entity/ai/EntityAIInfectedSearch", "parent", "Lcom/dhanantry/scapeandrunparasites/entity/ai/misc/EntityParasiteBase;"),
 							new VarInsnNode(Opcodes.ALOAD, 7),
-							new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "com/dhanantry/scapeandrunparasites/entity/ai/misc/EntityParasiteBase", "canEntityBeSeen", "(Lnet/minecraft/entity/Entity;)Z", false),
+							TransformUtil.createObfMethodInsn(Opcodes.INVOKEVIRTUAL, "com/dhanantry/scapeandrunparasites/entity/ai/misc/EntityParasiteBase", "func_70685_l", "(Lnet/minecraft/entity/Entity;)Z", false),
 							new JumpInsnNode(Opcodes.IFEQ, target1.label),
 							// countI++;
 							new IincInsnNode(2, 1),
