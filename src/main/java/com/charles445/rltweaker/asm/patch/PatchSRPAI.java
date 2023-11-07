@@ -118,7 +118,7 @@ public class PatchSRPAI extends PatchManager {
 							//     this.killcount = 0.0D;
 							// } else {
 							new VarInsnNode(Opcodes.ALOAD, 0),
-							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookSRP", "hasNoInfectedSearchAI", "(Lnet/minecraft/entity/EntityLivingBase;)Z", false),
+							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookSRP", "hasNoInfectedSearchAI", "(Lnet/minecraft/entity/EntityLiving;)Z", false),
 							new JumpInsnNode(Opcodes.IFNE, label1),
 							new VarInsnNode(Opcodes.ALOAD, 0),
 							new InsnNode(Opcodes.DCONST_0),
@@ -141,7 +141,7 @@ public class PatchSRPAI extends PatchManager {
 							//     this.killcount = 0.0D;
 							// } else {
 							new VarInsnNode(Opcodes.ALOAD, 0),
-							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookSRP", "hasNoInfectedSearchAI", "(Lnet/minecraft/entity/EntityLivingBase;)Z", false),
+							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookSRP", "hasNoInfectedSearchAI", "(Lnet/minecraft/entity/EntityLiving;)Z", false),
 							new JumpInsnNode(Opcodes.IFNE, label2),
 							new VarInsnNode(Opcodes.ALOAD, 0),
 							new InsnNode(Opcodes.DCONST_0),
