@@ -63,10 +63,9 @@ public class WorldRadiusUtil
 		{
 			for (int k3 = l2; k3 <= i3; ++k3)
 			{
-				//This runs faster in a warmed up environment than isChunkLoaded's reflection invoke
-				if (world.isBlockLoaded(new BlockPos(j3<<4, 64, k3<<4), true))
+				Chunk chunk = world.getChunkProvider().getLoadedChunk(j3, k3);
+				if (chunk != null)
 				{
-					Chunk chunk = world.getChunkFromChunkCoords(j3, k3);
 					getEntitiesWithinAABBForEntity(chunk, entity, bb, list, predicate, size);
 				}
 			}
@@ -98,10 +97,9 @@ public class WorldRadiusUtil
 		{
 			for (int k3 = l2; k3 < i3; ++k3)
 			{
-				//This runs faster in a warmed up environment than isChunkLoaded's reflection invoke
-				if (world.isBlockLoaded(new BlockPos(j3<<4, 64, k3<<4), true))
+				Chunk chunk = world.getChunkProvider().getLoadedChunk(j3, k3);
+				if (chunk != null)
 				{
-					Chunk chunk = world.getChunkFromChunkCoords(j3, k3);
 					getEntitiesOfTypeWithinAABB(chunk, clazz, aabb, list, filter, size);
 				}
 			}
