@@ -95,6 +95,7 @@ public class PatchEnchant extends PatchManager
 				addNode.owner = owner_HookEnchant;
 				addNode.name = "addEnchantmentRestricted";
 				addNode.desc = "(Ljava/util/List;Lnet/minecraft/enchantment/Enchantment;)Z";
+				addNode.itf = false;
 			}
 		});
 		
