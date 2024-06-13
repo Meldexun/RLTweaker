@@ -45,7 +45,7 @@ public class HookWorld
 		{
 			try
 			{
-				return WorldRadiusUtil.instance.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.instance.getRadiusForEntity(entity));
+				return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.instance.getRadiusForEntity(entity));
 			}
 			catch(Exception e)
 			{
@@ -72,7 +72,7 @@ public class HookWorld
 		{
 			try
 			{
-				return WorldRadiusUtil.instance.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.instance.getRadiusForEntity(entity));
+				return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.instance.getRadiusForEntity(entity));
 			}
 			catch(Exception e)
 			{
@@ -95,7 +95,7 @@ public class HookWorld
 		{
 			if(clazz.equals(EntityItem.class) || clazz.equals(EntityPlayer.class))
 			{
-				return WorldRadiusUtil.instance.getEntitiesWithinAABB(world, clazz, bb, predicate, 2.0d);
+				return WorldRadiusUtil.getEntitiesWithinAABB(world, clazz, bb, predicate, 2.0d);
 			}
 		}
 		catch(Exception e)
