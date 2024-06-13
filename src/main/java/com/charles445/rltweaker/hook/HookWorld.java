@@ -4,16 +4,14 @@ import java.util.List;
 
 import javax.annotation.Nullable;
 
-import com.charles445.rltweaker.RLTweaker;
-import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.util.CollisionUtil;
-import com.charles445.rltweaker.util.ErrorUtil;
 import com.charles445.rltweaker.util.WorldRadiusUtil;
 import com.google.common.base.Predicate;
 
 import meldexun.reflectionutil.ReflectionField;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityLivingBase;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
@@ -21,7 +19,6 @@ import net.minecraft.util.math.AxisAlignedBB;
 import net.minecraft.util.math.BlockPos.MutableBlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.world.World;
-import net.minecraft.world.WorldServer;
 import net.minecraft.world.border.WorldBorder;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
@@ -29,95 +26,40 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.world.GetCollisionBoxesEvent;
 import net.minecraftforge.fml.common.eventhandler.EventBus;
 
-public class HookWorld
-{
-	public static boolean warnItemHook = false;
-	
-	public static boolean warnSearchHook = false;
-	
-	//HOOK into World.getCollisionBoxes
-	public static List<Entity> getEntitiesWithinAABBExcludingEntity(World world, @Nullable Entity entity, AxisAlignedBB bb)
-	{
-		if(!ModConfig.server.minecraft.lessCollisions)
-			return world.getEntitiesWithinAABBExcludingEntity(entity, bb);
-		
-		if(entity != null)
-		{
-			try
-			{
-				return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.getRadiusForEntity(entity));
-			}
-			catch(Exception e)
-			{
-				if(!warnItemHook)
-				{
-					warnItemHook = true;
-					RLTweaker.logger.error("Error running CollisionUtil!",e);
-					ErrorUtil.logSilent("CollisionUtil Critical Failure");
-				}
-			}
-					
+public class HookWorld {
+
+	@Deprecated
+	public static List<Entity> getEntitiesWithinAABBExcludingEntity(World world, @Nullable Entity entity, AxisAlignedBB bb) {
+		if (entity != null) {
+			return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.getRadiusForEntity(entity));
 		}
-		
+
 		return world.getEntitiesWithinAABBExcludingEntity(entity, bb);
 	}
-	
-	//HOOK into EntityLivingBase.collideWithNearbyEntities
-	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entity, AxisAlignedBB bb, @Nullable Predicate <? super Entity > predicate)
-	{
-		if(!ModConfig.server.minecraft.lessCollisions)
-			return world.getEntitiesInAABBexcluding(entity, bb, predicate);
-		
-		if(entity != null)
-		{
-			try
-			{
-				return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.getRadiusForEntity(entity));
-			}
-			catch(Exception e)
-			{
-				if(!warnItemHook)
-				{
-					warnItemHook = true;
-					RLTweaker.logger.error("Error running CollisionUtil!",e);
-					ErrorUtil.logSilent("CollisionUtil Critical Failure");
-				}
-			}
+
+	/**
+	 * Hook into {@link EntityLivingBase#collideWithNearbyEntities()}
+	 */
+	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entity, AxisAlignedBB bb,
+			@Nullable Predicate<? super Entity> predicate) {
+		if (entity != null) {
+			return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.getRadiusForEntity(entity));
 		}
-		
+
 		return world.getEntitiesInAABBexcluding(entity, bb, predicate);
 	}
-	
-	//HOOK into World.getEntitiesWithinAABB
-	public static List<Entity> getEntitiesWithinAABB(World world, Class<Entity> clazz, AxisAlignedBB bb, @Nullable Predicate <? super Entity > predicate)
-	{
-		try
-		{
-			if(clazz.equals(EntityItem.class) || clazz.equals(EntityPlayer.class))
-			{
-				return WorldRadiusUtil.getEntitiesWithinAABB(world, clazz, bb, predicate, 2.0d);
-			}
+
+	/**
+	 * Hook into {@link World#getEntitiesWithinAABB(Class, AxisAlignedBB, Predicate)}
+	 */
+	public static List<Entity> getEntitiesWithinAABB(World world, Class<Entity> clazz, AxisAlignedBB bb, @Nullable Predicate<? super Entity> predicate) {
+		if (clazz.equals(EntityItem.class) || clazz.equals(EntityPlayer.class)) {
+			return WorldRadiusUtil.getEntitiesWithinAABB(world, clazz, bb, predicate, 2.0D);
 		}
-		catch(Exception e)
-		{
-			if(!warnSearchHook)
-			{
-				warnSearchHook = true;
-				RLTweaker.logger.error("Error running ReducedSearchSize!",e);
-				ErrorUtil.logSilent("ReducedSearchSize Critical Failure");
-			}
-		}
-		
-		
+
 		return world.getEntitiesWithinAABB(clazz, bb, predicate);
 	}
-	
-	//UNUSED
-	//HOOK
-	//com/charles445/rltweaker/hook/HookWorld
-	//getAABExcludingSizeFor
-	//(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;)D
-	
+
 	private static final GetCollisionBoxesEvent EVENT = new GetCollisionBoxesEvent(null, null, null, null);
 	private static final int EVENT_BUS_ID = new ReflectionField<Integer>(EventBus.class, "busID", null).getInt(MinecraftForge.EVENT_BUS);
 
