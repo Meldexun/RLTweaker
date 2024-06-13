@@ -251,4 +251,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fix potion changes on players causing unnecessary entity tracker updates.")
 	public boolean patchPotionEntityTrackerUpdate = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Replaces the random update handler with a faster alternative.")
+	public boolean patchSereneSeasonsMelting = true;
 }

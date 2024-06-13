@@ -19,7 +19,6 @@ import com.charles445.rltweaker.asm.patch.PatchBetterCombatMountFix;
 import com.charles445.rltweaker.asm.patch.PatchBetterNether;
 import com.charles445.rltweaker.asm.patch.PatchBountifulBaubles;
 import com.charles445.rltweaker.asm.patch.PatchBroadcastSounds;
-import com.charles445.rltweaker.asm.patch.PatchChunkTicks;
 import com.charles445.rltweaker.asm.patch.PatchCleanStructureFiles;
 import com.charles445.rltweaker.asm.patch.PatchConcurrentParticles;
 import com.charles445.rltweaker.asm.patch.PatchDoorPathfinding;
@@ -48,6 +47,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchBrokenTransformers;
 import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
 import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
+import com.charles445.rltweaker.asm.patch.sereneseasons.PatchMelting;
 import com.charles445.rltweaker.asm.util.ASMInfo;
 import com.charles445.rltweaker.asm.util.ASMLogger;
 import com.charles445.rltweaker.asm.util.ServerType;
@@ -379,12 +379,6 @@ public class RLTweakerASM implements IClassTransformer
 			}
 		}
 		
-		//chunkTicks
-		if(ASMConfig.getBoolean("general.patches.chunkTicks", true))
-		{
-			new PatchChunkTicks();
-		}
-		
 		if(ASMConfig.getBoolean("general.patches.patchCurePotion", true))
 		{
 			new PatchCurePotion();
@@ -443,6 +437,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchPotionEntityTrackerUpdate", false))
 		{
 			new PatchPotionUpdate();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchSereneSeasonsMelting", false))
+		{
+			new PatchMelting();
 		}
 		
 		//new PatchForgeNetwork();

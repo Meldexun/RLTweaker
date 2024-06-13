@@ -124,10 +124,6 @@ public class ModConfig
 		@Config.Name("Rustic")
 		public ConfigRustic rustic = new ConfigRustic();
 		
-		@Config.Comment("Serene Seasons tweaks")
-		@Config.Name("Serene Seasons")
-		public ConfigSereneSeasons sereneseasons = new ConfigSereneSeasons();
-		
 		@Config.Comment("Scape and Run Parasites tweaks")
 		@Config.Name("Scape and Run Parasites")
 		public ConfigSRParasites srparasites = new ConfigSRParasites();

@@ -118,57 +118,6 @@ public class HookWorld
 	//getAABExcludingSizeFor
 	//(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;)D
 	
-	/////////////////
-	//ChunkTick
-	/////////////////
-	
-	public static boolean chunkTickPatchEnabled = false;
-	
-	//Serene Seasons
-	public static IChunkTickPost sereneSeasonsPost = null;
-	
-	//com/charles445/rltweaker/hook/HookWorld
-		//onPreUpdateBlocks
-		//(Lnet/minecraft/world/WorldServer;)Lcom/charles445/rltweaker/hook/HookWorld$ChunkTickContainer;
-	public static ChunkTickContainer onPreUpdateBlocks(WorldServer world)
-	{
-		if(!chunkTickPatchEnabled)
-			chunkTickPatchEnabled = true;
-		
-		return new ChunkTickContainer(world);
-	}
-	
-	//com/charles445/rltweaker/hook/HookWorld
-	//postBlockTickChunk
-	//(Lnet/minecraft/world/chunk/Chunk;Lcom/charles445/rltweaker/hook/HookWorld$ChunkTickContainer;)V
-	public static void postBlockTickChunk(Chunk chunk, ChunkTickContainer container)
-	{
-		if(container.sereneSeasonsCompanionPost != null)
-			sereneSeasonsPost.invoke(chunk, container.sereneSeasonsCompanionPost);
-	}
-	
-	public static class ChunkTickContainer
-	{
-		public Object sereneSeasonsCompanionPost;
-		
-		public ChunkTickContainer(WorldServer world)
-		{
-			sereneSeasonsCompanionPost = sereneSeasonsPost == null ? null : sereneSeasonsPost.preUpdate(world);
-		}
-	}
-	
-	public static interface IChunkTickPost<T>
-	{
-		@Nullable
-		public T preUpdate(WorldServer world);
-		
-		public void invoke(Chunk c, T companion);
-	}
-
-	/////////////////
-	/////////////////
-	
-	
 	private static final GetCollisionBoxesEvent EVENT = new GetCollisionBoxesEvent(null, null, null, null);
 	private static final int EVENT_BUS_ID = new ReflectionField<Integer>(EventBus.class, "busID", null).getInt(MinecraftForge.EVENT_BUS);
 
