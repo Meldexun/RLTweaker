@@ -1,10 +1,12 @@
 package com.charles445.rltweaker.handler;
 
+import java.io.IOException;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.JsonConfig;
@@ -17,7 +19,11 @@ import com.charles445.rltweaker.reflect.ReskillableReflect;
 import com.charles445.rltweaker.util.CompatUtil;
 import com.charles445.rltweaker.util.CriticalException;
 import com.charles445.rltweaker.util.ErrorUtil;
+import com.charles445.rltweaker.util.ModNames;
 import com.charles445.rltweaker.util.ReflectUtil;
+import com.google.common.collect.ImmutableMultimap;
+import com.google.common.collect.Multimap;
+import com.google.gson.reflect.TypeToken;
 
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.Item;
@@ -25,6 +31,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.event.entity.player.PlayerEvent;
+import net.minecraftforge.fml.common.Loader;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
 import net.minecraftforge.fml.common.registry.ForgeRegistries;
@@ -32,6 +39,8 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ReskillableHandler
 {
+	private static final Path FILE_NAME = Paths.get("reskillableTransmutation.json");
+	private static final Type TYPE = new TypeToken<Multimap<String, JsonDoubleBlockState>>() {}.getType();
 	private ReskillableReflect reflector;
 	private ManualSubscriber manualSubscriber;
 	
@@ -61,36 +70,55 @@ public class ReskillableHandler
 				throw new RuntimeException(e);
 		}
 	}
-	
-	public void registerTransmutations()
-	{
-		if(JsonConfig.reskillableTransmutation!=null)
-		{
-			for(Map.Entry<String, List<JsonDoubleBlockState>> entry : JsonConfig.reskillableTransmutation.entrySet())
-			{
-				Item activator = ForgeRegistries.ITEMS.getValue(new ResourceLocation(entry.getKey()));
-				if(activator==null)
-				{
-					RLTweaker.logger.warn("Skipping unregistered item in registerTransmutations: "+entry.getKey());
-					continue;
-				}
-				
-				for(JsonDoubleBlockState jdbs : entry.getValue())
-				{
-					try
-					{
-						reflector.addEntryToReagent(activator, jdbs.input.getAsBlockState(), jdbs.output.getAsBlockState());
-					}
-					catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e)
-					{
-						RLTweaker.logger.error("Invocation error in registerTransmutations", e);
-						ErrorUtil.logSilent("Reskillable registerTransmutations Invoke Failure");
-					}
-				}
-			}
+
+	public static void loadConfig() {
+		if (!Loader.isModLoaded(ModNames.RESKILLABLE)) {
+			return;
+		}
+		if (!ModConfig.server.reskillable.enabled) {
+			return;
+		}
+		if (!ModConfig.server.reskillable.customTransmutation) {
+			return;
+		}
+
+		Multimap<String, JsonDoubleBlockState> transmutations;
+		try {
+			transmutations = JsonConfig.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, getDefaults());
+		} catch (IOException e) {
+			RLTweaker.logger.error("Failed to load reskillable transmutations config", e);
+			return;
+		}
+
+		Object reskillableHandler = RLTweaker.handlers.get(ModNames.RESKILLABLE);
+		if (reskillableHandler instanceof ReskillableHandler) {
+			((ReskillableHandler) reskillableHandler).registerTransmutations(transmutations);
 		}
 	}
-	
+
+	private static Multimap<String, JsonDoubleBlockState> getDefaults() {
+		return ImmutableMultimap.of("minecraft:stick", JsonDoubleBlockState.AIR);
+	}
+
+	public void registerTransmutations(Multimap<String, JsonDoubleBlockState> transmutations) {
+		transmutations.asMap().forEach((k, v) -> {
+			Item activator = ForgeRegistries.ITEMS.getValue(new ResourceLocation(k));
+			if (activator == null) {
+				RLTweaker.logger.warn("Skipping unregistered item in registerTransmutations: " + k);
+				return;
+			}
+
+			for (JsonDoubleBlockState jdbs : v) {
+				try {
+					reflector.addEntryToReagent(activator, jdbs.input.getAsBlockState(), jdbs.output.getAsBlockState());
+				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
+					RLTweaker.logger.error("Invocation error in registerTransmutations", e);
+					ErrorUtil.logSilent("Reskillable registerTransmutations Invoke Failure");
+				}
+			}
+		});
+	}
+
 	public class LockSkillReceiver implements IServerMessageReceiver
 	{
 		@Override

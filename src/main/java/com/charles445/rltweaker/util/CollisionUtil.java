@@ -1,90 +1,48 @@
 package com.charles445.rltweaker.util;
 
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
+import java.io.IOException;
+import java.lang.reflect.Type;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 import javax.annotation.Nonnull;
 
 import com.charles445.rltweaker.RLTweaker;
+import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
+import com.charles445.rltweaker.config.init.JsonConfigLessCollisions;
+import com.google.gson.reflect.TypeToken;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleMaps;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import net.minecraft.entity.Entity;
 import net.minecraft.world.World;
 
-public class CollisionUtil
-{
-	public static CollisionUtil instance = new CollisionUtil();
-	
-	//Accessed by both logical client and logical server
-	//TODO split this up?
-	private final Map<String, Double> stringReference = new ConcurrentHashMap<String, Double>();
-	
-	//These should be accessed individually, but might as well make them concurrent
-	private final Map<Class, Double> collisionMapServer = new ConcurrentHashMap<Class, Double>();
-	private final Map<Class, Double> collisionMapClient = new ConcurrentHashMap<Class, Double>();
-	
-	public CollisionUtil()
-	{
-		
-	}
-	
-	public void addToStringReference(Map<String, Double> sent)
-	{
-		stringReference.putAll(sent);
-	}
-	
-	public void refreshCollisionMaps()
-	{
-		//Empties out the cache
-		collisionMapServer.clear();
-		collisionMapClient.clear();
-	}
-	
-	public double getRadiusForEntity(@Nonnull Entity entity)
-	{
-		if(entity.world.isRemote)
-		{
-			//Client
-			Double dub = collisionMapClient.get(entity.getClass());
-			if(dub!=null)
-				return dub;
-			
-			dub = stringReference.get(entity.getClass().getName());
-			
-			if(dub==null)
-			{
-				dub = new Double(World.MAX_ENTITY_RADIUS);
-			}
-			
-			if(ModConfig.server.minecraft.debug)
-				RLTweaker.logger.debug("Adding "+entity.getClass().getName()+" with radius "+dub+" to client");
-			
-			collisionMapClient.put(entity.getClass(), Math.min(World.MAX_ENTITY_RADIUS, dub));
-			
-			return dub.doubleValue();
+public final class CollisionUtil {
+
+	private static final Path FILE_NAME = Paths.get("lessCollisions.json");
+	private static final Type TYPE = new TypeToken<Object2DoubleOpenHashMap<String>>() {}.getType();
+	private static Object2DoubleMap<String> lessCollisions = Object2DoubleMaps.emptyMap();
+
+	public static void loadConfig() {
+		if (!ModConfig.patches.lessCollisions) {
+			return;
 		}
-		else
-		{
-			//Server
-			Double dub = collisionMapServer.get(entity.getClass());
-			if(dub!=null)
-				return dub;
-			
-			dub = stringReference.get(entity.getClass().getName());
-			
-			if(dub==null)
-			{
-				dub = new Double(World.MAX_ENTITY_RADIUS);
-			}
-			
-			if(ModConfig.server.minecraft.debug)
-				RLTweaker.logger.debug("Adding "+entity.getClass().getName()+" with radius "+dub+" to server");
-			
-			collisionMapServer.put(entity.getClass(), Math.min(World.MAX_ENTITY_RADIUS, dub));
-			
-			return dub.doubleValue();
+
+		try {
+			lessCollisions = JsonConfig.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, JsonConfigLessCollisions.getDefaults());
+		} catch (IOException e) {
+			RLTweaker.logger.error("Failed to load less collisions config", e);
 		}
 	}
-	
-	
+
+	public static double getRadiusForEntity(@Nonnull Entity entity) {
+		double v = lessCollisions.getDouble(entity.getClass().getName());
+		if (v < 0.0D || v > World.MAX_ENTITY_RADIUS) {
+			v = World.MAX_ENTITY_RADIUS;
+		}
+		return v;
+	}
+
 }

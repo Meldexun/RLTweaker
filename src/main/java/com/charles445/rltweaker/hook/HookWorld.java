@@ -45,7 +45,7 @@ public class HookWorld
 		{
 			try
 			{
-				return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.instance.getRadiusForEntity(entity));
+				return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.getRadiusForEntity(entity));
 			}
 			catch(Exception e)
 			{
@@ -72,7 +72,7 @@ public class HookWorld
 		{
 			try
 			{
-				return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.instance.getRadiusForEntity(entity));
+				return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.getRadiusForEntity(entity));
 			}
 			catch(Exception e)
 			{

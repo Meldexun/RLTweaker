@@ -12,11 +12,9 @@ import com.charles445.rltweaker.capability.ITweakerCapability;
 import com.charles445.rltweaker.capability.TweakerCapability;
 import com.charles445.rltweaker.capability.TweakerStorage;
 import com.charles445.rltweaker.command.CommandAdvisor;
-import com.charles445.rltweaker.command.CommandDebug;
 import com.charles445.rltweaker.command.CommandErrorReport;
 import com.charles445.rltweaker.command.CommandRLTweakerConfig;
 import com.charles445.rltweaker.command.CommandReloadInvestigateAIConfig;
-import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
 import com.charles445.rltweaker.handler.AquacultureHandler;
@@ -52,6 +50,7 @@ import com.charles445.rltweaker.handler.WaystonesHandler;
 import com.charles445.rltweaker.network.NetworkHandler;
 import com.charles445.rltweaker.network.PacketHandler;
 import com.charles445.rltweaker.proxy.CommonProxy;
+import com.charles445.rltweaker.util.CollisionUtil;
 import com.charles445.rltweaker.util.ErrorUtil;
 import com.charles445.rltweaker.util.ModNames;
 import com.charles445.rltweaker.util.ServerRunnable;
@@ -208,7 +207,9 @@ public class RLTweaker
 			handlers.put(ModNames.RUINS, new RuinsHandler());
 		}
 		
-		JsonConfig.init();
+		CollisionUtil.loadConfig();
+		InvestigateAIHandler.loadConfig();
+		ReskillableHandler.loadConfig();
 		
 		proxy.postInit();
 	}
@@ -307,7 +308,6 @@ public class RLTweaker
 	public void serverStarting(FMLServerStartingEvent event)
 	{
 		event.registerServerCommand(new CommandAdvisor());
-		event.registerServerCommand(new CommandDebug());
 		event.registerServerCommand(new CommandErrorReport());
 		event.registerServerCommand(new CommandRLTweakerConfig());
 		event.registerServerCommand(new CommandReloadInvestigateAIConfig());
