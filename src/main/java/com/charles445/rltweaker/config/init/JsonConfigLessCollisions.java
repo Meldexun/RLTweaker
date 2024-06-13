@@ -1,30 +1,25 @@
 package com.charles445.rltweaker.config.init;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import com.charles445.rltweaker.util.ModNames;
 
+import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
+import it.unimi.dsi.fastutil.objects.Object2DoubleOpenHashMap;
 import net.minecraftforge.fml.common.Loader;
 
-public class JsonConfigLessCollisions
-{
-	public static Map<String, Double> getDefaults()
-	{
-		//No combat allies or offensive tools
-		//No mountables, except for pigs.
-		//No projectiles of any kind
-		//Caution with entities that may become the owner of explosions
-		
-		
-		
-		Map<String,Double> map = new HashMap<String,Double>();
-		
-		//Default value is 2.0d
-		double dfv = 2.0d;
-		
-		if(Loader.isModLoaded(ModNames.DEFILEDLANDS))
-		{
+public class JsonConfigLessCollisions {
+
+	public static Object2DoubleMap<String> getDefaults() {
+		// No combat allies or offensive tools
+		// No mountables, except for pigs.
+		// No projectiles of any kind
+		// Caution with entities that may become the owner of explosions
+
+		Object2DoubleMap<String> map = new Object2DoubleOpenHashMap<>();
+
+		// Default value is 2.0D
+		double dfv = 2.0D;
+
+		if (Loader.isModLoaded(ModNames.DEFILEDLANDS)) {
 			map.put("lykrast.defiledlands.common.entity.boss.EntityDestroyer", dfv);
 			map.put("lykrast.defiledlands.common.entity.boss.EntityMourner", dfv);
 			map.put("lykrast.defiledlands.common.entity.monster.EntityHost", dfv);
@@ -34,9 +29,8 @@ public class JsonConfigLessCollisions
 			map.put("lykrast.defiledlands.common.entity.monster.EntitySlimeDefiled", dfv);
 			map.put("lykrast.defiledlands.common.entity.passive.EntityBookWyrm", dfv);
 		}
-		
-		if(Loader.isModLoaded(ModNames.FAMILIARFAUNA))
-		{
+
+		if (Loader.isModLoaded(ModNames.FAMILIARFAUNA)) {
 			map.put("familiarfauna.entities.EntityButterfly", dfv);
 			map.put("familiarfauna.entities.EntityDeer", dfv);
 			map.put("familiarfauna.entities.EntityDragonfly", dfv);
@@ -44,9 +38,8 @@ public class JsonConfigLessCollisions
 			map.put("familiarfauna.entities.EntitySnail", dfv);
 			map.put("familiarfauna.entities.EntityTurkey", dfv);
 		}
-		
-		if(Loader.isModLoaded(ModNames.ICEANDFIRE))
-		{
+
+		if (Loader.isModLoaded(ModNames.ICEANDFIRE)) {
 			map.put("com.github.alexthe666.iceandfire.entity.EntityCyclops", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityCyclopsEye", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.EntityDeathWormEgg", dfv);
@@ -70,9 +63,8 @@ public class JsonConfigLessCollisions
 			map.put("com.github.alexthe666.iceandfire.entity.EntityTroll", dfv);
 			map.put("com.github.alexthe666.iceandfire.entity.util.EntityMultipartPart", dfv);
 		}
-		
-		if(Loader.isModLoaded(ModNames.LYCANITESMOBS))
-		{
+
+		if (Loader.isModLoaded(ModNames.LYCANITESMOBS)) {
 			map.put("com.lycanitesmobs.core.entity.EntityItemCustom", dfv);
 			map.put("com.lycanitesmobs.core.entity.creature.EntityArisaur", 6.0d);
 			map.put("com.lycanitesmobs.core.entity.creature.EntityAspid", 4.0d);
@@ -101,19 +93,16 @@ public class JsonConfigLessCollisions
 			map.put("com.lycanitesmobs.core.entity.creature.EntityYale", 4.0d);
 			map.put("com.lycanitesmobs.core.entity.creature.EntityYeti", 4.0d);
 		}
-		
-		if(Loader.isModLoaded(ModNames.TRUMPETSKELETON))
-		{
+
+		if (Loader.isModLoaded(ModNames.TRUMPETSKELETON)) {
 			map.put("com.jamieswhiteshirt.trumpetskeleton.common.entity.EntityTrumpetSkeleton", dfv);
 		}
-		
-		if(Loader.isModLoaded(ModNames.TUMBLEWEED))
-		{
+
+		if (Loader.isModLoaded(ModNames.TUMBLEWEED)) {
 			map.put("net.konwboy.tumbleweed.common.EntityTumbleweed", dfv);
 		}
-		
-		//Minecraft
-		
+
+		// Minecraft
 		map.put("net.minecraft.entity.item.EntityArmorStand", dfv);
 		map.put("net.minecraft.entity.item.EntityItem", dfv);
 		map.put("net.minecraft.entity.item.EntityItemFrame", dfv);
@@ -145,19 +134,19 @@ public class JsonConfigLessCollisions
 		map.put("net.minecraft.entity.monster.EntityWitherSkeleton", dfv);
 		map.put("net.minecraft.entity.monster.EntityZombie", dfv);
 		map.put("net.minecraft.entity.monster.EntityZombieVillager", dfv);
-
 		map.put("net.minecraft.entity.passive.EntityBat", dfv);
 		map.put("net.minecraft.entity.passive.EntityChicken", dfv);
 		map.put("net.minecraft.entity.passive.EntityCow", dfv);
 		map.put("net.minecraft.entity.passive.EntityMooshroom", dfv);
 		map.put("net.minecraft.entity.passive.EntityOcelot", dfv);
 		map.put("net.minecraft.entity.passive.EntityParrot", dfv);
-		map.put("net.minecraft.entity.passive.EntityPig", dfv); //Take a pig ride through asmodeus
+		map.put("net.minecraft.entity.passive.EntityPig", dfv); // Take a pig ride through asmodeus
 		map.put("net.minecraft.entity.passive.EntityRabbit", dfv);
 		map.put("net.minecraft.entity.passive.EntitySheep", dfv);
 		map.put("net.minecraft.entity.passive.EntitySquid", dfv);
 		map.put("net.minecraft.entity.passive.EntityVillager", dfv);
-		
+
 		return map;
 	}
+
 }
