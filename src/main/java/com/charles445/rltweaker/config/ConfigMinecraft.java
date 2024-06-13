@@ -57,13 +57,6 @@ public class ConfigMinecraft
 	@RLConfig.RLCraftTwoEightTwo("true") //Except people who update their tweakers for 2.8.2 servers then heck yeah
 	@RLConfig.RLCraftTwoNine("true")
 	public boolean damageTilt = false;
-	
-	@Config.Comment("Requires lessCollisions patch, change that config value instead, don't change this unless you are benchmarking")
-	@Config.Name("Less Collisions")
-	@RLConfig.ImprovementsOnly("true")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean lessCollisions = true;
 
 	@Config.Comment("Cleans up structure .dat files regularly to lower RAM usage. May break mods that use this data. (Stronghold, Village, Mineshaft, Temple, Monument, Mansion, Fortress, EndCity)")
 	@Config.Name("Cleanup Structure Worldgen Files Structures")
