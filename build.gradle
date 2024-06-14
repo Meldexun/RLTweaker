@@ -43,6 +43,8 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
+
+    buildDependencies 'curse.maven:serene-seasons-291874:2799213'
 }
 
 minecraft {
