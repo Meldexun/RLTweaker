@@ -29,35 +29,37 @@ import net.minecraftforge.fml.common.eventhandler.EventBus;
 public class HookWorld {
 
 	@Deprecated
-	public static List<Entity> getEntitiesWithinAABBExcludingEntity(World world, @Nullable Entity entity, AxisAlignedBB bb) {
-		if (entity != null) {
-			return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entity, bb, CollisionUtil.getRadiusForEntity(entity));
+	public static List<Entity> getEntitiesWithinAABBExcludingEntity(World world, @Nullable Entity entityIn, AxisAlignedBB bb) {
+		if (entityIn != null) {
+			return WorldRadiusUtil.getEntitiesWithinAABBExcludingEntity(world, entityIn, bb, CollisionUtil.getRadiusForEntity(entityIn));
 		}
 
-		return world.getEntitiesWithinAABBExcludingEntity(entity, bb);
+		return world.getEntitiesWithinAABBExcludingEntity(entityIn, bb);
 	}
 
 	/**
+	 * Hook into {@link World#getEntitiesWithinAABBExcludingEntity(Entity, AxisAlignedBB)}
 	 * Hook into {@link EntityLivingBase#collideWithNearbyEntities()}
 	 */
-	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entity, AxisAlignedBB bb,
+	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entityIn, AxisAlignedBB boundingBox,
 			@Nullable Predicate<? super Entity> predicate) {
-		if (entity != null) {
-			return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entity, bb, predicate, CollisionUtil.getRadiusForEntity(entity));
+		if (entityIn != null) {
+			return WorldRadiusUtil.getEntitiesInAABBexcluding(world, entityIn, boundingBox, predicate, CollisionUtil.getRadiusForEntity(entityIn));
 		}
 
-		return world.getEntitiesInAABBexcluding(entity, bb, predicate);
+		return world.getEntitiesInAABBexcluding(entityIn, boundingBox, predicate);
 	}
 
 	/**
-	 * Hook into {@link World#getEntitiesWithinAABB(Class, AxisAlignedBB, Predicate)}
+	 * Hook into {@link World#getEntitiesWithinAABB(Class, AxisAlignedBB)}
 	 */
-	public static List<Entity> getEntitiesWithinAABB(World world, Class<Entity> clazz, AxisAlignedBB bb, @Nullable Predicate<? super Entity> predicate) {
+	public static <T extends Entity> List<T> getEntitiesWithinAABB(World world, Class<? extends T> clazz, AxisAlignedBB aabb,
+			@Nullable Predicate<? super T> filter) {
 		if (clazz.equals(EntityItem.class) || clazz.equals(EntityPlayer.class)) {
-			return WorldRadiusUtil.getEntitiesWithinAABB(world, clazz, bb, predicate, 2.0D);
+			return WorldRadiusUtil.getEntitiesWithinAABB(world, clazz, aabb, filter, 2.0D);
 		}
 
-		return world.getEntitiesWithinAABB(clazz, bb, predicate);
+		return world.getEntitiesWithinAABB(clazz, aabb, filter);
 	}
 
 	private static final GetCollisionBoxesEvent EVENT = new GetCollisionBoxesEvent(null, null, null, null);
