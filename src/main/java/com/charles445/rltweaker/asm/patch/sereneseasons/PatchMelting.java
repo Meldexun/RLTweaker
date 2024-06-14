@@ -41,6 +41,16 @@ public class PatchMelting extends PatchManager {
 			}
 
 		});
+		this.add(new Patch(this, "sereneseasons.handler.season.RandomUpdateHandler", ClassWriter.COMPUTE_MAXS) {
+
+			@Override
+			public void patch(ClassNode clazzNode) {
+				MethodNode m_onWorldTick = this.findMethod(clazzNode, "onWorldTick");
+
+				m_onWorldTick.visibleAnnotations.removeIf(annotation -> annotation.desc.equals("Lnet/minecraftforge/fml/common/eventhandler/SubscribeEvent;"));
+			}
+
+		});
 	}
 
 }
