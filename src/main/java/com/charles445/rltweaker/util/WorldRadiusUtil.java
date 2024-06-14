@@ -24,10 +24,10 @@ public class WorldRadiusUtil {
 	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entity, AxisAlignedBB bb, @Nullable Predicate<? super Entity> predicate,
 			double size) {
 		List<Entity> list = new ArrayList<>();
-		int x0 = MathHelper.floor((bb.minX - size) / 16.0D);
-		int x1 = MathHelper.floor((bb.maxX + size) / 16.0D);
-		int z0 = MathHelper.floor((bb.minZ - size) / 16.0D);
-		int z1 = MathHelper.floor((bb.maxZ + size) / 16.0D);
+		int x0 = MathHelper.floor(bb.minX - size) >> 4;
+		int x1 = MathHelper.floor(bb.maxX + size) >> 4;
+		int z0 = MathHelper.floor(bb.minZ - size) >> 4;
+		int z1 = MathHelper.floor(bb.maxZ + size) >> 4;
 
 		for (int x = x0; x <= x1; x++) {
 			for (int z = z0; z <= z1; z++) {
@@ -48,10 +48,10 @@ public class WorldRadiusUtil {
 	public static <T extends Entity> List<T> getEntitiesWithinAABB(World world, Class<? extends T> clazz, AxisAlignedBB aabb,
 			@Nullable Predicate<? super T> filter, double size) {
 		List<T> list = new ArrayList<>();
-		int x0 = MathHelper.floor((aabb.minX - size) / 16.0D);
-		int x1 = MathHelper.floor((aabb.maxX + size) / 16.0D);
-		int z0 = MathHelper.floor((aabb.minZ - size) / 16.0D);
-		int z1 = MathHelper.floor((aabb.maxZ + size) / 16.0D);
+		int x0 = MathHelper.floor(aabb.minX - size) >> 4;
+		int x1 = MathHelper.floor(aabb.maxX + size) >> 4;
+		int z0 = MathHelper.floor(aabb.minZ - size) >> 4;
+		int z1 = MathHelper.floor(aabb.maxZ + size) >> 4;
 
 		for (int x = x0; x <= x1; x++) {
 			for (int z = z0; z <= z1; z++) {
@@ -71,7 +71,7 @@ public class WorldRadiusUtil {
 		double minDist = Double.MAX_VALUE;
 
 		for (T entity : entities) {
-			if (entity != closestTo && EntitySelectors.NOT_SPECTATING.apply(entity)) {
+			if (entity != closestTo) {
 				double dist = closestTo.getDistanceSq(entity);
 
 				if (dist <= minDist) {
@@ -87,10 +87,10 @@ public class WorldRadiusUtil {
 	private static <T extends Entity> void getEntitiesOfTypeWithinAABB(Chunk chunk, Class<? extends T> entityClass, AxisAlignedBB aabb, List<T> listToFill,
 			Predicate<? super T> filter, double size) {
 		ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
-		if (aabb.maxY < 0.0D || aabb.minY >= (entityLists.length << 4))
+		if (aabb.maxY < 0.0D || aabb.minY >= entityLists.length << 4)
 			return;
-		int y0 = Math.max(MathHelper.floor((aabb.minY - size) / 16.0D), 0);
-		int y1 = Math.min(MathHelper.floor((aabb.maxY + size) / 16.0D), entityLists.length - 1);
+		int y0 = Math.max(MathHelper.floor(aabb.minY - size) >> 4, 0);
+		int y1 = Math.min(MathHelper.floor(aabb.maxY + size) >> 4, entityLists.length - 1);
 
 		for (int y = y0; y <= y1; y++) {
 			for (T entity : entityLists[y].getByClass(entityClass)) {
@@ -105,10 +105,10 @@ public class WorldRadiusUtil {
 	private static void getEntitiesWithinAABBForEntity(Chunk chunk, @Nullable Entity entityIn, AxisAlignedBB aabb, List<Entity> listToFill,
 			Predicate<? super Entity> filter, double size) {
 		ClassInheritanceMultiMap<Entity>[] entityLists = chunk.getEntityLists();
-		if (aabb.maxY < 0.0D || aabb.minY >= entityLists.length * 16.0D)
+		if (aabb.maxY < 0.0D || aabb.minY >= entityLists.length << 4)
 			return;
-		int y0 = Math.max(MathHelper.floor((aabb.minY - size) / 16.0D), 0);
-		int y1 = Math.min(MathHelper.floor((aabb.maxY + size) / 16.0D), entityLists.length - 1);
+		int y0 = Math.max(MathHelper.floor(aabb.minY - size) >> 4, 0);
+		int y1 = Math.min(MathHelper.floor(aabb.maxY + size) >> 4, entityLists.length - 1);
 
 		for (int y = y0; y <= y1; y++) {
 			ClassInheritanceMultiMap<Entity> entityList = entityLists[y];
