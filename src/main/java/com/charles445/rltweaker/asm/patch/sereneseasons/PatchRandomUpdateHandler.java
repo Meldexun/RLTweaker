@@ -11,9 +11,9 @@ import com.charles445.rltweaker.asm.patch.Patch;
 import com.charles445.rltweaker.asm.patch.PatchManager;
 import com.charles445.rltweaker.asm.util.ASMUtil;
 
-public class PatchMelting extends PatchManager {
+public class PatchRandomUpdateHandler extends PatchManager {
 
-	public PatchMelting() {
+	public PatchRandomUpdateHandler() {
 		this.add(new Patch(this, "net.minecraft.world.WorldServer", ClassWriter.COMPUTE_MAXS) {
 
 			@Override

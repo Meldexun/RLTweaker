@@ -47,7 +47,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchBrokenTransformers;
 import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
 import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
-import com.charles445.rltweaker.asm.patch.sereneseasons.PatchMelting;
+import com.charles445.rltweaker.asm.patch.sereneseasons.PatchRandomUpdateHandler;
 import com.charles445.rltweaker.asm.util.ASMInfo;
 import com.charles445.rltweaker.asm.util.ASMLogger;
 import com.charles445.rltweaker.asm.util.ServerType;
@@ -439,9 +439,9 @@ public class RLTweakerASM implements IClassTransformer
 			new PatchPotionUpdate();
 		}
 		
-		if(ASMConfig.getBoolean("general.patches.patchSereneSeasonsMelting", false))
+		if(ASMConfig.getBoolean("general.patches.patchSSRandomUpdateHandler", false))
 		{
-			new PatchMelting();
+			new PatchRandomUpdateHandler();
 		}
 		
 		//new PatchForgeNetwork();

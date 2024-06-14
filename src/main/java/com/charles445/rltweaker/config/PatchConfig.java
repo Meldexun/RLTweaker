@@ -246,6 +246,6 @@ public class PatchConfig
 	public boolean patchPotionEntityTrackerUpdate = true;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Replaces the random update handler with a faster alternative.")
-	public boolean patchSereneSeasonsMelting = true;
+	@Config.Comment("Replaces the random update handler from Serene Seasons with a faster alternative.")
+	public boolean patchSSRandomUpdateHandler = true;
 }
