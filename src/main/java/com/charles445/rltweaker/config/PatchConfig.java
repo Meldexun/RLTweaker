@@ -171,13 +171,6 @@ public class PatchConfig
 	public boolean serverCompatibility = true;
 	
 	@Config.RequiresMcRestart
-	@Config.Comment("Enables features for ticking chunk blocks")
-	@RLConfig.ImprovementsOnly("true")
-	@RLConfig.RLCraftTwoEightTwo("true")
-	@RLConfig.RLCraftTwoNine("true")
-	public boolean chunkTicks = true;
-	
-	@Config.RequiresMcRestart
 	@Config.Comment("Enables config options to tweak what effects are incurable")
 	@RLConfig.ImprovementsOnly("true")
 	@RLConfig.RLCraftTwoEightTwo("true")
