@@ -21,19 +21,19 @@ public class WorldRadiusUtil {
 		return getEntitiesInAABBexcluding(world, entityIn, bb, EntitySelectors.NOT_SPECTATING, size);
 	}
 
-	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entity, AxisAlignedBB bb, @Nullable Predicate<? super Entity> predicate,
-			double size) {
+	public static List<Entity> getEntitiesInAABBexcluding(World world, @Nullable Entity entityIn, AxisAlignedBB boundingBox,
+			@Nullable Predicate<? super Entity> predicate, double size) {
 		List<Entity> list = new ArrayList<>();
-		int x0 = MathHelper.floor(bb.minX - size) >> 4;
-		int x1 = MathHelper.floor(bb.maxX + size) >> 4;
-		int z0 = MathHelper.floor(bb.minZ - size) >> 4;
-		int z1 = MathHelper.floor(bb.maxZ + size) >> 4;
+		int x0 = MathHelper.floor(boundingBox.minX - size) >> 4;
+		int x1 = MathHelper.floor(boundingBox.maxX + size) >> 4;
+		int z0 = MathHelper.floor(boundingBox.minZ - size) >> 4;
+		int z1 = MathHelper.floor(boundingBox.maxZ + size) >> 4;
 
 		for (int x = x0; x <= x1; x++) {
 			for (int z = z0; z <= z1; z++) {
 				Chunk chunk = world.getChunkProvider().getLoadedChunk(x, z);
 				if (chunk != null) {
-					getEntitiesWithinAABBForEntity(chunk, entity, bb, list, predicate, size);
+					getEntitiesWithinAABBForEntity(chunk, entityIn, boundingBox, list, predicate, size);
 				}
 			}
 		}
