@@ -18,6 +18,13 @@ public class PatchMelting extends PatchManager {
 
 			@Override
 			public void patch(ClassNode clazzNode) {
+				// check if Serene Seasons is loaded
+				try {
+					Class.forName("sereneseasons.asm.SSLoadingPlugin");
+				} catch (ClassNotFoundException e) {
+					return;
+				}
+
 				MethodNode m_updateBlocks = this.findMethod(clazzNode, "func_147456_g", "updateBlocks");
 
 				m_updateBlocks.instructions.insert(ASMUtil.listOf(
