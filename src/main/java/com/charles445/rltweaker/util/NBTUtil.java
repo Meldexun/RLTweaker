@@ -1,29 +1,31 @@
 package com.charles445.rltweaker.util;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
+import meldexun.reflectionutil.ReflectionField;
 import net.minecraft.nbt.NBTBase;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 
 public class NBTUtil {
 
+	private static final ReflectionField<Map<String, NBTBase>> NBTTagCompound_tagMap = new ReflectionField<>(NBTTagCompound.class, "field_74784_a", "tagMap");
+
 	public static boolean remove(NBTTagCompound compound, String key) {
-		if (!compound.hasKey(key)) {
-			return false;
-		}
-		compound.removeTag(key);
-		return true;
+		return NBTTagCompound_tagMap.get(compound).remove(key) != null;
 	}
 
 	public static boolean clear(NBTTagCompound compound) {
 		if (compound.hasNoTags()) {
 			return false;
 		}
-		compound.getKeySet()
-				.clear();
+		NBTTagCompound_tagMap.get(compound).clear();
 		return true;
 	}
 
@@ -37,16 +39,25 @@ public class NBTUtil {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends NBTBase> boolean removeIf(NBTTagCompound compound, Predicate<T> predicate) {
-		return compound.getKeySet()
-				.removeIf(key -> predicate.test((T) compound.getTag(key)));
+		Map<String, NBTBase> tagMap = NBTTagCompound_tagMap.get(compound);
+		if (tagMap instanceof HashMap) {
+			return tagMap.values().removeIf((Predicate<? super NBTBase>) predicate);
+		} else {
+			List<String> toRemove = new ArrayList<>();
+			tagMap.forEach((k, v) -> {
+				if (predicate.test((T) v)) {
+					toRemove.add(k);
+				}
+			});
+			toRemove.forEach(tagMap::remove);
+			return !toRemove.isEmpty();
+		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public static <T extends NBTBase> boolean removeIf(NBTTagCompound compound, String key, Predicate<T> predicate) {
-		if (!compound.hasKey(key)) {
-			return false;
-		}
-		if (predicate.test((T) compound.getTag(key))) {
+		NBTBase tag = compound.getTag(key);
+		if (tag != null && predicate.test((T) tag)) {
 			compound.removeTag(key);
 			return true;
 		}
