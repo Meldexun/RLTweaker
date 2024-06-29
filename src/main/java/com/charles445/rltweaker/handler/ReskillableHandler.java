@@ -21,6 +21,7 @@ import com.charles445.rltweaker.util.CriticalException;
 import com.charles445.rltweaker.util.ErrorUtil;
 import com.charles445.rltweaker.util.ModNames;
 import com.charles445.rltweaker.util.ReflectUtil;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.reflect.TypeToken;
@@ -40,7 +41,7 @@ import net.minecraftforge.registries.IForgeRegistry;
 public class ReskillableHandler
 {
 	private static final Path FILE_NAME = Paths.get("reskillableTransmutation.json");
-	private static final Type TYPE = new TypeToken<Multimap<String, JsonDoubleBlockState>>() {}.getType();
+	private static final Type TYPE = new TypeToken<HashMultimap<String, JsonDoubleBlockState>>() {}.getType();
 	private ReskillableReflect reflector;
 	private ManualSubscriber manualSubscriber;
 	
