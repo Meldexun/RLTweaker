@@ -35,6 +35,7 @@ public class JsonLoader {
 					return new ResourceLocation(TypeAdapters.STRING.read(in));
 				}
 			})
+			.registerTypeAdapterFactory(new HashMultimapAdapterFactory())
 			.setPrettyPrinting()
 			.create();
 

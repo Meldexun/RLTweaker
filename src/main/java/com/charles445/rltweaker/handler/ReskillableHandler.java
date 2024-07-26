@@ -22,7 +22,6 @@ import com.charles445.rltweaker.util.ErrorUtil;
 import com.charles445.rltweaker.util.ModNames;
 import com.charles445.rltweaker.util.ReflectUtil;
 import com.google.common.collect.HashMultimap;
-import com.google.common.collect.ImmutableMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.reflect.TypeToken;
 
@@ -97,8 +96,10 @@ public class ReskillableHandler
 		}
 	}
 
-	private static Multimap<String, JsonDoubleBlockState> getDefaults() {
-		return ImmutableMultimap.of("minecraft:stick", JsonDoubleBlockState.AIR);
+	private static HashMultimap<String, JsonDoubleBlockState> getDefaults() {
+		HashMultimap<String, JsonDoubleBlockState> defaults = HashMultimap.create();
+		defaults.put("minecraft:stick", JsonDoubleBlockState.AIR);
+		return defaults;
 	}
 
 	public void registerTransmutations(Multimap<String, JsonDoubleBlockState> transmutations) {

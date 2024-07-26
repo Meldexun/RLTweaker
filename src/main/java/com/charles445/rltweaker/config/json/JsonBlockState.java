@@ -19,7 +19,7 @@ public class JsonBlockState
 	
 	public int metadata;
 	
-	private IBlockState asBlockState;
+	private transient IBlockState asBlockState;
 	
 	public JsonBlockState(String registryName)
 	{
