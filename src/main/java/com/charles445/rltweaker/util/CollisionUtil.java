@@ -8,9 +8,9 @@ import java.nio.file.Paths;
 import javax.annotation.Nonnull;
 
 import com.charles445.rltweaker.RLTweaker;
-import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.config.init.JsonConfigLessCollisions;
+import com.charles445.rltweaker.config.json.JsonLoader;
 import com.google.gson.reflect.TypeToken;
 
 import it.unimi.dsi.fastutil.objects.Object2DoubleMap;
@@ -31,7 +31,7 @@ public final class CollisionUtil {
 		}
 
 		try {
-			lessCollisions = JsonConfig.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, JsonConfigLessCollisions.getDefaults());
+			lessCollisions = JsonLoader.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, JsonConfigLessCollisions.getDefaults());
 		} catch (IOException e) {
 			RLTweaker.logger.error("Failed to load less collisions config", e);
 		}

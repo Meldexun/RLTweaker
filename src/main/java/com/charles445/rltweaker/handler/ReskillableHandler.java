@@ -9,9 +9,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 import com.charles445.rltweaker.RLTweaker;
-import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.config.json.JsonDoubleBlockState;
+import com.charles445.rltweaker.config.json.JsonLoader;
 import com.charles445.rltweaker.network.IServerMessageReceiver;
 import com.charles445.rltweaker.network.MessageReskillableLockSkill;
 import com.charles445.rltweaker.network.ServerMessageHandler;
@@ -85,7 +85,7 @@ public class ReskillableHandler
 
 		Multimap<String, JsonDoubleBlockState> transmutations;
 		try {
-			transmutations = JsonConfig.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, getDefaults());
+			transmutations = JsonLoader.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, getDefaults());
 		} catch (IOException e) {
 			RLTweaker.logger.error("Failed to load reskillable transmutations config", e);
 			return;

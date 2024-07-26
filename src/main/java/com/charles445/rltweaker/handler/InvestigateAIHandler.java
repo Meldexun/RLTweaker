@@ -7,8 +7,8 @@ import java.util.Map;
 import java.util.Optional;
 
 import com.charles445.rltweaker.RLTweaker;
-import com.charles445.rltweaker.config.JsonConfig;
 import com.charles445.rltweaker.config.ModConfig;
+import com.charles445.rltweaker.config.json.JsonLoader;
 import com.charles445.rltweaker.entity.ai.InvestigateAI;
 import com.charles445.rltweaker.entity.ai.InvestigateAIConfig;
 
@@ -38,7 +38,7 @@ public class InvestigateAIHandler {
 		}
 
 		try {
-			configurations = JsonConfig.readJsons(RLTweaker.jsonDirectory.resolve(FILE_NAME), InvestigateAIConfig.class);
+			configurations = JsonLoader.readJsons(RLTweaker.jsonDirectory.resolve(FILE_NAME), InvestigateAIConfig.class);
 			return null;
 		} catch (Exception e) {
 			RLTweaker.logger.error("Failed to load investigate AI config", e);

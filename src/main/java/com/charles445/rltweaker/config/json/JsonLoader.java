@@ -1,4 +1,4 @@
-package com.charles445.rltweaker.config;
+package com.charles445.rltweaker.config.json;
 
 import java.io.IOException;
 import java.io.Reader;
@@ -21,7 +21,7 @@ import com.google.gson.stream.JsonWriter;
 
 import net.minecraft.util.ResourceLocation;
 
-public class JsonConfig {
+public class JsonLoader {
 
 	private static final Gson GSON = new GsonBuilder()
 			.registerTypeAdapter(ResourceLocation.class, new TypeAdapter<ResourceLocation>() {
