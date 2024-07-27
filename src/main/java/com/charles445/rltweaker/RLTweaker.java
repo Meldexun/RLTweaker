@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger;
 import com.charles445.rltweaker.capability.ITweakerCapability;
 import com.charles445.rltweaker.capability.TweakerCapability;
 import com.charles445.rltweaker.capability.TweakerStorage;
-import com.charles445.rltweaker.command.CommandRLTweakerConfig;
 import com.charles445.rltweaker.command.CommandReloadInvestigateAIConfig;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
@@ -299,7 +298,6 @@ public class RLTweaker
 	@Mod.EventHandler
 	public void serverStarting(FMLServerStartingEvent event)
 	{
-		event.registerServerCommand(new CommandRLTweakerConfig());
 		event.registerServerCommand(new CommandReloadInvestigateAIConfig());
 		
 		serverRunnables.values().forEach(runnable -> runnable.onServerStarting());
