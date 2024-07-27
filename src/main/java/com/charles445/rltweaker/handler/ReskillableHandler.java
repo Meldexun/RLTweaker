@@ -7,10 +7,10 @@ import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.Objects;
 
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.ModConfig;
-import com.charles445.rltweaker.config.json.JsonDoubleBlockState;
 import com.charles445.rltweaker.config.json.JsonLoader;
 import com.charles445.rltweaker.network.IServerMessageReceiver;
 import com.charles445.rltweaker.network.MessageReskillableLockSkill;
@@ -25,7 +25,9 @@ import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
 import com.google.gson.reflect.TypeToken;
 
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.Item;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
@@ -39,8 +41,38 @@ import net.minecraftforge.registries.IForgeRegistry;
 
 public class ReskillableHandler
 {
+
+	private static class Transmutation {
+
+		private final IBlockState input;
+		private final IBlockState output;
+
+		public Transmutation(IBlockState input, IBlockState output) {
+			this.input = Objects.requireNonNull(input);
+			this.output = Objects.requireNonNull(output);
+		}
+
+		@Override
+		public boolean equals(Object obj) {
+			if (!(obj instanceof Transmutation)) {
+				return false;
+			}
+			Transmutation other = (Transmutation) obj;
+			return input.equals(other.input) && output.equals(other.output);
+		}
+
+		@Override
+		public int hashCode() {
+			int hash = 1;
+			hash = hash * 31 + input.hashCode();
+			hash = hash * 31 + output.hashCode();
+			return hash;
+		}
+
+	}
+
 	private static final Path FILE_NAME = Paths.get("reskillableTransmutation.json");
-	private static final Type TYPE = new TypeToken<HashMultimap<String, JsonDoubleBlockState>>() {}.getType();
+	private static final Type TYPE = new TypeToken<HashMultimap<String, Transmutation>>() {}.getType();
 	private ReskillableReflect reflector;
 	private ManualSubscriber manualSubscriber;
 	
@@ -82,7 +114,7 @@ public class ReskillableHandler
 			return;
 		}
 
-		Multimap<String, JsonDoubleBlockState> transmutations;
+		Multimap<String, Transmutation> transmutations;
 		try {
 			transmutations = JsonLoader.readJson(RLTweaker.jsonDirectory.resolve(FILE_NAME), TYPE, getDefaults());
 		} catch (IOException e) {
@@ -96,13 +128,13 @@ public class ReskillableHandler
 		}
 	}
 
-	private static HashMultimap<String, JsonDoubleBlockState> getDefaults() {
-		HashMultimap<String, JsonDoubleBlockState> defaults = HashMultimap.create();
-		defaults.put("minecraft:stick", JsonDoubleBlockState.AIR);
+	private static HashMultimap<String, Transmutation> getDefaults() {
+		HashMultimap<String, Transmutation> defaults = HashMultimap.create();
+		defaults.put("minecraft:stick", new Transmutation(Blocks.AIR.getDefaultState(), Blocks.AIR.getDefaultState()));
 		return defaults;
 	}
 
-	public void registerTransmutations(Multimap<String, JsonDoubleBlockState> transmutations) {
+	public void registerTransmutations(Multimap<String, Transmutation> transmutations) {
 		transmutations.asMap().forEach((k, v) -> {
 			Item activator = ForgeRegistries.ITEMS.getValue(new ResourceLocation(k));
 			if (activator == null) {
@@ -110,9 +142,9 @@ public class ReskillableHandler
 				return;
 			}
 
-			for (JsonDoubleBlockState jdbs : v) {
+			for (Transmutation transmutation : v) {
 				try {
-					reflector.addEntryToReagent(activator, jdbs.input.getAsBlockState(), jdbs.output.getAsBlockState());
+					reflector.addEntryToReagent(activator, transmutation.input, transmutation.output);
 				} catch (IllegalAccessException | IllegalArgumentException | InvocationTargetException e) {
 					RLTweaker.logger.error("Invocation error in registerTransmutations", e);
 					ErrorUtil.logSilent("Reskillable registerTransmutations Invoke Failure");

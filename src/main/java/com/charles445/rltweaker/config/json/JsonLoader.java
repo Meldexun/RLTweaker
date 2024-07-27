@@ -14,28 +14,18 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonIOException;
 import com.google.gson.JsonSyntaxException;
-import com.google.gson.TypeAdapter;
-import com.google.gson.internal.bind.TypeAdapters;
-import com.google.gson.stream.JsonReader;
-import com.google.gson.stream.JsonWriter;
 
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.ResourceLocation;
 
 public class JsonLoader {
 
 	private static final Gson GSON = new GsonBuilder()
-			.registerTypeAdapter(ResourceLocation.class, new TypeAdapter<ResourceLocation>() {
-				@Override
-				public void write(JsonWriter out, ResourceLocation value) throws IOException {
-					TypeAdapters.STRING.write(out, value.toString());
-				}
-
-				@Override
-				public ResourceLocation read(JsonReader in) throws IOException {
-					return new ResourceLocation(TypeAdapters.STRING.read(in));
-				}
-			})
 			.registerTypeAdapterFactory(new HashMultimapAdapterFactory())
+			.registerTypeAdapter(ResourceLocation.class, MinecraftTypeAdapters.RESOURCE_LOCATION)
+			.registerTypeAdapter(Block.class, MinecraftTypeAdapters.BLOCK)
+			.registerTypeAdapter(IBlockState.class, new BlockStateSerializer())
 			.setPrettyPrinting()
 			.create();
 
