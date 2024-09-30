@@ -359,6 +359,7 @@ public class HookMinecraft
 				.filter(Objects::nonNull)
 				.filter(structureData -> ModConfig.server.minecraft.cleanupStructureWorldgenFilesMode.clean(world, structureData))
 				.forEach(MapGenStructureData::markDirty);
+		StructureCleanupMode.clearCache();
 	}
 
 }
