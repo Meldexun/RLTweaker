@@ -20,6 +20,7 @@ import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.ai.EntityAIBase;
 import net.minecraft.entity.ai.attributes.AttributeModifier;
 import net.minecraft.entity.ai.attributes.IAttributeInstance;
+import net.minecraft.entity.passive.EntityTameable;
 import net.minecraft.pathfinding.Path;
 import net.minecraft.pathfinding.PathNavigate;
 import net.minecraft.util.math.AxisAlignedBB;
@@ -74,6 +75,9 @@ public class InvestigateAI extends EntityAIBase {
 	@Override
 	public boolean shouldContinueExecuting() {
 		if (entity.getAttackTarget() != null) {
+			return false;
+		}
+		if (entity instanceof EntityTameable && ((EntityTameable) entity).isTamed()) {
 			return false;
 		}
 
