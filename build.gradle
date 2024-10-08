@@ -38,8 +38,11 @@ repositories {
 dependencies {
     minecraft "net.minecraftforge:forge:${mc_version}-${forge_version}"
     includedDependencies 'meldexun:ReflectionUtil:1.0.0@jar'
+    includedDependencies 'meldexun:MemoryUtil:1.1.0@jar'
 
     buildDependencies 'curse.maven:serene-seasons-291874:2799213'
+    buildDependencies 'curse.maven:fancy-menu-367706:4655936'
+    buildDependencies 'curse.maven:konkrete-410295:4514895'
 }
 
 minecraft {

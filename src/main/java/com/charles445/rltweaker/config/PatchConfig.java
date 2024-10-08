@@ -150,4 +150,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Replaces the random update handler from Serene Seasons with a faster alternative.")
 	public boolean patchSSRandomUpdateHandler = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Replaces the animation loader from FancyMenu with a faster alternative which also reduces memory usage significantly.")
+	public boolean patchFMAnimationLoading = true;
 }

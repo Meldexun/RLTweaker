@@ -47,6 +47,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchBrokenTransformers;
 import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
 import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
+import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
 import com.charles445.rltweaker.asm.patch.sereneseasons.PatchRandomUpdateHandler;
 import com.charles445.rltweaker.asm.util.ASMInfo;
 import com.charles445.rltweaker.asm.util.ASMLogger;
@@ -442,6 +443,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.patchSSRandomUpdateHandler", false))
 		{
 			new PatchRandomUpdateHandler();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.patchFMAnimationLoading", false))
+		{
+			new PatchAnimationLoading();
 		}
 		
 		//new PatchForgeNetwork();
