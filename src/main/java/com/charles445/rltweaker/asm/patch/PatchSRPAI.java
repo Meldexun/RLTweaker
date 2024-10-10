@@ -35,6 +35,8 @@ public class PatchSRPAI extends PatchManager {
 						new VarInsnNode(Opcodes.DLOAD, 5),
 						TransformUtil.createObfMethodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70092_e", "(DDD)D", false),
 						new VarInsnNode(Opcodes.DLOAD, 7),
+						new VarInsnNode(Opcodes.DLOAD, 7),
+						new InsnNode(Opcodes.DMUL),
 						new InsnNode(Opcodes.DCMPL),
 						new JumpInsnNode(Opcodes.IFGE, target1.label)
 				));
