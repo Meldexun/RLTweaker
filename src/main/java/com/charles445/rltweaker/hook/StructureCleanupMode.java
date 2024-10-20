@@ -5,12 +5,12 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Map;
 
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.util.NBTUtil;
 
-import it.unimi.dsi.fastutil.objects.Object2ObjectOpenHashMap;
 import meldexun.memoryutil.UnsafeUtil;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
@@ -114,11 +114,7 @@ public enum StructureCleanupMode {
 		if (regionFile != null) {
 			return regionFile.isChunkSaved(x, z);
 		}
-		ChunkGenerationInfo dummyRegionFile = ChunkGenerationInfo.fromRegionFile(file);
-		if (dummyRegionFile != null) {
-			return dummyRegionFile.isChunkSaved(x, z);
-		}
-		return false;
+		return ChunkGenerationInfo.fromRegionFile(file).isChunkSaved(x, z);
 	}
 
 	public static void clearCache() {
@@ -127,7 +123,13 @@ public enum StructureCleanupMode {
 
 	private static class ChunkGenerationInfo {
 
-		private static final Map<File, ChunkGenerationInfo> CACHE = new Object2ObjectOpenHashMap<>();
+		private static final Map<File, ChunkGenerationInfo> CACHE = new HashMap<>();
+		private static final ChunkGenerationInfo EMPTY = new ChunkGenerationInfo(null) {
+			@Override
+			public boolean isChunkSaved(int x, int z) {
+				return false;
+			}
+		};
 		private final byte[] offsets;
 
 		private ChunkGenerationInfo(byte[] offsets) {
@@ -137,7 +139,7 @@ public enum StructureCleanupMode {
 		public static ChunkGenerationInfo fromRegionFile(File file) {
 			return CACHE.computeIfAbsent(file, k -> {
 				if (!k.exists()) {
-					return null;
+					return EMPTY;
 				}
 				byte[] offsets = new byte[1024 * 4];
 				try (InputStream in = new FileInputStream(k)) {
