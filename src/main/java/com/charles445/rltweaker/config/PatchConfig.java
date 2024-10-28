@@ -158,4 +158,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Improves OTG's check for nearby structures which is slow and throws exceptions which are catched but ignored.")
 	public boolean otgNearbyStructureCheck = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Prevents normally unnecessary structure recreation.")
+	public boolean preventStructureRecreation = true;
 }
