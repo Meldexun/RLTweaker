@@ -174,4 +174,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes memory leak in ContentCreator's render util class.")
 	public boolean contentCreatorRenderUtilMemoryLeak = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fix epic siege reducing damage of all mobs that are modified to 1.")
+	public boolean epicSiegeReducedDamage = true;
 }
