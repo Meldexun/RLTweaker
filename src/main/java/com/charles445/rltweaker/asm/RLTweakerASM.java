@@ -49,6 +49,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
+import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
 import com.charles445.rltweaker.asm.patch.otg.NearbyStructureCheckPatch;
 import com.charles445.rltweaker.asm.patch.sereneseasons.PatchRandomUpdateHandler;
 import com.charles445.rltweaker.asm.util.ASMInfo;
@@ -460,6 +461,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.preventStructureRecreation", false))
 		{
 			new PreventStructureRecreationPatch();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.optifineFastShaderLoading", false))
+		{
+			new FastShaderLoadingPatch();
 		}
 		
 		//new PatchForgeNetwork();

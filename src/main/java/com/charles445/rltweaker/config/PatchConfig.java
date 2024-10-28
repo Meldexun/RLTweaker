@@ -162,4 +162,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Prevents normally unnecessary structure recreation.")
 	public boolean preventStructureRecreation = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Drastically reduces the time to load shaders in Optifine.")
+	public boolean optifineFastShaderLoading = true;
 }

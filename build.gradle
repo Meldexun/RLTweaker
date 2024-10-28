@@ -44,6 +44,8 @@ dependencies {
     buildDependencies 'curse.maven:fancy-menu-367706:4655936'
     buildDependencies 'curse.maven:konkrete-410295:4514895'
     buildDependencies 'curse.maven:open-terrain-generator-265894:5286210'
+    buildDependencies 'libs:Minecraft:1.12.2'
+    buildDependencies 'libs:Optifine:1.12.2_HD_U_G5'
 }
 
 minecraft {
