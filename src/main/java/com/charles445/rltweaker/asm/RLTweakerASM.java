@@ -48,6 +48,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
 import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
 import com.charles445.rltweaker.asm.patch.contentcreator.RenderUtilMemoryLeakPatch;
+import com.charles445.rltweaker.asm.patch.crafttweaker.FastEntityDefinitionPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ChunkCacheMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ReducedDamagePatch;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
@@ -496,6 +497,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.infernalMobsInfernalOnReload", false))
 		{
 			new InfernalOnReloadPatch();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.craftTweakerFastEntityDefinition", false))
+		{
+			new FastEntityDefinitionPatch();
 		}
 		
 		//new PatchForgeNetwork();

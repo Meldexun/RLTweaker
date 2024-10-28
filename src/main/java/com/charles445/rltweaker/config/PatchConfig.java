@@ -186,4 +186,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fix infernal mobs trying to make mobs infernal on reload.")
 	public boolean infernalMobsInfernalOnReload = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes craft tweaker's entity definition creation iterating over the entire entity registry.")
+	public boolean craftTweakerFastEntityDefinition = true;
 }
