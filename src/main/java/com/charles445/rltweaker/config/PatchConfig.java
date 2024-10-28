@@ -166,4 +166,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Drastically reduces the time to load shaders in Optifine.")
 	public boolean optifineFastShaderLoading = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes memory leak in EpicSiege's chunk cache class.")
+	public boolean epicSiegeChunkCacheMemoryLeak = true;
 }
