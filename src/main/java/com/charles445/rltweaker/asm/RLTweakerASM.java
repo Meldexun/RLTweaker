@@ -51,6 +51,7 @@ import com.charles445.rltweaker.asm.patch.contentcreator.RenderUtilMemoryLeakPat
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ChunkCacheMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ReducedDamagePatch;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
+import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalTargetingCreativePatch;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
 import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
 import com.charles445.rltweaker.asm.patch.otg.NearbyStructureCheckPatch;
@@ -484,6 +485,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.epicSiegeReducedDamage", false))
 		{
 			new ReducedDamagePatch();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.infernalMobsTargetingCreative", false))
+		{
+			new InfernalTargetingCreativePatch();
 		}
 		
 		//new PatchForgeNetwork();

@@ -178,4 +178,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fix epic siege reducing damage of all mobs that are modified to 1.")
 	public boolean epicSiegeReducedDamage = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fix infernal mobs modifiers targeting creative players.")
+	public boolean infernalMobsTargetingCreative = true;
 }
