@@ -47,6 +47,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchBrokenTransformers;
 import com.charles445.rltweaker.asm.patch.compat.PatchCatServer;
 import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
+import com.charles445.rltweaker.asm.patch.contentcreator.RenderUtilMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ChunkCacheMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
@@ -472,6 +473,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.epicSiegeChunkCacheMemoryLeak", false))
 		{
 			new ChunkCacheMemoryLeakPatch();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.contentCreatorRenderUtilMemoryLeak", false))
+		{
+			new RenderUtilMemoryLeakPatch();
 		}
 		
 		//new PatchForgeNetwork();

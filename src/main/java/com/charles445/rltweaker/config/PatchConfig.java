@@ -170,4 +170,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes memory leak in EpicSiege's chunk cache class.")
 	public boolean epicSiegeChunkCacheMemoryLeak = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes memory leak in ContentCreator's render util class.")
+	public boolean contentCreatorRenderUtilMemoryLeak = true;
 }
