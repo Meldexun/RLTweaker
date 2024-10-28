@@ -182,4 +182,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fix infernal mobs modifiers targeting creative players.")
 	public boolean infernalMobsTargetingCreative = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fix infernal mobs trying to make mobs infernal on reload.")
+	public boolean infernalMobsInfernalOnReload = true;
 }
