@@ -154,4 +154,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Replaces the animation loader from FancyMenu with a faster alternative which also reduces memory usage significantly.")
 	public boolean patchFMAnimationLoading = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Improves OTG's check for nearby structures which is slow and throws exceptions which are catched but ignored.")
+	public boolean otgNearbyStructureCheck = true;
 }

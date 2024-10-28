@@ -43,6 +43,7 @@ dependencies {
     buildDependencies 'curse.maven:serene-seasons-291874:2799213'
     buildDependencies 'curse.maven:fancy-menu-367706:4655936'
     buildDependencies 'curse.maven:konkrete-410295:4514895'
+    buildDependencies 'curse.maven:open-terrain-generator-265894:5286210'
 }
 
 minecraft {
