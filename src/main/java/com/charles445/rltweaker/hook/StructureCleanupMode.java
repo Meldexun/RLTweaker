@@ -106,15 +106,15 @@ public enum StructureCleanupMode {
 		if (chunkLoader.chunksToSave.containsKey(new ChunkPos(x, z))) {
 			return true;
 		}
-		File file = new File(chunkLoader.chunkSaveLocation, "region/r" + (x >> 5) + "." + (z >> 5));
+		File file = new File(chunkLoader.chunkSaveLocation, "region/r." + (x >> 5) + "." + (z >> 5) + ".mca");
 		RegionFile regionFile;
 		synchronized (RegionFileCache.class) {
 			regionFile = RegionFileCache.REGIONS_BY_FILE.get(file);
 		}
 		if (regionFile != null) {
-			return regionFile.isChunkSaved(x, z);
+			return regionFile.isChunkSaved(x & 31, z & 31);
 		}
-		return ChunkGenerationInfo.fromRegionFile(file).isChunkSaved(x, z);
+		return ChunkGenerationInfo.fromRegionFile(file).isChunkSaved(x & 31, z & 31);
 	}
 
 	public static void clearCache() {
