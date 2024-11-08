@@ -23,6 +23,7 @@ import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.model.IModel;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.fml.common.FMLLog;
+import net.optifine.util.TextureUtils;
 
 public class ShadersHook {
 
@@ -81,6 +82,8 @@ public class ShadersHook {
 		}
 
 		mc.getRenderItem().onResourceManagerReload(mc.getResourceManager());
+
+		TextureUtils.resourcesReloaded(mc.getResourceManager());
 
 		if (f_baseQuads.isPresent()) f_baseQuads.get(null).clear();
 		if (f_flippedBaseQuads.isPresent()) f_flippedBaseQuads.get(null).clear();
