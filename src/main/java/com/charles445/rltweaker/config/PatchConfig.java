@@ -128,7 +128,7 @@ public class PatchConfig
 	public boolean patchFallingBlockPortalDupe = true;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Fix for item linking from Quark.")
+	@Config.Comment("Adds a cooldown to the item linking feature from Quark.")
 	public boolean patchItemLinking = true;
 
 	@Config.RequiresMcRestart
@@ -176,15 +176,15 @@ public class PatchConfig
 	public boolean contentCreatorRenderUtilMemoryLeak = true;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Fix epic siege reducing damage of all mobs that are modified to 1.")
+	@Config.Comment("Fixes epic siege reducing damage of all mobs that are modified to 1.")
 	public boolean epicSiegeReducedDamage = true;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Fix infernal mobs modifiers targeting creative players.")
+	@Config.Comment("Fixes infernal mobs modifiers targeting creative players.")
 	public boolean infernalMobsTargetingCreative = true;
 
 	@Config.RequiresMcRestart
-	@Config.Comment("Fix infernal mobs trying to make mobs infernal on reload.")
+	@Config.Comment("Fixes infernal mobs trying to make mobs infernal on reload.")
 	public boolean infernalMobsInfernalOnReload = true;
 
 	@Config.RequiresMcRestart
