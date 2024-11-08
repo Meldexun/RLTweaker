@@ -14,12 +14,12 @@ public class CommandReloadInvestigateAIConfig extends CommandBase {
 
 	@Override
 	public String getName() {
-		return "rlreloadinvestigateai";
+		return "rl_reloadInvestigateAI";
 	}
 
 	@Override
 	public String getUsage(ICommandSender sender) {
-		return "/rlreloadinvestigateai";
+		return "/rl_reloadInvestigateAI";
 	}
 
 	@Override
