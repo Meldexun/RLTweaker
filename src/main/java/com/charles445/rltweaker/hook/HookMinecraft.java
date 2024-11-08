@@ -14,6 +14,7 @@ import org.apache.commons.lang3.tuple.Pair;
 import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.debug.DebugUtil;
+import com.charles445.rltweaker.hook.minecraft.structurecleanup.StructureCleanupMode;
 import com.charles445.rltweaker.util.ErrorUtil;
 
 import net.minecraft.block.Block;

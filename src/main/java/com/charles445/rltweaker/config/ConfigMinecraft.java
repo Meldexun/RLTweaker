@@ -1,6 +1,6 @@
 package com.charles445.rltweaker.config;
 
-import com.charles445.rltweaker.hook.StructureCleanupMode;
+import com.charles445.rltweaker.hook.minecraft.structurecleanup.StructureCleanupMode;
 
 import net.minecraftforge.common.config.Config;
 import net.minecraftforge.common.config.Config.RangeDouble;

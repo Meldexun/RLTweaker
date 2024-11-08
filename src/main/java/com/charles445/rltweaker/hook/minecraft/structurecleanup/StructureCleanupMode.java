@@ -1,17 +1,15 @@
-package com.charles445.rltweaker.hook;
+package com.charles445.rltweaker.hook.minecraft.structurecleanup;
 
 import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.util.NBTUtil;
 
-import meldexun.memoryutil.UnsafeUtil;
+import meldexun.memoryutil.MemoryAccess;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.math.ChunkPos;
@@ -22,7 +20,6 @@ import net.minecraft.world.chunk.storage.RegionFileCache;
 import net.minecraft.world.gen.ChunkProviderServer;
 import net.minecraft.world.gen.structure.MapGenStructureData;
 import net.minecraftforge.common.util.Constants.NBT;
-import sun.misc.Unsafe;
 
 public enum StructureCleanupMode {
 
@@ -73,6 +70,7 @@ public enum StructureCleanupMode {
 
 	private static final String KEY_CHILDREN = "Children";
 	private static final String KEY_BB = "BB";
+	private static final LazyLong2ObjectOpenHashMap<SavedChunkProvider> SAVED_CHUNK_PROVIDER_CACHE = new LazyLong2ObjectOpenHashMap<>();
 
 	public abstract boolean clean(WorldServer world, MapGenStructureData structureData);
 
@@ -102,71 +100,41 @@ public enum StructureCleanupMode {
 		if (chunkProvider.id2ChunkMap.containsKey(ChunkPos.asLong(x, z))) {
 			return true;
 		}
-		AnvilChunkLoader chunkLoader = (AnvilChunkLoader) chunkProvider.chunkLoader;
-		if (chunkLoader.chunksToSave.containsKey(new ChunkPos(x, z))) {
+		if (((AnvilChunkLoader) chunkProvider.chunkLoader).chunksToSave.containsKey(new ChunkPos(x, z))) {
 			return true;
 		}
-		File file = new File(chunkLoader.chunkSaveLocation, "region/r." + (x >> 5) + "." + (z >> 5) + ".mca");
-		RegionFile regionFile;
-		synchronized (RegionFileCache.class) {
-			regionFile = RegionFileCache.REGIONS_BY_FILE.get(file);
-		}
-		if (regionFile != null) {
-			return regionFile.isChunkSaved(x & 31, z & 31);
-		}
-		return ChunkGenerationInfo.fromRegionFile(file).isChunkSaved(x & 31, z & 31);
+		return SAVED_CHUNK_PROVIDER_CACHE.computeIfAbsent(((x >> 5) & 0xFFFFFFFFL) | ((z >> 5) & 0xFFFFFFFFL) << 32, k -> {
+			File file = new File(((AnvilChunkLoader) chunkProvider.chunkLoader).chunkSaveLocation, "region/r." + (int) k + "." + (int) (k >> 32) + ".mca");
+			RegionFile regionFile;
+			synchronized (RegionFileCache.class) {
+				regionFile = RegionFileCache.REGIONS_BY_FILE.get(file);
+			}
+			if (regionFile != null) {
+				return regionFile::isChunkSaved;
+			}
+			if (!file.exists()) {
+				return (x3, z3) -> false;
+			}
+			byte[] offsets = new byte[1024 * 4];
+			try (InputStream in = new FileInputStream(file)) {
+				int total = 0;
+				while (total < offsets.length) {
+					int now = in.read(offsets, total, offsets.length - total);
+					if (now < 0) {
+						throw new EOFException();
+					}
+					total += now;
+				}
+			} catch (IOException e) {
+				throw new RuntimeException(e);
+			}
+			MemoryAccess offsetsAccess = MemoryAccess.of(offsets);
+			return (x1, z1) -> offsetsAccess.getInt((x1 + z1 * 32) * 4) != 0;
+		}).isChunkSaved(x & 31, z & 31);
 	}
 
 	public static void clearCache() {
-		ChunkGenerationInfo.clearCache();
-	}
-
-	private static class ChunkGenerationInfo {
-
-		private static final Map<File, ChunkGenerationInfo> CACHE = new HashMap<>();
-		private static final ChunkGenerationInfo EMPTY = new ChunkGenerationInfo(null) {
-			@Override
-			public boolean isChunkSaved(int x, int z) {
-				return false;
-			}
-		};
-		private final byte[] offsets;
-
-		private ChunkGenerationInfo(byte[] offsets) {
-			this.offsets = offsets;
-		}
-
-		public static ChunkGenerationInfo fromRegionFile(File file) {
-			return CACHE.computeIfAbsent(file, k -> {
-				if (!k.exists()) {
-					return EMPTY;
-				}
-				byte[] offsets = new byte[1024 * 4];
-				try (InputStream in = new FileInputStream(k)) {
-					int total = 0;
-					while (total < offsets.length) {
-						int now = in.read(offsets, total, offsets.length - total);
-						if (now < 0) {
-							throw new EOFException();
-						}
-						total += now;
-					}
-				} catch (IOException e) {
-					throw new RuntimeException(e);
-				}
-				return new ChunkGenerationInfo(offsets);
-			});
-		}
-
-		public static void clearCache() {
-			CACHE.clear();
-		}
-
-		public boolean isChunkSaved(int x, int z) {
-			int i = (x + z * 32) * 4;
-			return UnsafeUtil.UNSAFE.getInt(this.offsets, (long) (Unsafe.ARRAY_BYTE_BASE_OFFSET + i)) != 0;
-		}
-
+		SAVED_CHUNK_PROVIDER_CACHE.clear();
 	}
 
 }
