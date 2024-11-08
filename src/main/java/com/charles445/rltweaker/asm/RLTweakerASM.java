@@ -57,6 +57,7 @@ import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalTargetingCreative
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
 import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
 import com.charles445.rltweaker.asm.patch.otg.FastInternalNamePatch;
+import com.charles445.rltweaker.asm.patch.otg.ChunkGeneratorMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.otg.NearbyStructureCheckPatch;
 import com.charles445.rltweaker.asm.patch.sereneseasons.PatchRandomUpdateHandler;
 import com.charles445.rltweaker.asm.util.ASMInfo;
@@ -508,6 +509,11 @@ public class RLTweakerASM implements IClassTransformer
 		if(ASMConfig.getBoolean("general.patches.otgFastInternalName", false))
 		{
 			new FastInternalNamePatch();
+		}
+		
+		if(ASMConfig.getBoolean("general.patches.otgChunkGeneratorMemoryLeak", false))
+		{
+			new ChunkGeneratorMemoryLeakPatch();
 		}
 		
 		//new PatchForgeNetwork();

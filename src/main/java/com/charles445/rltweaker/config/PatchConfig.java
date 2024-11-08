@@ -194,4 +194,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Changes OTG's toInternalName function to only work with valid entity id's which can improve loading times significantly.")
 	public boolean otgFastInternalName = true;
+
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes OTG's chunk generator enabling block state capturing for no reason which can sometimes cause a memory leak.")
+	public boolean otgChunkGeneratorMemoryLeak = true;
 }
