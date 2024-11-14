@@ -28,7 +28,7 @@ public class RenderUtilMemoryLeakPatch extends PatchManager {
 										f.name = "MC";
 										f.desc = "Lnet/minecraft/client/Minecraft;";
 										m.instructions.insert(f, TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", "field_71441_e", "Lnet/minecraft/client/multiplayer/WorldClient;"));
-									} else if (f.name.equals("WORLD")) {
+									} else if (f.name.equals("PLAYER")) {
 										f.name = "MC";
 										f.desc = "Lnet/minecraft/client/Minecraft;";
 										m.instructions.insert(f, TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", "field_71439_g", "Lnet/minecraft/client/entity/EntityPlayerSP;"));
