@@ -27,11 +27,13 @@ public class FastInternalNamePatch extends PatchManager {
 				m_toInternalName.instructions.clear();
 				LabelNode label1 = new LabelNode();
 				m_toInternalName.instructions.insert(ASMUtil.listOf(
-						new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/fml/common/registry/ForgeRegistries", "ENTITIES", "Lnet/minecraftforge/registries/IForgeRegistry;"),
 						new TypeInsnNode(Opcodes.NEW, "net/minecraft/util/ResourceLocation"),
 						new InsnNode(Opcodes.DUP),
 						new VarInsnNode(Opcodes.ALOAD, 0),
 						new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/util/ResourceLocation", "<init>", "(Ljava/lang/String;)V", false),
+						new VarInsnNode(Opcodes.ASTORE, 1),
+						new FieldInsnNode(Opcodes.GETSTATIC, "net/minecraftforge/fml/common/registry/ForgeRegistries", "ENTITIES", "Lnet/minecraftforge/registries/IForgeRegistry;"),
+						new VarInsnNode(Opcodes.ALOAD, 1),
 						new MethodInsnNode(Opcodes.INVOKEINTERFACE, "net/minecraftforge/registries/IForgeRegistry", "containsKey", "(Lnet/minecraft/util/ResourceLocation;)Z", true),
 						new JumpInsnNode(Opcodes.IFNE, label1),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/pg85/otg/logging/LogMarker", "ERROR", "Lcom/pg85/otg/logging/LogMarker;"),
@@ -44,7 +46,8 @@ public class FastInternalNamePatch extends PatchManager {
 						new InsnNode(Opcodes.AASTORE),
 						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/pg85/otg/OTG", "log", "(Lcom/pg85/otg/logging/LogMarker;Ljava/lang/String;[Ljava/lang/Object;)V", false),
 						label1,
-						new VarInsnNode(Opcodes.ALOAD, 0),
+						new VarInsnNode(Opcodes.ALOAD, 1),
+						new MethodInsnNode(Opcodes.INVOKEVIRTUAL, "net/minecraft/util/ResourceLocation", "toString", "()Ljava/lang/String;", false),
 						new InsnNode(Opcodes.ARETURN)
 				));
 			}
