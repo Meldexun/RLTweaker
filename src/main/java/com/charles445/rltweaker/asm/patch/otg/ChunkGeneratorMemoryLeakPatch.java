@@ -17,10 +17,10 @@ public class ChunkGeneratorMemoryLeakPatch extends PatchManager {
 		this.add(new Patch(this, "com.pg85.otg.forge.generator.OTGChunkGenerator", ClassWriter.COMPUTE_FRAMES) {
 			@Override
 			public void patch(ClassNode clazzNode) {
-				MethodNode m_toInternalName = this.findMethod(clazzNode, "setBlock");
-				FieldInsnNode target = ASMUtil.findFieldInsn(m_toInternalName, Opcodes.PUTFIELD, "net/minecraft/world/World", "captureBlockSnapshots", "Z", 0);
-				m_toInternalName.instructions.insert(target, new InsnNode(Opcodes.POP2));
-				m_toInternalName.instructions.remove(target);
+				MethodNode m_setBlock = this.findMethod(clazzNode, "setBlock");
+				FieldInsnNode target = ASMUtil.findFieldInsn(m_setBlock, Opcodes.PUTFIELD, "net/minecraft/world/World", "captureBlockSnapshots", "Z", 0);
+				m_setBlock.instructions.insert(target, new InsnNode(Opcodes.POP2));
+				m_setBlock.instructions.remove(target);
 			}
 		});
 	}
