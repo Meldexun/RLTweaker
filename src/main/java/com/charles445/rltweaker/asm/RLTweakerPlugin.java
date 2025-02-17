@@ -8,7 +8,7 @@ import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 @IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(1002)
 @IFMLLoadingPlugin.TransformerExclusions({ "com.charles445.rltweaker.asm", "meldexun.asmutil2" })
-public class CoreLoader implements IFMLLoadingPlugin {
+public class RLTweakerPlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public String[] getASMTransformerClass() {
