@@ -21,21 +21,17 @@ import com.charles445.rltweaker.asm.helper.ASMHelper;
 import com.charles445.rltweaker.asm.util.ASMUtil;
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
-public class PatchCurePotion extends PatchManager
-{
-	public PatchCurePotion()
-	{
+public class PatchCurePotion extends PatchManager {
+	public PatchCurePotion() {
 		super("Patch Cure Potion");
-		
-		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionPotionSickness", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
-		{
+
+		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionPotionSickness", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override
-			public void patch(ClassNode clazzNode)
-			{
-				//Make effects applied by potion sickness incurable
-				
+			public void patch(ClassNode clazzNode) {
+				// Make effects applied by potion sickness incurable
+
 				MethodNode m_lambda$performEffect$0 = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/EntityLivingBase;)V", "lambda$performEffect$0");
-				
+
 				InsnList inject = new InsnList();
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				inject.add(new FieldInsnNode(Opcodes.GETSTATIC, "com/tmtravlr/potioncore/PotionCoreEffects", "BAD_EFFECTS", "Ljava/util/ArrayList;"));
@@ -44,18 +40,16 @@ public class PatchCurePotion extends PatchManager
 				TransformUtil.insertBeforeFirst(m_lambda$performEffect$0, inject);
 			}
 		});
-		
-		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionCure", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
-		{
+
+		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionCure", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override
-			public void patch(ClassNode clazzNode)
-			{
+			public void patch(ClassNode clazzNode) {
 				MethodNode m_clearNegativeEffects = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/EntityLivingBase;)V", "clearNegativeEffects");
-				
-				//Check if cure is disabled
-				
+
+				// Check if cure is disabled
+
 				LabelNode label = new LabelNode();
-				
+
 				InsnList inject = new InsnList();
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 				inject.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "isCureDisabled", "(Lnet/minecraft/entity/EntityLivingBase;)Z", false));
@@ -63,11 +57,11 @@ public class PatchCurePotion extends PatchManager
 				inject.add(new InsnNode(Opcodes.RETURN));
 				inject.add(label);
 				TransformUtil.insertBeforeFirst(m_clearNegativeEffects, inject);
-				
-				//Don't remove potion sickness or incurable effects
-				
+
+				// Don't remove potion sickness or incurable effects
+
 				JumpInsnNode toCall = TransformUtil.findNextInsnWithType(TransformUtil.findNextCallWithOpcodeAndName(first(m_clearNegativeEffects), Opcodes.INVOKEVIRTUAL, "isBadEffect", "func_76398_f"), JumpInsnNode.class);
-				
+
 				InsnList inject1 = new InsnList();
 				inject1.add(new VarInsnNode(Opcodes.ALOAD, 5));
 				inject1.add(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "isCurable", "(Lnet/minecraft/potion/PotionEffect;)Z", false));
@@ -75,31 +69,29 @@ public class PatchCurePotion extends PatchManager
 				this.insert(m_clearNegativeEffects, toCall, inject1);
 			}
 		});
-		
-		add(new Patch(this, "net.minecraft.potion.PotionEffect", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
-		{
+
+		add(new Patch(this, "net.minecraft.potion.PotionEffect", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override
-			public void patch(ClassNode clazzNode)
-			{
-				//Add Incurable interface
-				
+			public void patch(ClassNode clazzNode) {
+				// Add Incurable interface
+
 				clazzNode.interfaces.add("com/charles445/rltweaker/hook/HookPotionCore$Incurable");
-				
+
 				clazzNode.fields.add(new FieldNode(Opcodes.ACC_PRIVATE, "incurable", "Z", null, false));
-				
+
 				MethodNode methodIsCurable = new MethodNode(Opcodes.ACC_PUBLIC, "isIncurable", "()Z", null, null);
 				methodIsCurable.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				methodIsCurable.instructions.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "incurable", "Z"));
 				methodIsCurable.instructions.add(new InsnNode(Opcodes.IRETURN));
 				clazzNode.methods.add(methodIsCurable);
-				
+
 				MethodNode methodSetCurable = new MethodNode(Opcodes.ACC_PUBLIC, "setIncurable", "(Z)V", null, null);
 				methodSetCurable.instructions.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				methodSetCurable.instructions.add(new VarInsnNode(Opcodes.ILOAD, 1));
 				methodSetCurable.instructions.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/potion/PotionEffect", "incurable", "Z"));
 				methodSetCurable.instructions.add(new InsnNode(Opcodes.RETURN));
 				clazzNode.methods.add(methodSetCurable);
-				
+
 				{
 					MethodNode m = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/potion/PotionEffect;)V", "<init>");
 					AbstractInsnNode toCall = TransformUtil.findPreviousInsnWithType(ASMHelper.findLastInstructionWithOpcode(m, Opcodes.RETURN), LabelNode.class);
@@ -110,7 +102,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(new FieldInsnNode(Opcodes.PUTFIELD, "net/minecraft/potion/PotionEffect", "incurable", "Z"));
 					this.insert(m, toCall, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "func_76452_a", "combine");
 					LabelNode label1 = new LabelNode();
@@ -121,19 +113,19 @@ public class PatchCurePotion extends PatchManager
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					inject.add(TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "field_76461_c", "I"));
 					inject.add(new JumpInsnNode(Opcodes.IF_ICMPLT, label1));
-					
+
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					inject.add(TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "field_76461_c", "I"));
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					inject.add(TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "field_76461_c", "I"));
 					inject.add(new JumpInsnNode(Opcodes.IF_ICMPNE, label2));
-					
+
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					inject.add(TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "field_76460_b", "I"));
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
 					inject.add(TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "field_76460_b", "I"));
 					inject.add(new JumpInsnNode(Opcodes.IF_ICMPGE, label2));
-					
+
 					inject.add(label1);
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 					inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -142,7 +134,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(label2);
 					TransformUtil.insertBeforeFirst(m, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "toString");
 					AbstractInsnNode toCall = TransformUtil.findPreviousInsnWithType(ASMHelper.findLastInstructionWithOpcode(m, Opcodes.ARETURN), LabelNode.class);
@@ -162,7 +154,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(label);
 					this.insert(m, toCall, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "equals");
 					AbstractInsnNode n = ASMHelper.findLastInstructionWithOpcode(m, Opcodes.IRETURN);
@@ -177,7 +169,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(new JumpInsnNode(Opcodes.IF_ICMPNE, label));
 					this.insertBefore(m, toCall, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "hashCode");
 					AbstractInsnNode toCall = TransformUtil.findPreviousInsnWithType(ASMHelper.findLastInstructionWithOpcode(m, Opcodes.IRETURN), LabelNode.class);
@@ -199,7 +191,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(new IntInsnNode(Opcodes.ISTORE, 1));
 					this.insert(m, toCall, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "func_82719_a", "writeCustomPotionEffectToNBT");
 					AbstractInsnNode toCall = ASMHelper.findLastInstructionWithOpcode(m, Opcodes.ARETURN);
@@ -211,7 +203,7 @@ public class PatchCurePotion extends PatchManager
 					inject.add(TransformUtil.createObfMethodInsn(Opcodes.INVOKEVIRTUAL, "net/minecraft/nbt/NBTTagCompound", "func_74757_a", "(Ljava/lang/String;Z)V", false));
 					this.insertBefore(m, toCall, inject);
 				}
-				
+
 				{
 					MethodNode m = this.findMethod(clazzNode, "func_82722_b", "readCustomPotionEffectFromNBT");
 					AbstractInsnNode toCall = ASMHelper.findLastInstructionWithOpcode(m, Opcodes.ARETURN);
@@ -225,26 +217,19 @@ public class PatchCurePotion extends PatchManager
 				}
 			}
 		});
-		
-		add(new Patch(this, "rustic.common.potions.PotionTipsy", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES)
-		{
+
+		add(new Patch(this, "rustic.common.potions.PotionTipsy", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
 			@Override
-			public void patch(ClassNode clazzNode)
-			{
-				//Make effects applied by tipsy incurable
-				
+			public void patch(ClassNode clazzNode) {
+				// Make effects applied by tipsy incurable
+
 				MethodNode m_performEffect = this.findMethod(clazzNode, "func_76394_a", "performEffect");
 
-				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 0), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
-				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 1), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
-				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 2), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
-				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 3), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
-				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 4), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
+				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 0), ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
+				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 1), ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
+				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 2), ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
+				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 3), ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
+				this.insertBefore(m_performEffect, ASMUtil.findMethodInsn(m_performEffect, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70690_d", "addPotionEffect", "(Lnet/minecraft/potion/PotionEffect;)V", 4), ASMUtil.listOf(new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "onAddTipsyEffect", "(Lnet/minecraft/potion/PotionEffect;)Lnet/minecraft/potion/PotionEffect;", false)));
 			}
 		});
 	}

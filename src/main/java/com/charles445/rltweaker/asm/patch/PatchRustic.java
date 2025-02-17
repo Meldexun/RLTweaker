@@ -20,25 +20,29 @@ public class PatchRustic extends PatchManager {
 				MethodNode m_affectPlayer = this.findMethod(clazzNode, "affectPlayer");
 
 				this.insert(m_affectPlayer, ASMUtil.findMethodInsn(m_affectPlayer, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70651_bq", "getActivePotionEffects", "()Ljava/util/Collection;", 0), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)));
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findInsnWithOpcode(m_affectPlayer, Opcodes.ICONST_2, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierMaximum", "I")));
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierMaximum", "I")
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findInsnWithOpcode(m_affectPlayer, Opcodes.ICONST_1, 1), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierModifier", "I")));
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierModifier", "I")
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findInsnWithOpcode(m_affectPlayer, Opcodes.ICONST_1, 2), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierModifier", "I")));
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wildberryWineAmplifierModifier", "I")
+				));
 			}
 
 		});
@@ -49,33 +53,38 @@ public class PatchRustic extends PatchManager {
 				MethodNode m_affectPlayer = this.findMethod(clazzNode, "affectPlayer");
 
 				this.insert(m_affectPlayer, ASMUtil.findMethodInsn(m_affectPlayer, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70651_bq", "getActivePotionEffects", "()Ljava/util/Collection;", 0), ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)));
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/util/CollectionUtil", "copy", "(Ljava/util/Collection;)Ljava/util/Collection;", false)
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findIntInsn(m_affectPlayer, Opcodes.SIPUSH, 12000, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationMaximum", "I")));
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationMaximum", "I")
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findIntInsn(m_affectPlayer, Opcodes.SIPUSH, 12000, 1), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
-						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationMaximum", "I")));
+						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationMaximum", "I")
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findLdcInsn(m_affectPlayer, 2400.0F, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationModifier", "I"),
-						new InsnNode(Opcodes.I2F)));
+						new InsnNode(Opcodes.I2F)
+				));
 
 				this.insert(m_affectPlayer, ASMUtil.findLdcInsn(m_affectPlayer, 2400.0D, 0), ASMUtil.listOf(
 						new InsnNode(Opcodes.POP2),
 						new FieldInsnNode(Opcodes.GETSTATIC, "com/charles445/rltweaker/config/ModConfig", "server", "Lcom/charles445/rltweaker/config/ModConfig$ServerConfig;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ModConfig$ServerConfig", "rustic", "Lcom/charles445/rltweaker/config/ConfigRustic;"),
 						new FieldInsnNode(Opcodes.GETFIELD, "com/charles445/rltweaker/config/ConfigRustic", "wineDurationModifier", "I"),
-						new InsnNode(Opcodes.I2D)));
+						new InsnNode(Opcodes.I2D)
+				));
 			}
 
 		});

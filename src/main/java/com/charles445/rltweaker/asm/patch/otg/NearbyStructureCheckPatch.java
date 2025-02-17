@@ -22,12 +22,12 @@ public class NearbyStructureCheckPatch extends PatchManager {
 				m_isStructureInRadius.instructions.clear();
 				m_isStructureInRadius.tryCatchBlocks.clear();
 				m_isStructureInRadius.instructions.insert(ASMUtil.listOf(
-					new VarInsnNode(Opcodes.ALOAD, 0),
-					new VarInsnNode(Opcodes.ALOAD, 1),
-					new VarInsnNode(Opcodes.ALOAD, 2),
-					new VarInsnNode(Opcodes.ILOAD, 3),
-					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/otg/nearbystructurecheck/ForgeWorldHook", "isStructureInRadius", "(Lcom/pg85/otg/forge/world/ForgeWorld;Lcom/pg85/otg/util/ChunkCoordinate;Lnet/minecraft/world/gen/structure/MapGenStructure;I)Z", false),
-					new InsnNode(Opcodes.IRETURN)
+						new VarInsnNode(Opcodes.ALOAD, 0),
+						new VarInsnNode(Opcodes.ALOAD, 1),
+						new VarInsnNode(Opcodes.ALOAD, 2),
+						new VarInsnNode(Opcodes.ILOAD, 3),
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/otg/nearbystructurecheck/ForgeWorldHook", "isStructureInRadius", "(Lcom/pg85/otg/forge/world/ForgeWorld;Lcom/pg85/otg/util/ChunkCoordinate;Lnet/minecraft/world/gen/structure/MapGenStructure;I)Z", false),
+						new InsnNode(Opcodes.IRETURN)
 				));
 			}
 		});

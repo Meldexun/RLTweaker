@@ -34,7 +34,8 @@ public class PatchFasterBlockCollision extends PatchManager {
 						new VarInsnNode(Opcodes.ALOAD, 4),
 						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookWorld", "getCollisionBoxes", "(Lnet/minecraft/world/World;Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;ZLjava/util/List;)Z", false),
 						new InsnNode(Opcodes.IRETURN),
-						labelNode));
+						labelNode
+				));
 			}
 		});
 	}

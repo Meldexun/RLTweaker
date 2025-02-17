@@ -17,32 +17,23 @@ import org.objectweb.asm.tree.VarInsnNode;
 import com.charles445.rltweaker.asm.helper.ASMHelper;
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
-public class PatchDebug extends PatchManager
-{	
-	private MethodInsnNode objectDebug()
-	{
-		return new MethodInsnNode(Opcodes.INVOKESTATIC,
-				"com/charles445/rltweaker/hook/HookDebug",
-				"printObject",
-				"(Ljava/lang/Object;)V",
-				false);
+public class PatchDebug extends PatchManager {
+	private MethodInsnNode objectDebug() {
+		return new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookDebug", "printObject", "(Ljava/lang/Object;)V", false);
 	}
-	
-	private LdcInsnNode stringObject(String s)
-	{
+
+	private LdcInsnNode stringObject(String s) {
 		return new LdcInsnNode(s);
 	}
-	
-	private InsnList debugPrint(String s)
-	{
+
+	private InsnList debugPrint(String s) {
 		InsnList inject = new InsnList();
 		inject.add(stringObject(s));
 		inject.add(objectDebug());
 		return inject;
 	}
-	
-	public PatchDebug()
-	{
+
+	public PatchDebug() {
 		super("Debug");
 	}
 }

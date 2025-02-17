@@ -31,7 +31,8 @@ public class PatchFallingBlockPortalDupe extends PatchManager {
 						TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/entity/item/EntityFallingBlock", "field_70128_L", "Z"),
 						new JumpInsnNode(Opcodes.IFEQ, labelNode),
 						new InsnNode(Opcodes.RETURN),
-						labelNode));
+						labelNode
+				));
 			}
 		});
 	}

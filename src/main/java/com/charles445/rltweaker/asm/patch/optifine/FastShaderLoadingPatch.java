@@ -50,15 +50,11 @@ public class FastShaderLoadingPatch extends PatchManager {
 				MethodNode m_parseShaderPackOptions = this.findMethod(clazzNode, "parseShaderPackOptions");
 				m_parseShaderPackOptions.instructions.clear();
 				m_parseShaderPackOptions.instructions.insert(ASMUtil.listOf(
-					new VarInsnNode(Opcodes.ALOAD, 0),
-					new VarInsnNode(Opcodes.ALOAD, 1),
-					new VarInsnNode(Opcodes.ALOAD, 2),
-					new MethodInsnNode(Opcodes.INVOKESTATIC,
-							"com/charles445/rltweaker/hook/optifine/fastshaderloading/ShaderPackParserHook",
-							m_parseShaderPackOptions.name,
-							m_parseShaderPackOptions.desc,
-							false),
-					new InsnNode(Opcodes.ARETURN)
+						new VarInsnNode(Opcodes.ALOAD, 0),
+						new VarInsnNode(Opcodes.ALOAD, 1),
+						new VarInsnNode(Opcodes.ALOAD, 2),
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/optifine/fastshaderloading/ShaderPackParserHook", m_parseShaderPackOptions.name, m_parseShaderPackOptions.desc, false),
+						new InsnNode(Opcodes.ARETURN)
 				));
 			}
 		});
@@ -69,27 +65,19 @@ public class FastShaderLoadingPatch extends PatchManager {
 					MethodNode m_parseOption = this.findMethod(clazzNode, "parseOption");
 					m_parseOption.instructions.clear();
 					m_parseOption.instructions.insert(ASMUtil.listOf(
-						new VarInsnNode(Opcodes.ALOAD, 0),
-						new VarInsnNode(Opcodes.ALOAD, 1),
-						new MethodInsnNode(Opcodes.INVOKESTATIC,
-								"com/charles445/rltweaker/hook/optifine/fastshaderloading/" + name + "Hook",
-								m_parseOption.name,
-								m_parseOption.desc,
-								false),
-						new InsnNode(Opcodes.ARETURN)
+							new VarInsnNode(Opcodes.ALOAD, 0),
+							new VarInsnNode(Opcodes.ALOAD, 1),
+							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/optifine/fastshaderloading/" + name + "Hook", m_parseOption.name, m_parseOption.desc, false),
+							new InsnNode(Opcodes.ARETURN)
 					));
 
 					MethodNode m_matchesLine = this.findMethod(clazzNode, "matchesLine");
 					m_matchesLine.instructions.clear();
 					m_matchesLine.instructions.insert(ASMUtil.listOf(
-						new VarInsnNode(Opcodes.ALOAD, 0),
-						new VarInsnNode(Opcodes.ALOAD, 1),
-						new MethodInsnNode(Opcodes.INVOKESTATIC,
-								"com/charles445/rltweaker/hook/optifine/fastshaderloading/" + name + "Hook",
-								m_matchesLine.name,
-								"(Lnet/optifine/shaders/config/" + name + ";Ljava/lang/String;)Z",
-								false),
-						new InsnNode(Opcodes.IRETURN)
+							new VarInsnNode(Opcodes.ALOAD, 0),
+							new VarInsnNode(Opcodes.ALOAD, 1),
+							new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/optifine/fastshaderloading/" + name + "Hook", m_matchesLine.name, "(Lnet/optifine/shaders/config/" + name + ";Ljava/lang/String;)Z", false),
+							new InsnNode(Opcodes.IRETURN)
 					));
 				}
 			});
@@ -100,14 +88,10 @@ public class FastShaderLoadingPatch extends PatchManager {
 				MethodNode m_isUsedInLine = this.findMethod(clazzNode, "isUsedInLine");
 				m_isUsedInLine.instructions.clear();
 				m_isUsedInLine.instructions.insert(ASMUtil.listOf(
-					new VarInsnNode(Opcodes.ALOAD, 0),
-					new VarInsnNode(Opcodes.ALOAD, 1),
-					new MethodInsnNode(Opcodes.INVOKESTATIC,
-							"com/charles445/rltweaker/hook/optifine/fastshaderloading/ShaderOptionSwitchHook",
-							m_isUsedInLine.name,
-							"(Lnet/optifine/shaders/config/ShaderOptionSwitch;Ljava/lang/String;)Z",
-							false),
-					new InsnNode(Opcodes.IRETURN)
+						new VarInsnNode(Opcodes.ALOAD, 0),
+						new VarInsnNode(Opcodes.ALOAD, 1),
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/optifine/fastshaderloading/ShaderOptionSwitchHook", m_isUsedInLine.name, "(Lnet/optifine/shaders/config/ShaderOptionSwitch;Ljava/lang/String;)Z", false),
+						new InsnNode(Opcodes.IRETURN)
 				));
 			}
 		});

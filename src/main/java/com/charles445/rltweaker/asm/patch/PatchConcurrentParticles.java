@@ -9,29 +9,25 @@ import org.objectweb.asm.tree.MethodNode;
 
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
-public class PatchConcurrentParticles extends PatchManager
-{
-	public PatchConcurrentParticles()
-	{
+public class PatchConcurrentParticles extends PatchManager {
+	public PatchConcurrentParticles() {
 		super("Concurrent Particles");
-		
-		add(new Patch(this, "net.minecraft.client.particle.ParticleManager", ClassWriter.COMPUTE_MAXS)
-		{
+
+		add(new Patch(this, "net.minecraft.client.particle.ParticleManager", ClassWriter.COMPUTE_MAXS) {
 			@Override
-			public void patch(ClassNode c_ParticleManager)
-			{
+			public void patch(ClassNode c_ParticleManager) {
 				MethodNode m_init = findMethod(c_ParticleManager, "<init>");
-				
+
 				AbstractInsnNode anchor = TransformUtil.findNextFieldWithOpcodeAndName(first(m_init), Opcodes.PUTFIELD, "queue", "field_187241_h");
-				
-				if(anchor == null)
+
+				if (anchor == null)
 					throw new RuntimeException("Couldn't find queue or field_187241_h");
-				
+
 				MethodInsnNode hookCaller = TransformUtil.findPreviousCallWithOpcodeAndName(anchor, Opcodes.INVOKESTATIC, "newArrayDeque");
-				
-				if(hookCaller == null)
+
+				if (hookCaller == null)
 					throw new RuntimeException("Couldn't find newArrayDeque");
-				
+
 				hookCaller.owner = "com/charles445/rltweaker/hook/HookMinecraft";
 				hookCaller.name = "newConcurrentLinkedDeque";
 				hookCaller.desc = "()Ljava/util/concurrent/ConcurrentLinkedDeque;";

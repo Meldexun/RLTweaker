@@ -32,7 +32,8 @@ public class PatchItemLinking extends PatchManager {
 						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookQuark", "tryLinkItem", "(Lnet/minecraft/entity/player/EntityPlayer;)Z", false),
 						new JumpInsnNode(Opcodes.IFNE, labelNode),
 						new InsnNode(Opcodes.RETURN),
-						labelNode));
+						labelNode
+				));
 			}
 		});
 	}

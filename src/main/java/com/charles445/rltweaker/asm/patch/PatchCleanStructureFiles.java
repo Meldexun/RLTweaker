@@ -22,7 +22,8 @@ public class PatchCleanStructureFiles extends PatchManager {
 
 				TransformUtil.insertBeforeFirst(m_saveLevel, ASMUtil.listOf(
 						new VarInsnNode(Opcodes.ALOAD, 0),
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookMinecraft", "preSaveWorld", "(Lnet/minecraft/world/WorldServer;)V", false)));
+						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookMinecraft", "preSaveWorld", "(Lnet/minecraft/world/WorldServer;)V", false)
+				));
 			}
 		});
 	}
