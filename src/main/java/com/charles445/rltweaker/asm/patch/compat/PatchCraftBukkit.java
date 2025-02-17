@@ -9,7 +9,7 @@ import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.charles445.rltweaker.asm.RLTweakerASM;
+import com.charles445.rltweaker.asm.RLTweakerClassTransformer;
 
 import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.IClassTransformerRegistry;
@@ -18,7 +18,7 @@ public class PatchCraftBukkit {
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("net.minecraft.tileentity.TileEntityBeacon", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			try {
-				Class.forName("svenhjol.charm.base.CharmClassTransformer", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("svenhjol.charm.base.CharmClassTransformer", false, RLTweakerClassTransformer.class.getClassLoader());
 			} catch (ClassNotFoundException e) {
 				return;
 			}

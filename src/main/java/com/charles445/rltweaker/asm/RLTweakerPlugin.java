@@ -12,7 +12,7 @@ public class RLTweakerPlugin implements IFMLLoadingPlugin {
 
 	@Override
 	public String[] getASMTransformerClass() {
-		return new String[] { RLTweakerASM.class.getName() };
+		return new String[] { RLTweakerClassTransformer.class.getName() };
 	}
 
 	@Override

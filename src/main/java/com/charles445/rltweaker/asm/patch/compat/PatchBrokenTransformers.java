@@ -2,14 +2,14 @@ package com.charles445.rltweaker.asm.patch.compat;
 
 import org.objectweb.asm.ClassWriter;
 
-import com.charles445.rltweaker.asm.RLTweakerASM;
+import com.charles445.rltweaker.asm.RLTweakerClassTransformer;
 
 import meldexun.asmutil2.IClassTransformerRegistry;
 
 public class PatchBrokenTransformers {
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		try {
-			Class.forName("com.teamwizardry.librarianlib.asm.LibLibTransformer", false, RLTweakerASM.class.getClassLoader());
+			Class.forName("com.teamwizardry.librarianlib.asm.LibLibTransformer", false, RLTweakerClassTransformer.class.getClassLoader());
 		} catch (ClassNotFoundException e) {
 			return;
 		}

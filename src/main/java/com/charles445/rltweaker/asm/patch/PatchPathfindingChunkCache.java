@@ -7,7 +7,7 @@ import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.TypeInsnNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.charles445.rltweaker.asm.RLTweakerASM;
+import com.charles445.rltweaker.asm.RLTweakerClassTransformer;
 
 import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.IClassTransformerRegistry;
@@ -16,7 +16,7 @@ public class PatchPathfindingChunkCache {
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("net.minecraft.world.ChunkCache", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			try {
-				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerClassTransformer.class.getClassLoader());
 			} catch (ClassNotFoundException e) {
 				return;
 			}
@@ -42,7 +42,7 @@ public class PatchPathfindingChunkCache {
 
 		registry.add("net.minecraft.pathfinding.PathNavigate", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			try {
-				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerClassTransformer.class.getClassLoader());
 			} catch (ClassNotFoundException e) {
 				return;
 			}

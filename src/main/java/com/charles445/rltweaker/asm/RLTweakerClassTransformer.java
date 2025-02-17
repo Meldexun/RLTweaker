@@ -63,7 +63,7 @@ import meldexun.asmutil2.reader.ClassUtil;
 import net.minecraft.launchwrapper.IClassTransformer;
 import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
-public class RLTweakerASM extends HashMapClassNodeClassTransformer implements IClassTransformer {
+public class RLTweakerClassTransformer extends HashMapClassNodeClassTransformer implements IClassTransformer {
 
 	private static final ClassUtil.Configuration REMAPPING_CONFIGURATION;
 	static {
@@ -72,7 +72,7 @@ public class RLTweakerASM extends HashMapClassNodeClassTransformer implements IC
 			f.setAccessible(true);
 			@SuppressWarnings("unchecked")
 			BiMap<String, String> classNameBiMap = (BiMap<String, String>) f.get(FMLDeobfuscatingRemapper.INSTANCE);
-			REMAPPING_CONFIGURATION = new ClassUtil.Configuration(RLTweakerASM.class.getClassLoader(), classNameBiMap.inverse(), classNameBiMap);
+			REMAPPING_CONFIGURATION = new ClassUtil.Configuration(RLTweakerClassTransformer.class.getClassLoader(), classNameBiMap.inverse(), classNameBiMap);
 		} catch (ReflectiveOperationException e) {
 			throw new UnsupportedOperationException(e);
 		}
@@ -135,19 +135,19 @@ public class RLTweakerASM extends HashMapClassNodeClassTransformer implements IC
 			boolean catServer = false;
 			boolean mohist = false;
 			try {
-				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerClassTransformer.class.getClassLoader());
 				hasSponge = true;
 			} catch (ClassNotFoundException e) {
 				// ignore
 			}
 			try {
-				Class.forName("catserver.server.CatServer", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("catserver.server.CatServer", false, RLTweakerClassTransformer.class.getClassLoader());
 				catServer = true;
 			} catch (ClassNotFoundException e) {
 				// ignore
 			}
 			try {
-				Class.forName("com.mohistmc.MohistMC", false, RLTweakerASM.class.getClassLoader());
+				Class.forName("com.mohistmc.MohistMC", false, RLTweakerClassTransformer.class.getClassLoader());
 				mohist = true;
 			} catch (ClassNotFoundException e) {
 				// ignore
