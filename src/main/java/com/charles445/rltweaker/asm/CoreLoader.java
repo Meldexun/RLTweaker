@@ -2,49 +2,37 @@ package com.charles445.rltweaker.asm;
 
 import java.util.Map;
 
-import com.charles445.rltweaker.asm.helper.ObfHelper;
-
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 @IFMLLoadingPlugin.Name("RLTweaker ASM")
+@IFMLLoadingPlugin.MCVersion("1.12.2")
 @IFMLLoadingPlugin.SortingIndex(1002)
-@IFMLLoadingPlugin.TransformerExclusions({ "com.charles445.rltweaker.asm", "com.charles445.rltweaker.asm." })
-
-public class CoreLoader implements IFMLLoadingPlugin
-{
-	//
-	// IFMLLoadingPlugin
-	// 
+@IFMLLoadingPlugin.TransformerExclusions({ "com.charles445.rltweaker.asm", "meldexun.asmutil2" })
+public class CoreLoader implements IFMLLoadingPlugin {
 
 	@Override
-	public String[] getASMTransformerClass()
-	{
-		ASMConfig.setup();
-		return new String[] { "com.charles445.rltweaker.asm.RLTweakerASM" };
+	public String[] getASMTransformerClass() {
+		return new String[] { RLTweakerASM.class.getName() };
 	}
 
 	@Override
-	public void injectData(Map<String, Object> data)
-	{
-		ObfHelper.setObfuscated((Boolean) data.get("runtimeDeobfuscationEnabled"));
-		ObfHelper.setRunsAfterDeobfRemapper(true);
-	}
-
-	@Override
-	public String getModContainerClass()
-	{
+	public String getModContainerClass() {
 		return null;
 	}
 
 	@Override
-	public String getSetupClass()
-	{
+	public String getSetupClass() {
 		return null;
 	}
 
 	@Override
-	public String getAccessTransformerClass()
-	{
+	public void injectData(Map<String, Object> data) {
+
+	}
+
+	@Override
+	public String getAccessTransformerClass() {
 		return null;
 	}
+
 }

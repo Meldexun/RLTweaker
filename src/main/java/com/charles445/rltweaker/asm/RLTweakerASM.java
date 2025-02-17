@@ -1,17 +1,10 @@
 package com.charles445.rltweaker.asm;
 
-import java.io.File;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.lang.reflect.Field;
 
-import org.objectweb.asm.tree.ClassNode;
+import org.objectweb.asm.ClassWriter;
 
-import com.charles445.rltweaker.asm.helper.ASMHelper;
-import com.charles445.rltweaker.asm.patch.IPatch;
-import com.charles445.rltweaker.asm.patch.Patch;
+import com.charles445.rltweaker.asm.configloader.EarlyConfigLoader;
 import com.charles445.rltweaker.asm.patch.PatchAggressiveMotionChecker;
 import com.charles445.rltweaker.asm.patch.PatchAnvilDupe;
 import com.charles445.rltweaker.asm.patch.PatchBetterCombatCriticalsFix;
@@ -56,467 +49,130 @@ import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalOnReloadPatch;
 import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalTargetingCreativePatch;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
 import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
-import com.charles445.rltweaker.asm.patch.otg.FastInternalNamePatch;
 import com.charles445.rltweaker.asm.patch.otg.ChunkGeneratorMemoryLeakPatch;
+import com.charles445.rltweaker.asm.patch.otg.FastInternalNamePatch;
 import com.charles445.rltweaker.asm.patch.otg.NearbyStructureCheckPatch;
 import com.charles445.rltweaker.asm.patch.sereneseasons.PatchRandomUpdateHandler;
-import com.charles445.rltweaker.asm.util.ASMInfo;
-import com.charles445.rltweaker.asm.util.ASMLogger;
-import com.charles445.rltweaker.asm.util.ServerType;
+import com.charles445.rltweaker.config.PatchConfig;
+import com.google.common.collect.BiMap;
 
+import meldexun.asmutil2.HashMapClassNodeClassTransformer;
+import meldexun.asmutil2.IClassTransformerRegistry;
+import meldexun.asmutil2.NonLoadingClassWriter;
+import meldexun.asmutil2.reader.ClassUtil;
 import net.minecraft.launchwrapper.IClassTransformer;
-import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.asm.transformers.deobf.FMLDeobfuscatingRemapper;
 
-public class RLTweakerASM implements IClassTransformer
-{
-	private static boolean run = true;
-	
-	private static boolean setup = false;
-	
-	private static boolean firstrun = false;
-	
-	//private boolean debug = true;
-	
-	protected static Map<String, List<IPatch>> transformMap = new HashMap<>();
-	
-	public RLTweakerASM()
-	{
-		super();
-		
-		if(setup)
-			return;
-		
-		setup = true;
-		
-		ASMInfo.cacheServerType(this.getClass().getClassLoader());
-		
-		ASMLogger.info("Server Type: "+ASMInfo.serverType.name());
-		
-		this.run = ASMConfig.getBoolean("general.patches.ENABLED", true);
-		
-		if(this.run)
-		{
-			ASMLogger.info("Patcher is enabled");
+public class RLTweakerASM extends HashMapClassNodeClassTransformer implements IClassTransformer {
+
+	private static final ClassUtil.Configuration REMAPPING_CONFIGURATION;
+	static {
+		try {
+			Field f = FMLDeobfuscatingRemapper.class.getDeclaredField("classNameBiMap");
+			f.setAccessible(true);
+			@SuppressWarnings("unchecked")
+			BiMap<String, String> classNameBiMap = (BiMap<String, String>) f.get(FMLDeobfuscatingRemapper.INSTANCE);
+			REMAPPING_CONFIGURATION = new ClassUtil.Configuration(RLTweakerASM.class.getClassLoader(), classNameBiMap.inverse(), classNameBiMap);
+		} catch (ReflectiveOperationException e) {
+			throw new UnsupportedOperationException(e);
 		}
-		else
-		{
-			ASMLogger.info("Patcher has been disabled");
-			return;
-		}
-		
-		this.createPatches();
 	}
-	
+
 	@Override
-	public byte[] transform(String name, String transformedName, byte[] basicClass)
-	{
-		byte[] result = doTransform(name, transformedName, basicClass);
-		return result;
-	}
-	
-	public byte[] doTransform(String name, String transformedName, byte[] basicClass)
-	{
-		if(true)
-		{
-			//Test to compute frames on EVERYTHING, although this test skips RLTweaker transformers entirely
-			//return ASMHelper.writeClassToBytes(ASMHelper.readClassFromBytes(basicClass), ClassWriter.COMPUTE_FRAMES | ClassWriter.COMPUTE_MAXS);
-		}
-		
-		if(!this.run)
-			return basicClass;
-		
-		if(!firstrun)
-		{
-			firstrun = true;
-			
-			//Gather up loaded transformers in order to make informed decisions later
-			if(this.getClass().getClassLoader() instanceof LaunchClassLoader)
-			{
-				LaunchClassLoader loader = (LaunchClassLoader)this.getClass().getClassLoader();
-				for(IClassTransformer transformer : loader.getTransformers())
-				{
-					if(transformer != null)
-					{
-						Patch.loadedTransformers.add(transformer.getClass().getName());
-					}
-				}
-			}
-			else
-			{
-				ASMLogger.warn("WARNING: RLTweaker transformer firstrun is not loaded by LaunchClassLoader! Some mod and server compatibility will fail!");
-			}
-		}
-		
-		//if(this.debug)
-		//	PatchDebug.transformAll(basicClass);
-		
-		//Check for patches
-		if(transformMap.containsKey(transformedName))
-		{
-			ASMLogger.info("Patch exists for "+transformedName);
-			int flags = 0;
-			int oldFlags = 0;
-			
-			boolean ranAnyPatch = false;
-			
-			ClassNode clazzNode = ASMHelper.readClassFromBytes(basicClass);
-			
-			//TODO backup old classnode state and flags for safer exception handling?
-			for(IPatch patch : transformMap.get(transformedName))
-			{
-				oldFlags = flags;
-				flags = flags | patch.getFlags();
-				try
-				{
-					patch.patch(clazzNode);
-					if(patch.isCancelled())
-					{
-						flags = oldFlags;
-					}
-					else
-					{
-						ranAnyPatch = true;
-					}
-				}
-				catch(Exception e)
-				{
-					ASMLogger.warn("Failed at patch "+patch.getPatchManager().getName());
-					ASMLogger.warn("Failed to write "+transformedName);
-					ASMLogger.error("Failed Patch Trace: ", e);
-					return basicClass;
-				}
-			}
-			
-			//TODO verbose
-			if(ranAnyPatch)
-			{
-				ASMLogger.info("Writing class "+transformedName+" with flags "+flagsAsString(flags));
-				if(ASMConfig.getBoolean("general.patches.export", false))
-				{
-					try
-					{
-						File file = new File(".rltweaker/" + transformedName.replace('.', '/') + ".class");
-						file.getParentFile().mkdirs();
-						if(file.exists())
-						{
-							file.delete();
-						}
-						file.createNewFile();
-						ASMHelper.writeClassToFile(clazzNode, file);
-					}
-					catch(IOException e)
-					{
-						ASMLogger.error("Failed writing class to file!", e);
-					}
-				}
-				return ASMHelper.writeClassToBytes(clazzNode, flags);
-				//return ASMHelper.writeClassToBytes(clazzNode, ClassWriter.COMPUTE_FRAMES|ClassWriter.COMPUTE_MAXS);
-			}
-			else
-			{
-				ASMLogger.info("All patches for class "+transformedName+" were cancelled, skipping...");
-				return basicClass;
-			}
-			
-		}
-		
-		
-		return basicClass;
-	}
-	
-	public static String flagsAsString(int flags)
-	{
-		switch(flags)
-		{
-			case 0: return "None";
-			case 1: return "MAXS";
-			case 2: return "FRAMES";
-			case 3: return "MAXS | FRAMES";
-			default: return "(unknown "+flags+")";
-		}
-	}
-	
-	public static void addPatch(IPatch patch)
-	{
-		String target = patch.getTargetClazz();
-		
-		if(!transformMap.containsKey(target))
-			transformMap.put(target, new ArrayList<IPatch>());
-		
-		List<IPatch> patches = transformMap.get(target);
-		patches.add(patch);
-	}
-	
-	private void createPatches()
-	{
-		//Create all the patches
-		
-		//particleThreading
-		if(ASMConfig.getBoolean("general.patches.particleThreading", true))
-		{
-			new PatchConcurrentParticles();
-		}
-		
-		//lessCollisions
-		if(ASMConfig.getBoolean("general.patches.lessCollisions", true))
-		{
-			new PatchLessCollisions();
-		}
-		
-		//betterCombatMountFix
-		if(ASMConfig.getBoolean("general.patches.betterCombatMountFix", true))
-		{
-			new PatchBetterCombatMountFix();
-		}
-		
-		//realBenchDupeBugFix
-		if(ASMConfig.getBoolean("general.patches.realBenchDupeBugFix", true))
-		{
-			new PatchRealBench();
-		}
-		
-		//lycanitesPetDupeFix
-		if(ASMConfig.getBoolean("general.patches.lycanitesPetDupeFix", false))
-		{
-			new PatchLycanitesDupe();
-		}
-		
-		//doorPathfindingFix
-		if(ASMConfig.getBoolean("general.patches.doorPathfindingFix", true))
-		{
-			new PatchDoorPathfinding();
-		}
-		
-		//reducedSearchSize
-		if(ASMConfig.getBoolean("general.patches.reducedSearchSize", false))
-		{
-			new PatchReducedSearchSize();
-		}
-		
-		//patchBroadcastSounds
-		if(ASMConfig.getBoolean("general.patches.patchBroadcastSounds", false))
-		{
-			new PatchBroadcastSounds();
-		}
-		
-		//patchEnchantments
-		if(ASMConfig.getBoolean("general.patches.patchEnchantments", false))
-		{
-			new PatchEnchant();
-		}
-		
-		//aggressiveMotionChecker
-		if(ASMConfig.getBoolean("general.patches.aggressiveMotionChecker", true))
-		{
-			new PatchAggressiveMotionChecker();
+	protected void registerTransformers(IClassTransformerRegistry registry) {
+		PatchConfig config = EarlyConfigLoader.loadConfigEarly("rltweaker", "general.patches", new PatchConfig());
+
+		if (!config.ENABLED) {
+			return;
 		}
 
-		//patchEntityBlockDestroy
-		if(ASMConfig.getBoolean("general.patches.patchEntityBlockDestroy", false))
-		{
-			new PatchEntityBlockDestroy();
+		if (config.aggressiveMotionChecker) PatchAggressiveMotionChecker.registerTransformers(registry);
+		if (config.betterCombatCriticalsFix) PatchBetterCombatCriticalsFix.registerTransformers(registry);
+		if (config.betterCombatMountFix) PatchBetterCombatMountFix.registerTransformers(registry);
+		if (config.contentCreatorRenderUtilMemoryLeak) RenderUtilMemoryLeakPatch.registerTransformers(registry);
+		if (config.craftTweakerFastEntityDefinition) FastEntityDefinitionPatch.registerTransformers(registry);
+		if (config.doorPathfindingFix) PatchDoorPathfinding.registerTransformers(registry);
+		if (config.epicSiegeChunkCacheMemoryLeak) ChunkCacheMemoryLeakPatch.registerTransformers(registry);
+		if (config.epicSiegeReducedDamage) ReducedDamagePatch.registerTransformers(registry);
+		if (config.fixWaystoneScrolls) PatchWaystoneScroll.registerTransformers(registry);
+		if (config.infernalMobsInfernalOnReload) InfernalOnReloadPatch.registerTransformers(registry);
+		if (config.infernalMobsTargetingCreative) InfernalTargetingCreativePatch.registerTransformers(registry);
+		if (config.lessCollisions) PatchLessCollisions.registerTransformers(registry);
+		if (config.lycanitesPetDupeFix) PatchLycanitesDupe.registerTransformers(registry);
+		if (config.optifineFastShaderLoading) FastShaderLoadingPatch.registerTransformers(registry);
+		if (config.otgChunkGeneratorMemoryLeak) ChunkGeneratorMemoryLeakPatch.registerTransformers(registry);
+		if (config.otgFastInternalName) FastInternalNamePatch.registerTransformers(registry);
+		if (config.otgNearbyStructureCheck) NearbyStructureCheckPatch.registerTransformers(registry);
+		if (config.particleThreading) PatchConcurrentParticles.registerTransformers(registry);
+		if (config.patchAnvilDupe) PatchAnvilDupe.registerTransformers(registry);
+		if (config.patchBroadcastSounds) PatchBroadcastSounds.registerTransformers(registry);
+		if (config.patchChestOfDrawers) PatchBetterNether.registerTransformers(registry);
+		if (config.patchCleanupStructureWorldgenFiles) PatchCleanStructureFiles.registerTransformers(registry);
+		if (config.patchCurePotion) PatchCurePotion.registerTransformers(registry);
+		if (config.patchCustomAttributeInstances) PatchCustomAttributeInstances.registerTransformers(registry);
+		if (config.patchEnchantments) PatchEnchant.registerTransformers(registry);
+		if (config.patchEntityBlockDestroy) PatchEntityBlockDestroy.registerTransformers(registry);
+		if (config.patchFMAnimationLoading) PatchAnimationLoading.registerTransformers(registry);
+		if (config.patchFallingBlockPortalDupe) PatchFallingBlockPortalDupe.registerTransformers(registry);
+		if (config.patchFasterBlockCollision) PatchFasterBlockCollision.registerTransformers(registry);
+		if (config.patchHopper) PatchHopper.registerTransformers(registry);
+		if (config.patchItemFrameDupe) PatchItemFrameDupe.registerTransformers(registry);
+		if (config.patchItemLinking) PatchItemLinking.registerTransformers(registry);
+		if (config.patchModifierBooks) PatchBountifulBaubles.registerTransformers(registry);
+		if (config.patchOverlayMessage) PatchOverlayMessage.registerTransformers(registry);
+		if (config.patchPotionCoreResistance) PatchPotionCoreResistance.registerTransformers(registry);
+		if (config.patchPotionEntityTrackerUpdate) PatchPotionUpdate.registerTransformers(registry);
+		if (config.patchPushReaction) PatchPushReaction.registerTransformers(registry);
+		if (config.patchRusticWineEffects) PatchRustic.registerTransformers(registry);
+		if (config.patchSRPAI) PatchSRPAI.registerTransformers(registry);
+		if (config.patchSSRandomUpdateHandler) PatchRandomUpdateHandler.registerTransformers(registry);
+		if (config.pathfindingChunkCacheFix) PatchPathfindingChunkCache.registerTransformers(registry);
+		if (config.preventStructureRecreation) PreventStructureRecreationPatch.registerTransformers(registry);
+		if (config.realBenchDupeBugFix) PatchRealBench.registerTransformers(registry);
+		if (config.reducedSearchSize) PatchReducedSearchSize.registerTransformers(registry);
+		if (config.serverCompatibility) {
+			boolean hasSponge = false;
+			boolean catServer = false;
+			boolean mohist = false;
+			try {
+				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerASM.class.getClassLoader());
+				hasSponge = true;
+			} catch (ClassNotFoundException e) {
+				// ignore
+			}
+			try {
+				Class.forName("catserver.server.CatServer", false, RLTweakerASM.class.getClassLoader());
+				catServer = true;
+			} catch (ClassNotFoundException e) {
+				// ignore
+			}
+			try {
+				Class.forName("com.mohistmc.MohistMC", false, RLTweakerASM.class.getClassLoader());
+				mohist = true;
+			} catch (ClassNotFoundException e) {
+				// ignore
+			}
+			if (hasSponge || catServer || mohist) {
+				PatchLootManagement.registerTransformers(registry);
+			}
+			if (catServer || mohist) {
+				PatchBrokenTransformers.registerTransformers(registry);
+				PatchCraftBukkit.registerTransformers(registry);
+			}
+			if (catServer) {
+				PatchCatServer.registerTransformers(registry);
+			}
 		}
-		
-		//patchItemFrameDupe
-		if(ASMConfig.getBoolean("general.patches.patchItemFrameDupe", true))
-		{
-			new PatchItemFrameDupe();
-		}
-		
-		//patchPushReaction
-		if(ASMConfig.getBoolean("general.patches.patchPushReaction", false))
-		{
-			new PatchPushReaction();
-		}
-		
-		//patchOverlayMessage
-		if(ASMConfig.getBoolean("general.patches.patchOverlayMessage", false))
-		{
-			new PatchOverlayMessage();
-		}
-		
-		//patchAnvilDupe
-		if(ASMConfig.getBoolean("general.patches.patchAnvilDupe", true))
-		{
-			new PatchAnvilDupe();
-		}
-		
-		//patchHopper
-		if(ASMConfig.getBoolean("general.patches.patchHopper", false))
-		{
-			new PatchHopper();
-		}
+	}
 
-		//betterCombatCriticalsFix
-		if(ASMConfig.getBoolean("general.patches.betterCombatCriticalsFix", true))
-		{
-			new PatchBetterCombatCriticalsFix();
-		}
-		
-		//fixWaystoneScrolls
-		if(ASMConfig.getBoolean("general.patches.fixWaystoneScrolls", true))
-		{
-			new PatchWaystoneScroll();
-		}
-		
-		//pathfindingChunkCacheFix
-		if(ASMConfig.getBoolean("general.patches.pathfindingChunkCacheFix", true))
-		{
-			new PatchPathfindingChunkCache();
-		}
-		
-		//serverCompatibility
-		if(ASMConfig.getBoolean("general.patches.serverCompatibility", true))
-		{
-			boolean hasSponge = ASMInfo.hasSponge;
-			boolean catServer = ASMInfo.serverType == ServerType.CATSERVER;
-			boolean mohist = ASMInfo.serverType == ServerType.MOHIST;
-			
-			if(hasSponge || catServer || mohist)
-			{
-				new PatchLootManagement();
+	@Override
+	protected ClassWriter createClassWriter(int flags) {
+		return new NonLoadingClassWriter(flags) {
+			@Override
+			protected ClassUtil.Configuration getClassUtilConfiguration() {
+				return REMAPPING_CONFIGURATION;
 			}
-			
-			//Craftbukkit
-			if(catServer || mohist)
-			{
-				new PatchBrokenTransformers();
-				new PatchCraftBukkit();
-			}
-			
-			//CatServer
-			if(catServer)
-			{
-				new PatchCatServer();
-			}
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchCurePotion", true))
-		{
-			new PatchCurePotion();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchRusticWineEffects", true))
-		{
-			new PatchRustic();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchModifierBooks", true))
-		{
-			new PatchBountifulBaubles();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchChestOfDrawers", true))
-		{
-			new PatchBetterNether();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchPotionCoreResistance", false))
-		{
-			new PatchPotionCoreResistance();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchCustomAttributeInstances", false))
-		{
-			new PatchCustomAttributeInstances();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchFallingBlockPortalDupe", false))
-		{
-			new PatchFallingBlockPortalDupe();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchItemLinking", false))
-		{
-			new PatchItemLinking();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchFasterBlockCollision", false))
-		{
-			new PatchFasterBlockCollision();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchCleanupStructureWorldgenFiles", false))
-		{
-			new PatchCleanStructureFiles();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchSRPAI", false))
-		{
-			new PatchSRPAI();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchPotionEntityTrackerUpdate", false))
-		{
-			new PatchPotionUpdate();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchSSRandomUpdateHandler", false))
-		{
-			new PatchRandomUpdateHandler();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.patchFMAnimationLoading", false))
-		{
-			new PatchAnimationLoading();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.otgNearbyStructureCheck", false))
-		{
-			new NearbyStructureCheckPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.preventStructureRecreation", false))
-		{
-			new PreventStructureRecreationPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.optifineFastShaderLoading", false))
-		{
-			new FastShaderLoadingPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.epicSiegeChunkCacheMemoryLeak", false))
-		{
-			new ChunkCacheMemoryLeakPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.contentCreatorRenderUtilMemoryLeak", false))
-		{
-			new RenderUtilMemoryLeakPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.epicSiegeReducedDamage", false))
-		{
-			new ReducedDamagePatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.infernalMobsTargetingCreative", false))
-		{
-			new InfernalTargetingCreativePatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.infernalMobsInfernalOnReload", false))
-		{
-			new InfernalOnReloadPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.craftTweakerFastEntityDefinition", false))
-		{
-			new FastEntityDefinitionPatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.otgFastInternalName", false))
-		{
-			new FastInternalNamePatch();
-		}
-		
-		if(ASMConfig.getBoolean("general.patches.otgChunkGeneratorMemoryLeak", false))
-		{
-			new ChunkGeneratorMemoryLeakPatch();
-		}
-		
-		//new PatchForgeNetwork();
+		};
 	}
 
 }

@@ -3,133 +3,109 @@ package com.charles445.rltweaker.asm.patch;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.LabelNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.charles445.rltweaker.asm.util.ASMUtil;
-import com.charles445.rltweaker.asm.util.TransformUtil;
+import meldexun.asmutil2.ASMUtil;
+import meldexun.asmutil2.IClassTransformerRegistry;
 
-public class PatchPotionCoreResistance extends PatchManager {
+public class PatchPotionCoreResistance {
 
-	public PatchPotionCoreResistance() {
-		super("Patch Potion Core Resistance");
+	public static void registerTransformers(IClassTransformerRegistry registry) {
+		registry.add("com.tmtravlr.potioncore.PotionCoreAttributes", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_clinit = ASMUtil.find(clazzNode, "<clinit>", "()V");
 
-		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreAttributes", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_clinit = this.findMethodWithDesc(clazzNode, "()V", "<clinit>");
+			AbstractInsnNode target = ASMUtil.first(m_clinit).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/ai/attributes/RangedAttribute", "func_111112_a", "setShouldWatch", "(Z)Lnet/minecraft/entity/ai/attributes/BaseAttribute;").ordinal(3).find();
+			target = target.getPrevious();
 
-				AbstractInsnNode target = ASMUtil.findMethodInsn(m_clinit, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/ai/attributes/RangedAttribute", "func_111112_a", "setShouldWatch", "(Z)Lnet/minecraft/entity/ai/attributes/BaseAttribute;", 3);
-				target = target.getPrevious();
-
-				m_clinit.instructions.insertBefore(target, ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "resistance_createAttribute", "(Lnet/minecraft/entity/ai/attributes/RangedAttribute;)Lnet/minecraft/entity/ai/attributes/RangedAttribute;", false)
-				));
-			}
+			m_clinit.instructions.insertBefore(target, ASMUtil.listOf(
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "resistance_createAttribute", "(Lnet/minecraft/entity/ai/attributes/RangedAttribute;)Lnet/minecraft/entity/ai/attributes/RangedAttribute;", false)
+			));
 		});
 
-		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEffects", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_loadPotionEffects = this.findMethodWithDesc(clazzNode, "(Lnet/minecraftforge/registries/IForgeRegistry;)V", "loadPotionEffects");
+		registry.add("com.tmtravlr.potioncore.PotionCoreEffects", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_loadPotionEffects = ASMUtil.find(clazzNode, "loadPotionEffects", "(Lnet/minecraftforge/registries/IForgeRegistry;)V");
 
-				MethodInsnNode i_registerPotionAttributeModifier = ASMUtil.findMethodInsn(m_loadPotionEffects, Opcodes.INVOKEVIRTUAL, "net/minecraft/potion/Potion", "func_111184_a", "registerPotionAttributeModifier", "(Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", 0);
-				MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "resistance_registerPotionAttributeModifier", "(Lnet/minecraft/potion/Potion;Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", false);
-				m_loadPotionEffects.instructions.set(i_registerPotionAttributeModifier, redirect);
-			}
+			MethodInsnNode i_registerPotionAttributeModifier = ASMUtil.first(m_loadPotionEffects).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/potion/Potion", "func_111184_a", "registerPotionAttributeModifier", "(Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;").find();
+			MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "resistance_registerPotionAttributeModifier", "(Lnet/minecraft/potion/Potion;Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", false);
+			m_loadPotionEffects.instructions.set(i_registerPotionAttributeModifier, redirect);
 		});
 
-		add(new Patch(this, "com.tmtravlr.potioncore.potion.PotionVulnerable", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_registerPotionAttributeModifiers = this.findMethodWithDesc(clazzNode, "()V", "registerPotionAttributeModifiers");
+		registry.add("com.tmtravlr.potioncore.potion.PotionVulnerable", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_registerPotionAttributeModifiers = ASMUtil.find(clazzNode, "registerPotionAttributeModifiers", "()V");
 
-				MethodInsnNode i_registerPotionAttributeModifier = ASMUtil.findMethodInsn(m_registerPotionAttributeModifiers, Opcodes.INVOKEVIRTUAL, "com/tmtravlr/potioncore/potion/PotionVulnerable", "func_111184_a", "registerPotionAttributeModifier", "(Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", 0);
-				MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "vulnerable_registerPotionAttributeModifier", "(Lnet/minecraft/potion/Potion;Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", false);
-				m_registerPotionAttributeModifiers.instructions.set(i_registerPotionAttributeModifier, redirect);
-			}
+			MethodInsnNode i_registerPotionAttributeModifier = ASMUtil.first(m_registerPotionAttributeModifiers).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("com/tmtravlr/potioncore/potion/PotionVulnerable", "func_111184_a", "registerPotionAttributeModifier", "(Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;").find();
+			MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "vulnerable_registerPotionAttributeModifier", "(Lnet/minecraft/potion/Potion;Lnet/minecraft/entity/ai/attributes/IAttribute;Ljava/lang/String;DI)Lnet/minecraft/potion/Potion;", false);
+			m_registerPotionAttributeModifiers.instructions.set(i_registerPotionAttributeModifier, redirect);
 		});
 
-		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEventHandler", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_onLivingHurt = this.findMethodWithDesc(clazzNode, "(Lnet/minecraftforge/event/entity/living/LivingHurtEvent;)V", "onLivingHurt");
+		registry.add("com.tmtravlr.potioncore.PotionCoreEventHandler", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_onLivingHurt = ASMUtil.find(clazzNode, "onLivingHurt", "(Lnet/minecraftforge/event/entity/living/LivingHurtEvent;)V");
 
-				MethodInsnNode i_getAdjustedDamageResistanceAttribute = ASMUtil.findMethodInsn(m_onLivingHurt, Opcodes.INVOKESTATIC, "com/tmtravlr/potioncore/PotionCoreAttributes", "getAdjustedDamageResistanceAttribute", "(Lnet/minecraft/entity/EntityLivingBase;)D", 0);
-				MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getAdjustedDamageResistanceAttribute", "(Lnet/minecraft/entity/EntityLivingBase;)D", false);
-				m_onLivingHurt.instructions.set(i_getAdjustedDamageResistanceAttribute, redirect);
-			}
+			MethodInsnNode i_getAdjustedDamageResistanceAttribute = ASMUtil.first(m_onLivingHurt).opcode(Opcodes.INVOKESTATIC).methodInsn("com/tmtravlr/potioncore/PotionCoreAttributes", "getAdjustedDamageResistanceAttribute", "(Lnet/minecraft/entity/EntityLivingBase;)D").find();
+			MethodInsnNode redirect = new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getAdjustedDamageResistanceAttribute", "(Lnet/minecraft/entity/EntityLivingBase;)D", false);
+			m_onLivingHurt.instructions.set(i_getAdjustedDamageResistanceAttribute, redirect);
 		});
 
-		add(new Patch(this, "net.minecraft.entity.EntityLivingBase", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_applyPotionDamageCalculations = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/util/DamageSource;F)F", "func_70672_c", "applyPotionDamageCalculations");
+		registry.add("net.minecraft.entity.EntityLivingBase", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_applyPotionDamageCalculations = ASMUtil.find(clazzNode, "func_70672_c", "applyPotionDamageCalculations", "(Lnet/minecraft/util/DamageSource;F)F");
 
-				AbstractInsnNode target = ASMUtil.findMethodInsn(m_applyPotionDamageCalculations, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/EntityLivingBase", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z", 0);
-				target = TransformUtil.findPreviousInsnWithType(target, LabelNode.class);
-				AbstractInsnNode target1 = ASMUtil.findInsnWithOpcode(m_applyPotionDamageCalculations, Opcodes.IFGT, 0);
-				target1 = TransformUtil.findPreviousInsnWithType(target1, LabelNode.class);
+			AbstractInsnNode target = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/EntityLivingBase", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z").find();
+			target = ASMUtil.prev(target).type(LabelNode.class).find();
+			AbstractInsnNode target1 = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.IFGT).find();
+			target1 = ASMUtil.prev(target1).type(LabelNode.class).find();
 
-				insert(m_applyPotionDamageCalculations, target, ASMUtil.listOf(
-						new VarInsnNode(Opcodes.FLOAD, 2),
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "preResistancePotionCalculation", "(F)V", false)
-				));
-				insert(m_applyPotionDamageCalculations, target1, ASMUtil.listOf(
-						new VarInsnNode(Opcodes.ALOAD, 0),
-						new VarInsnNode(Opcodes.FLOAD, 2),
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
-						new VarInsnNode(Opcodes.FSTORE, 2)
-				));
-			}
+			m_applyPotionDamageCalculations.instructions.insert(target, ASMUtil.listOf(
+					new VarInsnNode(Opcodes.FLOAD, 2),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "preResistancePotionCalculation", "(F)V", false)
+			));
+			m_applyPotionDamageCalculations.instructions.insert(target1, ASMUtil.listOf(
+					new VarInsnNode(Opcodes.ALOAD, 0),
+					new VarInsnNode(Opcodes.FLOAD, 2),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
+					new VarInsnNode(Opcodes.FSTORE, 2)
+			));
 		});
 
-		add(new Patch(this, "ichttt.mods.firstaid.common.util.ArmorUtils", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_applyPotionDamageCalculations = this.findMethodWithDesc(clazzNode, "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/DamageSource;F)F", "applyGlobalPotionModifiers");
+		registry.add("ichttt.mods.firstaid.common.util.ArmorUtils", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_applyPotionDamageCalculations = ASMUtil.find(clazzNode, "applyGlobalPotionModifiers", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/DamageSource;F)F");
 
-				AbstractInsnNode target = ASMUtil.findMethodInsn(m_applyPotionDamageCalculations, Opcodes.INVOKEVIRTUAL, "net/minecraft/entity/player/EntityPlayer", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z", 0);
-				target = TransformUtil.findPreviousInsnWithType(target, LabelNode.class);
-				AbstractInsnNode target1 = ASMUtil.findInsnWithOpcode(m_applyPotionDamageCalculations, Opcodes.IFGT, 0);
-				target1 = TransformUtil.findPreviousInsnWithType(target1, LabelNode.class);
+			AbstractInsnNode target = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/player/EntityPlayer", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z").find();
+			target = ASMUtil.prev(target).type(LabelNode.class).find();
+			AbstractInsnNode target1 = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.IFGT).find();
+			target1 = ASMUtil.prev(target1).type(LabelNode.class).find();
 
-				insert(m_applyPotionDamageCalculations, target, ASMUtil.listOf(
-						new VarInsnNode(Opcodes.FLOAD, 2),
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "preResistancePotionCalculation", "(F)V", false)
-				));
-				insert(m_applyPotionDamageCalculations, target1, ASMUtil.listOf(
-						new VarInsnNode(Opcodes.ALOAD, 0),
-						new VarInsnNode(Opcodes.FLOAD, 2),
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
-						new VarInsnNode(Opcodes.FSTORE, 2)
-				));
-			}
+			m_applyPotionDamageCalculations.instructions.insert(target, ASMUtil.listOf(
+					new VarInsnNode(Opcodes.FLOAD, 2),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "preResistancePotionCalculation", "(F)V", false)
+			));
+			m_applyPotionDamageCalculations.instructions.insert(target1, ASMUtil.listOf(
+					new VarInsnNode(Opcodes.ALOAD, 0),
+					new VarInsnNode(Opcodes.FLOAD, 2),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "postResistancePotionCalculation", "(Lnet/minecraft/entity/EntityLivingBase;F)F", false),
+					new VarInsnNode(Opcodes.FSTORE, 2)
+			));
 		});
 
-		add(new Patch(this, "com.tmtravlr.potioncore.PotionCoreEventHandlerClient", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_renderOverlaysPre = this.findMethodWithDesc(clazzNode, "(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Pre;)V", "renderOverlaysPre");
-				MethodNode m_renderOverlaysPost = this.findMethodWithDesc(clazzNode, "(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Post;)V", "renderOverlaysPost");
+		registry.add("com.tmtravlr.potioncore.PotionCoreEventHandlerClient", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_renderOverlaysPre = ASMUtil.find(clazzNode, "renderOverlaysPre", "(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Pre;)V");
+			MethodNode m_renderOverlaysPost = ASMUtil.find(clazzNode, "renderOverlaysPost", "(Lnet/minecraftforge/client/event/RenderGameOverlayEvent$Post;)V");
 
-				AbstractInsnNode target = ASMUtil.findMethodInsn(m_renderOverlaysPre, Opcodes.INVOKEINTERFACE, "net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue", "()D", 0);
-				target = target.getNext();
-				target = target.getNext();
-				AbstractInsnNode target1 = ASMUtil.findMethodInsn(m_renderOverlaysPost, Opcodes.INVOKEINTERFACE, "net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue", "()D", 1);
-				target1 = target1.getNext();
-				target1 = target1.getNext();
+			AbstractInsnNode target = ASMUtil.first(m_renderOverlaysPre).opcode(Opcodes.INVOKEINTERFACE).methodInsnObf("net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue", "()D").find();
+			target = target.getNext();
+			target = target.getNext();
+			AbstractInsnNode target1 = ASMUtil.first(m_renderOverlaysPost).opcode(Opcodes.INVOKEINTERFACE).methodInsnObf("net/minecraft/entity/ai/attributes/IAttributeInstance", "func_111126_e", "getAttributeValue", "()D").ordinal(1).find();
+			target1 = target1.getNext();
+			target1 = target1.getNext();
 
-				insert(m_renderOverlaysPre, target, ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)
-				));
-				insert(m_renderOverlaysPost, target1, ASMUtil.listOf(
-						new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)
-				));
-			}
+			m_renderOverlaysPre.instructions.insert(target, ASMUtil.listOf(
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)
+			));
+			m_renderOverlaysPost.instructions.insert(target1, ASMUtil.listOf(
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookPotionCore", "getActualResistance", "(D)D", false)
+			));
 		});
 	}
 

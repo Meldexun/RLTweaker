@@ -1,18 +1,18 @@
 package com.charles445.rltweaker.asm.patch.compat;
 
-import javax.annotation.Nullable;
-
 import org.objectweb.asm.ClassWriter;
-import org.objectweb.asm.tree.ClassNode;
 
-import com.charles445.rltweaker.asm.patch.IPatchManager;
-import com.charles445.rltweaker.asm.patch.Patch;
-import com.charles445.rltweaker.asm.patch.PatchManager;
-import com.charles445.rltweaker.asm.util.ModTransformer;
+import com.charles445.rltweaker.asm.RLTweakerASM;
 
-public class PatchBrokenTransformers extends PatchManager {
-	public PatchBrokenTransformers() {
-		super("Broken Transformers");
+import meldexun.asmutil2.IClassTransformerRegistry;
+
+public class PatchBrokenTransformers {
+	public static void registerTransformers(IClassTransformerRegistry registry) {
+		try {
+			Class.forName("com.teamwizardry.librarianlib.asm.LibLibTransformer", false, RLTweakerASM.class.getClassLoader());
+		} catch (ClassNotFoundException e) {
+			return;
+		}
 
 		// Mods that recompute frames with modified class writers can cause serious damage to minecraft
 		// Including this one! ha
@@ -20,32 +20,13 @@ public class PatchBrokenTransformers extends PatchManager {
 		// This manually recomputes frames for certain classes depending on the mod
 
 		// LibrarianLib Client
-		add(new RecomputePatch(this, "net.minecraft.client.renderer.RenderItem", ModTransformer.LIBRARIANLIB));
-		add(new RecomputePatch(this, "net.minecraft.client.renderer.entity.layers.LayerArmorBase", ModTransformer.LIBRARIANLIB));
-		add(new RecomputePatch(this, "net.minecraft.client.renderer.BlockRendererDispatcher", ModTransformer.LIBRARIANLIB));
-		add(new RecomputePatch(this, "net.minecraft.client.particle.Particle", ModTransformer.LIBRARIANLIB));
+		registry.add("net.minecraft.client.renderer.RenderItem", ClassWriter.COMPUTE_FRAMES, classNode -> {});
+		registry.add("net.minecraft.client.renderer.entity.layers.LayerArmorBase", ClassWriter.COMPUTE_FRAMES, classNode -> {});
+		registry.add("net.minecraft.client.renderer.BlockRendererDispatcher", ClassWriter.COMPUTE_FRAMES, classNode -> {});
+		registry.add("net.minecraft.client.particle.Particle", ClassWriter.COMPUTE_FRAMES, classNode -> {});
 
 		// LibrarianLib Server
-		add(new RecomputePatch(this, "net.minecraft.world.World", ModTransformer.LIBRARIANLIB));
-		add(new RecomputePatch(this, "net.minecraft.network.NetHandlerPlayServer", ModTransformer.LIBRARIANLIB));
-	}
-
-	public class RecomputePatch extends Patch {
-		@Nullable
-		private ModTransformer mod;
-
-		public RecomputePatch(IPatchManager manager, String target, @Nullable ModTransformer mod) {
-			super(manager, target, ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES);
-			this.mod = mod;
-		}
-
-		@Override
-		public void patch(ClassNode clazzNode) {
-			if (this.mod != null && !this.hasModTransformer(mod)) {
-				this.cancelled = true;
-				return;
-			}
-		}
-
+		registry.add("net.minecraft.world.World", ClassWriter.COMPUTE_FRAMES, classNode -> {});
+		registry.add("net.minecraft.network.NetHandlerPlayServer", ClassWriter.COMPUTE_FRAMES, classNode -> {});
 	}
 }

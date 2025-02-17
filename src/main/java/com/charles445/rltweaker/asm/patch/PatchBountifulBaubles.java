@@ -2,42 +2,38 @@ package com.charles445.rltweaker.asm.patch;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.ClassNode;
 import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 import org.objectweb.asm.tree.VarInsnNode;
 
-import com.charles445.rltweaker.asm.util.ASMUtil;
+import meldexun.asmutil2.ASMUtil;
+import meldexun.asmutil2.IClassTransformerRegistry;
 
-public class PatchBountifulBaubles extends PatchManager {
 
-	public PatchBountifulBaubles() {
-		add(new Patch(this, "cursedflames.bountifulbaubles.recipe.AnvilRecipes", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES) {
+public class PatchBountifulBaubles {
 
-			@Override
-			public void patch(ClassNode clazzNode) {
-				MethodNode m_onAnvilUpdate = findMethod(clazzNode, "onAnvilUpdate");
+	public static void registerTransformers(IClassTransformerRegistry registry) {
+		registry.add("cursedflames.bountifulbaubles.recipe.AnvilRecipes", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode m_onAnvilUpdate = ASMUtil.find(clazzNode, "onAnvilUpdate");
 
-				insert(m_onAnvilUpdate, ASMUtil.findMethodInsn(m_onAnvilUpdate, Opcodes.INVOKESTATIC, "cursedflames/bountifulbaubles/recipe/AnvilRecipes", "getResultModifierBook", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;", 1), new InsnNode(Opcodes.RETURN));
+			m_onAnvilUpdate.instructions.insert(ASMUtil.first(m_onAnvilUpdate).opcode(Opcodes.INVOKESTATIC).methodInsn("cursedflames/bountifulbaubles/recipe/AnvilRecipes", "getResultModifierBook", "(Lnet/minecraft/item/ItemStack;Lnet/minecraft/item/ItemStack;)Lnet/minecraft/item/ItemStack;").ordinal(1).find(), new InsnNode(Opcodes.RETURN));
 
-				MethodNode m_getResultModifierBook = findMethod(clazzNode, "getResultModifierBook");
+			MethodNode m_getResultModifierBook = ASMUtil.find(clazzNode, "getResultModifierBook");
 
-				insert(m_getResultModifierBook, ASMUtil.findInsn(m_getResultModifierBook, VarInsnNode.class, insn -> insn.var == 1, 1), ASMUtil.listOf(
-						new InsnNode(Opcodes.POP),
-						new VarInsnNode(Opcodes.ALOAD, 2)
-				));
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(1).find(), ASMUtil.listOf(
+					new InsnNode(Opcodes.POP),
+					new VarInsnNode(Opcodes.ALOAD, 2)
+			));
 
-				insert(m_getResultModifierBook, ASMUtil.findInsn(m_getResultModifierBook, VarInsnNode.class, insn -> insn.var == 1, 2), ASMUtil.listOf(
-						new InsnNode(Opcodes.POP),
-						new VarInsnNode(Opcodes.ALOAD, 2)
-				));
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(2).find(), ASMUtil.listOf(
+					new InsnNode(Opcodes.POP),
+					new VarInsnNode(Opcodes.ALOAD, 2)
+			));
 
-				insert(m_getResultModifierBook, ASMUtil.findInsn(m_getResultModifierBook, VarInsnNode.class, insn -> insn.var == 1, 3), ASMUtil.listOf(
-						new InsnNode(Opcodes.POP),
-						new VarInsnNode(Opcodes.ALOAD, 2)
-				));
-			}
-
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(3).find(), ASMUtil.listOf(
+					new InsnNode(Opcodes.POP),
+					new VarInsnNode(Opcodes.ALOAD, 2)
+			));
 		});
 	}
 
