@@ -330,7 +330,7 @@ public class HookMinecraft
 		return destination;
 	}
 	
-	//com/charles445/rltweaker/hook/HookDebug
+	//com/charles445/rltweaker/hook/HookMinecraft
 	//cacheGetChunkFromChunkCoords
 	//(Lnet/minecraft/world/World;IILnet/minecraft/world/ChunkCache;)Lnet/minecraft/world/chunk/Chunk;
 	@Nullable

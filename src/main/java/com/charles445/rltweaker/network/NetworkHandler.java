@@ -5,14 +5,9 @@ import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import com.charles445.rltweaker.RLTweaker;
-import com.charles445.rltweaker.hook.HookForge;
-import com.charles445.rltweaker.util.TriConsumer;
 import com.charles445.rltweaker.util.VersionDelimiter;
 
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessage;
-import net.minecraftforge.fml.common.network.simpleimpl.IMessageHandler;
-import net.minecraftforge.fml.common.network.simpleimpl.MessageContext;
 
 public class NetworkHandler
 {
@@ -57,20 +52,5 @@ public class NetworkHandler
 		{
 			return false;
 		}
-	}
-	
-	public static void addServerPacketExecutor(String name, TriConsumer<IMessageHandler, IMessage, MessageContext> consumer)
-	{
-		HookForge.addServer(name, consumer);
-	}
-	
-	public static void addServerPacketExecutor(String name, TriConsumer<IMessageHandler, IMessage, MessageContext> consumer, boolean override)
-	{
-		HookForge.addServer(name, consumer, override);
-	}
-	
-	public static void addServerPacketExecutor(String name, HookForge.MessageExecutor executor)
-	{
-		HookForge.addServer(name, executor);
 	}
 }
