@@ -54,7 +54,7 @@ public class SRParasitesHandler
 				if(event.getEntity().dimension == blacklist[i])
 				{
 					ResourceLocation rl = EntityList.getKey(event.getEntity());
-					if(rl != null && rl.getResourceDomain().equals("srparasites"))
+					if(rl != null && rl.getNamespace().equals("srparasites"))
 					{
 						event.setCanceled(true);
 					}

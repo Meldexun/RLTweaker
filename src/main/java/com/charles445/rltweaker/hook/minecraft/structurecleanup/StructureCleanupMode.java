@@ -57,7 +57,7 @@ public enum StructureCleanupMode {
 			return NBTUtil.<NBTTagCompound>stream(structureData.getTagCompound())
 					.filter(structureStartTag -> NBTUtil.<NBTTagCompound>removeIf(structureStartTag.getTagList(KEY_CHILDREN, NBT.TAG_COMPOUND),
 							child -> allChunksGenerated(world, child.getIntArray(KEY_BB)))
-							| NBTUtil.<NBTTagList>removeIf(structureStartTag, KEY_CHILDREN, NBTTagList::hasNoTags))
+							| NBTUtil.<NBTTagList>removeIf(structureStartTag, KEY_CHILDREN, NBTTagList::isEmpty))
 					.count() > 0;
 		}
 	},
@@ -97,7 +97,7 @@ public enum StructureCleanupMode {
 	}
 
 	private static boolean isChunkGeneratedAt(ChunkProviderServer chunkProvider, int x, int z) {
-		if (chunkProvider.id2ChunkMap.containsKey(ChunkPos.asLong(x, z))) {
+		if (chunkProvider.loadedChunks.containsKey(ChunkPos.asLong(x, z))) {
 			return true;
 		}
 		if (((AnvilChunkLoader) chunkProvider.chunkLoader).chunksToSave.containsKey(new ChunkPos(x, z))) {

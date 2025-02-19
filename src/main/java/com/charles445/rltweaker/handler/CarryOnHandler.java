@@ -93,7 +93,7 @@ public class CarryOnHandler
 			World world = event.getWorld();
 			EntityPlayer player = event.getPlayer();
 			
-			if(quarkLoaded && reflectorQuark != null && registry.getResourceDomain().equals(ModNames.QUARK))
+			if(quarkLoaded && reflectorQuark != null && registry.getNamespace().equals(ModNames.QUARK))
 			{
 				handlePlacedQuarkBlock(event, snapshot, registry, world, player);
 			}

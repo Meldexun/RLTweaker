@@ -341,13 +341,13 @@ public class HookMinecraft
 		if(chunkCache instanceof NullableChunkCache)
 		{
 			if(world.isBlockLoaded(new BlockPos(chunkX << 4, 64, chunkZ << 4)))
-				return world.getChunkFromChunkCoords(chunkX, chunkZ);
+				return world.getChunk(chunkX, chunkZ);
 			
 			return null;
 		}
 		else
 		{
-			return world.getChunkFromChunkCoords(chunkX, chunkZ);
+			return world.getChunk(chunkX, chunkZ);
 		}
 	}
 

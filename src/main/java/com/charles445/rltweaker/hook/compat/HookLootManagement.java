@@ -44,7 +44,7 @@ public class HookLootManagement
 				if(baseFolder == null)
 					return file;
 				
-				File fileOverworld = new File(new File(baseFolder, resource.getResourceDomain()), resource.getResourcePath() + ".json");
+				File fileOverworld = new File(new File(baseFolder, resource.getNamespace()), resource.getPath() + ".json");
 				
 				if(fileOverworld.exists() && fileOverworld.isFile())
 					return fileOverworld;

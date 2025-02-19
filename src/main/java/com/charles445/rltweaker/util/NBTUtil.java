@@ -22,7 +22,7 @@ public class NBTUtil {
 	}
 
 	public static boolean clear(NBTTagCompound compound) {
-		if (compound.hasNoTags()) {
+		if (compound.isEmpty()) {
 			return false;
 		}
 		NBTTagCompound_tagMap.get(compound).clear();
@@ -65,7 +65,7 @@ public class NBTUtil {
 	}
 
 	public static boolean clear(NBTTagList list) {
-		if (list.hasNoTags()) {
+		if (list.isEmpty()) {
 			return false;
 		}
 		for (int i = list.tagCount() - 1; i >= 0; i--) {
