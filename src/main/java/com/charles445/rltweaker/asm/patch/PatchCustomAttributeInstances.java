@@ -17,7 +17,7 @@ public class PatchCustomAttributeInstances {
 
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("net.minecraft.entity.ai.attributes.AttributeMap", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
-			MethodNode m_createInstance = ASMUtil.find(clazzNode, "func_180376_c", "createInstance", "(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;");
+			MethodNode m_createInstance = ASMUtil.findObf(clazzNode, "func_180376_c", "createInstance", "(Lnet/minecraft/entity/ai/attributes/IAttribute;)Lnet/minecraft/entity/ai/attributes/IAttributeInstance;");
 
 			LabelNode label = new LabelNode();
 

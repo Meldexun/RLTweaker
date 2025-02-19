@@ -29,7 +29,7 @@ public class PatchOverlayMessage {
 				m_renderGameOverlay.instructions.insert(anchor, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookMinecraft", "overlayTextYOffset", "(I)I", false));
 
 				// Dropshadow
-				MethodInsnNode textCall = ASMUtil.next(anchor).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("func_78276_b", "drawString").find();
+				MethodInsnNode textCall = ASMUtil.next(m_renderGameOverlay, anchor).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("func_78276_b", "drawString").find();
 				if (textCall == null)
 					throw new RuntimeException("Couldn't find func_78276_b or drawString call in renderRecordOverlay");
 				// Change call to fontrenderer to the one that includes a boolean for dropshadow
@@ -39,7 +39,7 @@ public class PatchOverlayMessage {
 				// Add hook
 				m_renderGameOverlay.instructions.insertBefore(textCall, new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/HookMinecraft", "overlayTextDropShadow", "()Z", false));
 				// Add some I2F for casting
-				anchor = ASMUtil.prev(textCall).intInsn(-4).find();
+				anchor = ASMUtil.prev(m_renderGameOverlay, textCall).intInsn(-4).find();
 				if (anchor == null)
 					throw new RuntimeException("Couldn't find BIPUSH -4 in renderRecordOverlay, please report to RLTweaker dev");
 				m_renderGameOverlay.instructions.insertBefore(anchor, new InsnNode(Opcodes.I2F));

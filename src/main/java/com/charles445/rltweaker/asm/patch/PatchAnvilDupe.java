@@ -24,7 +24,7 @@ public class PatchAnvilDupe {
 			if (anchor == null)
 				throw new RuntimeException("Couldn't find post in onAnvilChange");
 
-			anchor = ASMUtil.next(anchor).opcode(Opcodes.ICONST_0).find();
+			anchor = ASMUtil.next(m_onAnvilChange, anchor).opcode(Opcodes.ICONST_0).find();
 			if (anchor == null)
 				throw new RuntimeException("Couldn't find next ICONST_0 in onAnvilChange");
 

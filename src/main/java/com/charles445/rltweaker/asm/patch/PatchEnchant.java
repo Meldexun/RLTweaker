@@ -56,7 +56,7 @@ public class PatchEnchant {
 			if (anchor == null)
 				throw new RuntimeException("Couldn't find func_92089_a or canApply");
 
-			MethodInsnNode addNode = ASMUtil.next(anchor).opcode(Opcodes.INVOKEINTERFACE).methodInsn("add").find();
+			MethodInsnNode addNode = ASMUtil.next(m_apply, anchor).opcode(Opcodes.INVOKEINTERFACE).methodInsn("add").find();
 			if (addNode == null)
 				throw new RuntimeException("Couldn't find add in apply");
 			if (!addNode.owner.equals("java/util/List"))

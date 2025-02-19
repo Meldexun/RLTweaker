@@ -13,7 +13,7 @@ public class PatchReducedSearchSize {
 		registry.add("net.minecraft.world.World", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			if (true) // func_72872_a getEntitiesWithinAABB
 			{
-				MethodNode m_getEntitiesWithinAABB = ASMUtil.find(clazzNode, "func_72872_a", "getEntitiesWithinAABB", "(Ljava/lang/Class;Lnet/minecraft/util/math/AxisAlignedBB;)Ljava/util/List;");
+				MethodNode m_getEntitiesWithinAABB = ASMUtil.findObf(clazzNode, "func_72872_a", "getEntitiesWithinAABB", "(Ljava/lang/Class;Lnet/minecraft/util/math/AxisAlignedBB;)Ljava/util/List;");
 				if (m_getEntitiesWithinAABB == null)
 					throw new RuntimeException("Couldn't find getEntitiesWithinAABB or func_72872_a with matching desc");
 

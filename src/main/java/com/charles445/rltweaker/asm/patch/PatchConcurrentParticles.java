@@ -19,7 +19,7 @@ public class PatchConcurrentParticles {
 			if (anchor == null)
 				throw new RuntimeException("Couldn't find queue or field_187241_h");
 
-			MethodInsnNode hookCaller = ASMUtil.prev(anchor).opcode(Opcodes.INVOKESTATIC).methodInsn("newArrayDeque").find();
+			MethodInsnNode hookCaller = ASMUtil.prev(m_init, anchor).opcode(Opcodes.INVOKESTATIC).methodInsn("newArrayDeque").find();
 
 			if (hookCaller == null)
 				throw new RuntimeException("Couldn't find newArrayDeque");

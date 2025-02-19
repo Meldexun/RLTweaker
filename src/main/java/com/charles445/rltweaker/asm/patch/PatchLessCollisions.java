@@ -70,7 +70,7 @@ public class PatchLessCollisions {
 				c_World -> {
 					if (true) // func_72839_b getEntitiesWithinAABBExcludingEntity
 					{
-						MethodNode m_getEntWithAABBExclEntity = ASMUtil.find(c_World, "func_72839_b", "getEntitiesWithinAABBExcludingEntity", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;)Ljava/util/List;");
+						MethodNode m_getEntWithAABBExclEntity = ASMUtil.findObf(c_World, "func_72839_b", "getEntitiesWithinAABBExcludingEntity", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;)Ljava/util/List;");
 
 						if (m_getEntWithAABBExclEntity == null)
 							throw new RuntimeException("Couldn't find getEntitiesWithinAABBExcludingEntity or func_72839_b with matching desc");
@@ -93,7 +93,7 @@ public class PatchLessCollisions {
 		registry.add("net.minecraft.entity.EntityLivingBase", ClassWriter.COMPUTE_MAXS, c_EntityLivingBase -> {
 			if (true) // func_85033_bc collideWithNearbyEntities
 			{
-				MethodNode m_collideWithNearbyEntities = ASMUtil.find(c_EntityLivingBase, "func_85033_bc", "collideWithNearbyEntities", "()V");
+				MethodNode m_collideWithNearbyEntities = ASMUtil.findObf(c_EntityLivingBase, "func_85033_bc", "collideWithNearbyEntities", "()V");
 
 				if (m_collideWithNearbyEntities == null)
 					throw new RuntimeException("Couldn't find collideWithNearbyEntities or func_85033_bc with matching desc");

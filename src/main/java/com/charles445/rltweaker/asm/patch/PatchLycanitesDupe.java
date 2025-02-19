@@ -93,7 +93,7 @@ public class PatchLycanitesDupe {
 			MethodNode m_getStackInSlot = ASMUtil.findObf(clazzNode, "func_70301_a", "getStackInSlot");
 			anchor = m_getStackInSlot.instructions.getFirst();
 
-			anchor = ASMUtil.next(anchor).opcode(Opcodes.GETFIELD).fieldInsn("inventoryContents").find().getPrevious();
+			anchor = ASMUtil.next(m_getStackInSlot, anchor).opcode(Opcodes.GETFIELD).fieldInsn("inventoryContents").find().getPrevious();
 			LabelNode gsisContinueNode = new LabelNode();
 			InsnList gsisInsert = new InsnList();
 

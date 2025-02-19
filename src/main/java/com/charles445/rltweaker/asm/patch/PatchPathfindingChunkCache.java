@@ -59,16 +59,16 @@ public class PatchPathfindingChunkCache {
 					throw new RuntimeException("Couldn't find any instantiation in func_179680_a or getPathToPos");
 
 				while (!newNode.desc.equals("net/minecraft/world/ChunkCache")) {
-					newNode = (TypeInsnNode) ASMUtil.next(newNode).opcode(Opcodes.NEW).find();
+					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToPos, newNode).opcode(Opcodes.NEW).find();
 					if (newNode == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation new in func_179680_a or getPathToPo");
 				}
 
 				newNode.desc = ("com/charles445/rltweaker/hook/NullableChunkCache");
 
-				MethodInsnNode callInit = ASMUtil.next(newNode).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
+				MethodInsnNode callInit = ASMUtil.next(m_getPathToPos, newNode).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
 				while (!callInit.owner.equals("net/minecraft/world/ChunkCache")) {
-					callInit = ASMUtil.next(callInit).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
+					callInit = ASMUtil.next(m_getPathToPos, callInit).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
 					if (callInit == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation call in func_179680_a or getPathToPo");
 				}
@@ -82,16 +82,16 @@ public class PatchPathfindingChunkCache {
 				TypeInsnNode newNode = (TypeInsnNode) ASMUtil.first(m_getPathToEntityLiving).opcode(Opcodes.NEW).find();
 
 				while (!newNode.desc.equals("net/minecraft/world/ChunkCache")) {
-					newNode = (TypeInsnNode) ASMUtil.next(newNode).opcode(Opcodes.NEW).find();
+					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToEntityLiving, newNode).opcode(Opcodes.NEW).find();
 					if (newNode == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation new in func_75494_a or getPathToEntityLiving");
 				}
 
 				newNode.desc = ("com/charles445/rltweaker/hook/NullableChunkCache");
 
-				MethodInsnNode callInit = ASMUtil.next(newNode).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
+				MethodInsnNode callInit = ASMUtil.next(m_getPathToEntityLiving, newNode).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
 				while (!callInit.owner.equals("net/minecraft/world/ChunkCache")) {
-					callInit = ASMUtil.next(callInit).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
+					callInit = ASMUtil.next(m_getPathToEntityLiving, callInit).opcode(Opcodes.INVOKESPECIAL).methodInsn("<init>").find();
 					if (callInit == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation call in func_75494_a or getPathToEntityLiving");
 				}

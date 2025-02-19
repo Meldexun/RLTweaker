@@ -28,7 +28,7 @@ public class PatchPushReaction {
 
 			// Make sure it's EnumPushReaction
 			while (!fieldStatic.owner.equals("net/minecraft/block/material/EnumPushReaction")) {
-				fieldStatic = ASMUtil.prev(fieldStatic).opcode(Opcodes.GETSTATIC).fieldInsn("NORMAL").find();
+				fieldStatic = ASMUtil.prev(m_getPushReaction, fieldStatic).opcode(Opcodes.GETSTATIC).fieldInsn("NORMAL").find();
 				if (fieldStatic == null) {
 					ASMUtil.LOGGER.info(ASMUtil.methodToString(m_getPushReaction));
 					throw new RuntimeException("Couldn't find EnumPushReaction specific NORMAL getstatic in getPushReaction, observe above for mod compatibility errors");

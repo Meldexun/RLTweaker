@@ -50,12 +50,12 @@ public class PatchPotionCoreResistance {
 		});
 
 		registry.add("net.minecraft.entity.EntityLivingBase", ClassWriter.COMPUTE_MAXS | ClassWriter.COMPUTE_FRAMES, clazzNode -> {
-			MethodNode m_applyPotionDamageCalculations = ASMUtil.find(clazzNode, "func_70672_c", "applyPotionDamageCalculations", "(Lnet/minecraft/util/DamageSource;F)F");
+			MethodNode m_applyPotionDamageCalculations = ASMUtil.findObf(clazzNode, "func_70672_c", "applyPotionDamageCalculations", "(Lnet/minecraft/util/DamageSource;F)F");
 
 			AbstractInsnNode target = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/EntityLivingBase", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z").find();
-			target = ASMUtil.prev(target).type(LabelNode.class).find();
+			target = ASMUtil.prev(m_applyPotionDamageCalculations, target).type(LabelNode.class).find();
 			AbstractInsnNode target1 = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.IFGT).find();
-			target1 = ASMUtil.prev(target1).type(LabelNode.class).find();
+			target1 = ASMUtil.prev(m_applyPotionDamageCalculations, target1).type(LabelNode.class).find();
 
 			m_applyPotionDamageCalculations.instructions.insert(target, ASMUtil.listOf(
 					new VarInsnNode(Opcodes.FLOAD, 2),
@@ -73,9 +73,9 @@ public class PatchPotionCoreResistance {
 			MethodNode m_applyPotionDamageCalculations = ASMUtil.find(clazzNode, "applyGlobalPotionModifiers", "(Lnet/minecraft/entity/player/EntityPlayer;Lnet/minecraft/util/DamageSource;F)F");
 
 			AbstractInsnNode target = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/player/EntityPlayer", "func_70644_a", "isPotionActive", "(Lnet/minecraft/potion/Potion;)Z").find();
-			target = ASMUtil.prev(target).type(LabelNode.class).find();
+			target = ASMUtil.prev(m_applyPotionDamageCalculations, target).type(LabelNode.class).find();
 			AbstractInsnNode target1 = ASMUtil.first(m_applyPotionDamageCalculations).opcode(Opcodes.IFGT).find();
-			target1 = ASMUtil.prev(target1).type(LabelNode.class).find();
+			target1 = ASMUtil.prev(m_applyPotionDamageCalculations, target1).type(LabelNode.class).find();
 
 			m_applyPotionDamageCalculations.instructions.insert(target, ASMUtil.listOf(
 					new VarInsnNode(Opcodes.FLOAD, 2),

@@ -16,7 +16,7 @@ public class PatchFasterBlockCollision {
 
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("net.minecraft.world.World", ClassWriter.COMPUTE_FRAMES, clazzNode -> {
-			MethodNode m_getCollisionBoxes = ASMUtil.find(clazzNode, "func_191504_a", "getCollisionBoxes", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;ZLjava/util/List;)Z");
+			MethodNode m_getCollisionBoxes = ASMUtil.findObf(clazzNode, "func_191504_a", "getCollisionBoxes", "(Lnet/minecraft/entity/Entity;Lnet/minecraft/util/math/AxisAlignedBB;ZLjava/util/List;)Z");
 
 			LabelNode labelNode = new LabelNode();
 			m_getCollisionBoxes.instructions.insert(ASMUtil.listOf(

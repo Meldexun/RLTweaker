@@ -53,7 +53,7 @@ public class PatchCurePotion {
 
 			// Don't remove potion sickness or incurable effects
 
-			JumpInsnNode toCall = ASMUtil.next(ASMUtil.first(m_clearNegativeEffects).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("isBadEffect", "func_76398_f").find()).type(JumpInsnNode.class).find();
+			JumpInsnNode toCall = ASMUtil.next(m_clearNegativeEffects, ASMUtil.first(m_clearNegativeEffects).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("isBadEffect", "func_76398_f").find()).type(JumpInsnNode.class).find();
 
 			InsnList inject1 = new InsnList();
 			inject1.add(new VarInsnNode(Opcodes.ALOAD, 5));
@@ -84,7 +84,7 @@ public class PatchCurePotion {
 
 			{
 				MethodNode m = ASMUtil.find(clazzNode, "<init>", "(Lnet/minecraft/potion/PotionEffect;)V");
-				AbstractInsnNode toCall = ASMUtil.prev(ASMUtil.last(m).opcode(Opcodes.RETURN).find()).type(LabelNode.class).find();
+				AbstractInsnNode toCall = ASMUtil.prev(m, ASMUtil.last(m).opcode(Opcodes.RETURN).find()).type(LabelNode.class).find();
 				InsnList inject = new InsnList();
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 1));
@@ -127,7 +127,7 @@ public class PatchCurePotion {
 
 			{
 				MethodNode m = ASMUtil.find(clazzNode, "toString");
-				AbstractInsnNode toCall = ASMUtil.prev(ASMUtil.last(m).opcode(Opcodes.ARETURN).find()).type(LabelNode.class).find();
+				AbstractInsnNode toCall = ASMUtil.prev(m, ASMUtil.last(m).opcode(Opcodes.ARETURN).find()).type(LabelNode.class).find();
 				LabelNode label = new LabelNode();
 				InsnList inject = new InsnList();
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
@@ -148,9 +148,9 @@ public class PatchCurePotion {
 			{
 				MethodNode m = ASMUtil.find(clazzNode, "equals");
 				AbstractInsnNode n = ASMUtil.last(m).opcode(Opcodes.IRETURN).find();
-				n = ASMUtil.prev(n).opcode(Opcodes.ICONST_0).find();
-				LabelNode label = ASMUtil.prev(n).type(LabelNode.class).find();
-				AbstractInsnNode toCall = ASMUtil.prev(label).opcode(Opcodes.ICONST_1).find();
+				n = ASMUtil.prev(m, n).opcode(Opcodes.ICONST_0).find();
+				LabelNode label = ASMUtil.prev(m, n).type(LabelNode.class).find();
+				AbstractInsnNode toCall = ASMUtil.prev(m, label).opcode(Opcodes.ICONST_1).find();
 				InsnList inject = new InsnList();
 				inject.add(new VarInsnNode(Opcodes.ALOAD, 0));
 				inject.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/potion/PotionEffect", "incurable", "Z"));
@@ -162,7 +162,7 @@ public class PatchCurePotion {
 
 			{
 				MethodNode m = ASMUtil.find(clazzNode, "hashCode");
-				AbstractInsnNode toCall = ASMUtil.prev(ASMUtil.last(m).opcode(Opcodes.IRETURN).find()).type(LabelNode.class).find();
+				AbstractInsnNode toCall = ASMUtil.prev(m, ASMUtil.last(m).opcode(Opcodes.IRETURN).find()).type(LabelNode.class).find();
 				LabelNode label0 = new LabelNode();
 				LabelNode label1 = new LabelNode();
 				InsnList inject = new InsnList();
