@@ -92,7 +92,7 @@ jar {
     archiveClassifier = mod_stage
 
     from {
-        configurations.includedDependencies.collect { it.isDirectory() ? it : zipTree(it) }
+        configurations.includedDependencies.collect { it.isDirectory() ? it : zipTree(it).matching { exclude 'LICENSE' } }
     }
 
     manifest {
