@@ -27,7 +27,7 @@ public class PatchBetterCombatCriticalsFix {
 
 			AbstractInsnNode anchor = m_attackItem.instructions.getFirst();
 			while (anchor != null) {
-				anchor = ASMUtil.next(m_attackItem, anchor).opcode(Opcodes.ISTORE).find();
+				anchor = ASMUtil.nextExclusive(m_attackItem, anchor).opcode(Opcodes.ISTORE).find();
 				if (anchor != null && ((VarInsnNode) anchor).var == isCrit_index)
 					break;
 			}
