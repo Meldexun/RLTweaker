@@ -24,7 +24,7 @@ public class PatchSRPAI {
 			MethodNode m_getNearest = ASMUtil.find(clazzNode, "getNearest");
 
 			MethodInsnNode invoke_isSpectator = ASMUtil.first(m_getNearest).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("net/minecraft/entity/player/EntityPlayer", "func_175149_v", "isSpectator", "()Z").find();
-			JumpInsnNode target1 = ASMUtil.first(m_getNearest).type(JumpInsnNode.class).predicate(insn -> m_getNearest.instructions.indexOf(insn) > m_getNearest.instructions.indexOf(invoke_isSpectator)).find();
+			JumpInsnNode target1 = ASMUtil.first(m_getNearest).type(JumpInsnNode.class).predicate(insn -> m_getNearest.instructions.indexOf(insn) > m_getNearest.instructions.indexOf(invoke_isSpectator), null).find();
 			m_getNearest.instructions.insert(target1, ASMUtil.listOf(
 					// if (entityplayer2.getDistanceSq(posX, posY, posZ) < maxXZDistance)
 					new VarInsnNode(Opcodes.ALOAD, 16),
@@ -39,17 +39,17 @@ public class PatchSRPAI {
 					new JumpInsnNode(Opcodes.IFGE, target1.label)
 			));
 
-			VarInsnNode aload_maxYDistance1 = ASMUtil.first(m_getNearest).type(VarInsnNode.class).predicate(insn -> insn.getOpcode() == Opcodes.DLOAD && insn.var == 9).find();
+			VarInsnNode aload_maxYDistance1 = ASMUtil.first(m_getNearest).type(VarInsnNode.class).predicate(insn -> insn.getOpcode() == Opcodes.DLOAD && insn.var == 9, null).find();
 			aload_maxYDistance1.var = 7;
 
-			VarInsnNode aload_maxYDistance2 = ASMUtil.first(m_getNearest).type(VarInsnNode.class).predicate(insn -> insn.getOpcode() == Opcodes.DLOAD && insn.var == 9).ordinal(2).find();
+			VarInsnNode aload_maxYDistance2 = ASMUtil.first(m_getNearest).type(VarInsnNode.class).predicate(insn -> insn.getOpcode() == Opcodes.DLOAD && insn.var == 9, null).ordinal(2).find();
 			m_getNearest.instructions.set(aload_maxYDistance2, new InsnNode(Opcodes.DCONST_1));
 		});
 		registry.add("com.dhanantry.scapeandrunparasites.entity.ai.EntityAIInfectedSearch", ClassWriter.COMPUTE_FRAMES, clazzNode -> {
 			MethodNode m_LeshCount = ASMUtil.find(clazzNode, "LeshCount");
 
 			MethodInsnNode invoke_getTimes = ASMUtil.first(m_LeshCount).opcode(Opcodes.INVOKEVIRTUAL).methodInsn("com/dhanantry/scapeandrunparasites/entity/monster/crude/EntityLesh", "getTimes", "()I").find();
-			JumpInsnNode target1 = ASMUtil.first(m_LeshCount).type(JumpInsnNode.class).predicate(insn -> m_LeshCount.instructions.indexOf(insn) > m_LeshCount.instructions.indexOf(invoke_getTimes)).find();
+			JumpInsnNode target1 = ASMUtil.first(m_LeshCount).type(JumpInsnNode.class).predicate(insn -> m_LeshCount.instructions.indexOf(insn) > m_LeshCount.instructions.indexOf(invoke_getTimes), null).find();
 			m_LeshCount.instructions.insert(target1, ASMUtil.listOf(
 					// if (mob instanceof EntityCanMelt)
 					new VarInsnNode(Opcodes.ALOAD, 7),
@@ -80,7 +80,7 @@ public class PatchSRPAI {
 			MethodNode m_onLivingUpdate = ASMUtil.findObf(clazzNode, "func_70636_d", "onLivingUpdate");
 
 			FieldInsnNode get_primitiveKills1 = ASMUtil.first(m_onLivingUpdate).opcode(Opcodes.GETSTATIC).fieldInsn("com/dhanantry/scapeandrunparasites/util/config/SRPConfig", "primitiveKills", "D").find();
-			JumpInsnNode target1 = ASMUtil.first(m_onLivingUpdate).type(JumpInsnNode.class).predicate(insn -> m_onLivingUpdate.instructions.indexOf(insn) > m_onLivingUpdate.instructions.indexOf(get_primitiveKills1)).find();
+			JumpInsnNode target1 = ASMUtil.first(m_onLivingUpdate).type(JumpInsnNode.class).predicate(insn -> m_onLivingUpdate.instructions.indexOf(insn) > m_onLivingUpdate.instructions.indexOf(get_primitiveKills1), null).find();
 			LabelNode label1 = new LabelNode();
 			m_onLivingUpdate.instructions.insert(target1, ASMUtil.listOf(
 					// if (!HookSRP.hasNoInfectedSearchAI(this)) {
@@ -99,7 +99,7 @@ public class PatchSRPAI {
 			MethodNode m_onKillEntity = ASMUtil.findObf(clazzNode, "func_70074_a", "onKillEntity");
 
 			FieldInsnNode get_primitiveKills2 = ASMUtil.first(m_onKillEntity).opcode(Opcodes.GETSTATIC).fieldInsn("com/dhanantry/scapeandrunparasites/util/config/SRPConfig", "primitiveKills", "D").find();
-			JumpInsnNode target2 = ASMUtil.first(m_onKillEntity).type(JumpInsnNode.class).predicate(insn -> m_onKillEntity.instructions.indexOf(insn) > m_onKillEntity.instructions.indexOf(get_primitiveKills2)).find();
+			JumpInsnNode target2 = ASMUtil.first(m_onKillEntity).type(JumpInsnNode.class).predicate(insn -> m_onKillEntity.instructions.indexOf(insn) > m_onKillEntity.instructions.indexOf(get_primitiveKills2), null).find();
 			LabelNode label2 = new LabelNode();
 			m_onKillEntity.instructions.insert(target2, ASMUtil.listOf(
 					// if (!HookSRP.hasNoInfectedSearchAI(this)) {

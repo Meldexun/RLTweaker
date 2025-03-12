@@ -20,17 +20,17 @@ public class PatchBountifulBaubles {
 
 			MethodNode m_getResultModifierBook = ASMUtil.find(clazzNode, "getResultModifierBook");
 
-			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(1).find(), ASMUtil.listOf(
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1, null).ordinal(1).find(), ASMUtil.listOf(
 					new InsnNode(Opcodes.POP),
 					new VarInsnNode(Opcodes.ALOAD, 2)
 			));
 
-			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(2).find(), ASMUtil.listOf(
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1, null).ordinal(2).find(), ASMUtil.listOf(
 					new InsnNode(Opcodes.POP),
 					new VarInsnNode(Opcodes.ALOAD, 2)
 			));
 
-			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1).ordinal(3).find(), ASMUtil.listOf(
+			m_getResultModifierBook.instructions.insert(ASMUtil.first(m_getResultModifierBook).type(VarInsnNode.class).predicate(insn -> insn.var == 1, null).ordinal(3).find(), ASMUtil.listOf(
 					new InsnNode(Opcodes.POP),
 					new VarInsnNode(Opcodes.ALOAD, 2)
 			));
