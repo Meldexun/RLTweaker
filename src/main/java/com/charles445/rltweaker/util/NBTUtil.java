@@ -5,8 +5,6 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.BiPredicate;
 import java.util.function.Predicate;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 import meldexun.reflectionutil.ReflectionField;
 import net.minecraft.nbt.NBTBase;
@@ -28,14 +26,6 @@ public class NBTUtil {
 		}
 		NBTTagCompound_tagMap.get(compound).clear();
 		return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T extends NBTBase> Stream<T> stream(NBTTagCompound compound) {
-		return compound.getKeySet()
-				.stream()
-				.map(compound::getTag)
-				.map(tag -> (T) tag);
 	}
 
 	public static <T extends NBTBase> boolean forEach(NBTTagCompound compound, Predicate<T> predicate) {
@@ -76,13 +66,6 @@ public class NBTUtil {
 		}
 		NBTTagList_tagList.get(list).clear();
 		return true;
-	}
-
-	@SuppressWarnings("unchecked")
-	public static <T extends NBTBase> Stream<T> stream(NBTTagList list) {
-		return IntStream.range(0, list.tagCount())
-				.mapToObj(list::get)
-				.map(tag -> (T) tag);
 	}
 
 	@SuppressWarnings("unchecked")
