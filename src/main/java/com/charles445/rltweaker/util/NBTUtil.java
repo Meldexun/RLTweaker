@@ -1,7 +1,5 @@
 package com.charles445.rltweaker.util;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Predicate;
@@ -16,6 +14,7 @@ import net.minecraft.nbt.NBTTagList;
 public class NBTUtil {
 
 	private static final ReflectionField<Map<String, NBTBase>> NBTTagCompound_tagMap = new ReflectionField<>(NBTTagCompound.class, "field_74784_a", "tagMap");
+	private static final ReflectionField<List<NBTBase>> NBTTagList_tagList = new ReflectionField<>(NBTTagList.class, "field_74747_a", "tagList");
 
 	public static boolean remove(NBTTagCompound compound, String key) {
 		return NBTTagCompound_tagMap.get(compound).remove(key) != null;
@@ -39,19 +38,7 @@ public class NBTUtil {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends NBTBase> boolean removeIf(NBTTagCompound compound, Predicate<T> predicate) {
-		Map<String, NBTBase> tagMap = NBTTagCompound_tagMap.get(compound);
-		if (tagMap instanceof HashMap) {
-			return tagMap.values().removeIf((Predicate<? super NBTBase>) predicate);
-		} else {
-			List<String> toRemove = new ArrayList<>();
-			tagMap.forEach((k, v) -> {
-				if (predicate.test((T) v)) {
-					toRemove.add(k);
-				}
-			});
-			toRemove.forEach(tagMap::remove);
-			return !toRemove.isEmpty();
-		}
+		return ((Map<String, T>) NBTTagCompound_tagMap.get(compound)).entrySet().removeIf(entry -> predicate.test(entry.getValue()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -68,9 +55,7 @@ public class NBTUtil {
 		if (list.isEmpty()) {
 			return false;
 		}
-		for (int i = list.tagCount() - 1; i >= 0; i--) {
-			list.removeTag(i);
-		}
+		NBTTagList_tagList.get(list).clear();
 		return true;
 	}
 
@@ -83,14 +68,7 @@ public class NBTUtil {
 
 	@SuppressWarnings("unchecked")
 	public static <T extends NBTBase> boolean removeIf(NBTTagList list, Predicate<T> predicate) {
-		boolean anythingRemoved = false;
-		for (int i = list.tagCount() - 1; i >= 0; i--) {
-			if (predicate.test((T) list.get(i))) {
-				list.removeTag(i);
-				anythingRemoved = true;
-			}
-		}
-		return anythingRemoved;
+		return ((List<T>) NBTTagList_tagList.get(list)).removeIf(predicate);
 	}
 
 }
