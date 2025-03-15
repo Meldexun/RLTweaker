@@ -6,6 +6,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.charles445.rltweaker.RLTweaker;
 import com.charles445.rltweaker.config.ModConfig;
 import com.charles445.rltweaker.util.NBTUtil;
 
@@ -32,33 +33,28 @@ public enum StructureCleanupMode {
 	ALWAYS_COMPONENTS_ONLY {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			return NBTUtil.<NBTTagCompound>stream(structureData.getTagCompound())
-					.filter(structureStartTag -> NBTUtil.remove(structureStartTag, KEY_CHILDREN))
-					.count() > 0L;
+			return NBTUtil.<NBTTagCompound>forEach(structureData.getTagCompound(), structureStart -> NBTUtil.remove(structureStart, KEY_CHILDREN));
 		}
 	},
 	GENERATED {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			return NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(),
-					structureStartTag -> allChunksGenerated(world, structureStartTag.getIntArray(KEY_BB)));
+			return NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(), (key, structureStart) -> allChunksGenerated(world, structureData, key, -1, structureStart));
 		}
 	},
 	GENERATED_COMPONENTS {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			return GENERATED_COMPONENTS_ONLY.clean(world, structureData) | NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(),
-					structureStartTag -> !structureStartTag.hasKey(KEY_CHILDREN, NBT.TAG_LIST));
+			return GENERATED_COMPONENTS_ONLY.clean(world, structureData) | NBTUtil.<NBTTagCompound>removeIf(structureData.getTagCompound(), structureStart -> !structureStart.hasKey(KEY_CHILDREN, NBT.TAG_LIST));
 		}
 	},
 	GENERATED_COMPONENTS_ONLY {
 		@Override
 		public boolean clean(WorldServer world, MapGenStructureData structureData) {
-			return NBTUtil.<NBTTagCompound>stream(structureData.getTagCompound())
-					.filter(structureStartTag -> NBTUtil.<NBTTagCompound>removeIf(structureStartTag.getTagList(KEY_CHILDREN, NBT.TAG_COMPOUND),
-							child -> allChunksGenerated(world, child.getIntArray(KEY_BB)))
-							| NBTUtil.<NBTTagList>removeIf(structureStartTag, KEY_CHILDREN, NBTTagList::isEmpty))
-					.count() > 0;
+			return NBTUtil.<NBTTagCompound>forEach(structureData.getTagCompound(), (key, structureStart) -> {
+				return NBTUtil.<NBTTagCompound>removeIf(structureStart.getTagList(KEY_CHILDREN, NBT.TAG_COMPOUND), (index, structureComponent) -> allChunksGenerated(world, structureData, key, index, structureComponent))
+						| NBTUtil.removeIf(structureStart, KEY_CHILDREN, NBTTagList::isEmpty);
+			});
 		}
 	},
 	DISABLED {
@@ -74,16 +70,27 @@ public enum StructureCleanupMode {
 
 	public abstract boolean clean(WorldServer world, MapGenStructureData structureData);
 
-	private static boolean allChunksGenerated(WorldServer world, int[] bb) {
+	private static boolean allChunksGenerated(WorldServer world, MapGenStructureData structureData, String key, int index, NBTTagCompound tag) {
+		if (!tag.hasKey(KEY_BB, NBT.TAG_INT_ARRAY)) {
+			RLTweaker.logger.warn("Structure tag is missing bounding box! Deleting structure tag name={} key={} index={} tag={}", structureData.mapName, key, index, tag);
+			return true;
+		}
+		int[] bb = tag.getIntArray(KEY_BB);
+		if (bb.length != 6) {
+			RLTweaker.logger.warn("Structure tag bounding box is invalid! Deleting structure tag name={} key={} index={} tag={}", structureData.mapName, key, index, tag);
+			return true;
+		}
 		int minX = bb[0];
 		int minZ = bb[2];
 		int maxX = bb[3];
 		int maxZ = bb[5];
 		if (minX > maxX || minZ > maxZ) {
+			RLTweaker.logger.warn("Structure tag bounding box is invalid! Deleting structure tag name={} key={} index={} tag={}", structureData.mapName, key, index, tag);
 			return true;
 		}
 		if ((long) maxX - (long) minX > ModConfig.server.minecraft.cleanupStructureWorldgenFilesSizeLimit
 				|| (long) maxZ - (long) minZ > ModConfig.server.minecraft.cleanupStructureWorldgenFilesSizeLimit) {
+			RLTweaker.logger.warn("Structure tag bounding box is too big! Deleting structure tag name={} key={} index={} tag={}", structureData.mapName, key, index, tag);
 			return true;
 		}
 		for (int x = (minX >> 4); x <= (maxX >> 4); x++) {

@@ -2,6 +2,8 @@ package com.charles445.rltweaker.util;
 
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiPredicate;
 import java.util.function.Predicate;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -36,9 +38,26 @@ public class NBTUtil {
 				.map(tag -> (T) tag);
 	}
 
+	public static <T extends NBTBase> boolean forEach(NBTTagCompound compound, Predicate<T> predicate) {
+		return NBTUtil.<T>forEach(compound, (k, v) -> predicate.test(v));
+	}
+
 	@SuppressWarnings("unchecked")
+	public static <T extends NBTBase> boolean forEach(NBTTagCompound compound, BiPredicate<String, T> predicate) {
+		return ((Map<String, T>) NBTTagCompound_tagMap.get(compound))
+				.entrySet()
+				.stream()
+				.filter(entry -> predicate.test(entry.getKey(), entry.getValue()))
+				.count() > 0;
+	}
+
 	public static <T extends NBTBase> boolean removeIf(NBTTagCompound compound, Predicate<T> predicate) {
-		return ((Map<String, T>) NBTTagCompound_tagMap.get(compound)).entrySet().removeIf(entry -> predicate.test(entry.getValue()));
+		return NBTUtil.<T>removeIf(compound, (k, v) -> predicate.test(v));
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <T extends NBTBase> boolean removeIf(NBTTagCompound compound, BiPredicate<String, T> predicate) {
+		return ((Map<String, T>) NBTTagCompound_tagMap.get(compound)).entrySet().removeIf(entry -> predicate.test(entry.getKey(), entry.getValue()));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -69,6 +88,11 @@ public class NBTUtil {
 	@SuppressWarnings("unchecked")
 	public static <T extends NBTBase> boolean removeIf(NBTTagList list, Predicate<T> predicate) {
 		return ((List<T>) NBTTagList_tagList.get(list)).removeIf(predicate);
+	}
+
+	public static <T extends NBTBase> boolean removeIf(NBTTagList list, IntObjPredicate<T> predicate) {
+		AtomicInteger index = new AtomicInteger();
+		return NBTUtil.<T>removeIf(list, element -> predicate.test(index.getAndIncrement(), element));
 	}
 
 }
