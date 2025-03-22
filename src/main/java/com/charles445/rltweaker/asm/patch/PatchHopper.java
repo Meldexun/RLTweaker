@@ -3,9 +3,11 @@ package com.charles445.rltweaker.asm.patch;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
+import org.objectweb.asm.tree.FrameNode;
 import org.objectweb.asm.tree.InsnList;
 import org.objectweb.asm.tree.JumpInsnNode;
 import org.objectweb.asm.tree.LabelNode;
+import org.objectweb.asm.tree.LineNumberNode;
 import org.objectweb.asm.tree.LocalVariableNode;
 import org.objectweb.asm.tree.MethodInsnNode;
 import org.objectweb.asm.tree.MethodNode;
@@ -27,21 +29,8 @@ public class PatchHopper {
 
 			if (true) {
 				// Skip ahead to the tile entity check
-				AbstractInsnNode anchor = ASMUtil.first(m_getInventoryAtPosition).opcode(Opcodes.INVOKEVIRTUAL).methodInsn("hasTileEntity").find();
-				if (anchor == null)
-					throw new RuntimeException("Couldn't find call to hasTileEntity in getInventoryAtPosition");
-				anchor = anchor.getNext();
-				// Find the branch
-				if (!(anchor instanceof JumpInsnNode))
-					throw new RuntimeException("Unexpected lack of jump instruction after hasTileEntity");
-				// Grab the destination node for the branch
-				LabelNode lvn_tileBlockEnd = ((JumpInsnNode) anchor).label;
-				// Go to that label
-				anchor = lvn_tileBlockEnd;
-				if (anchor == null)
-					throw new RuntimeException("Couldn't follow label in getInventoryAtPosition");
-				// Move to the first real instruction
-				anchor = anchor.getNext();
+				AbstractInsnNode anchor = ASMUtil.first(m_getInventoryAtPosition).methodInsn("hasTileEntity").findThenNext().type(JumpInsnNode.class).find().label;
+				anchor = ASMUtil.next(m_getInventoryAtPosition, anchor).predicate(insn -> !(insn instanceof LabelNode) && !(insn instanceof LineNumberNode) && !(insn instanceof FrameNode), null).find();
 				// Load up a bunch of variables
 				LocalVariableNode lvn_iinventory = ASMUtil.findLocalVariable(m_getInventoryAtPosition, "iinventory");
 				LocalVariableNode lvn_block = ASMUtil.findLocalVariable(m_getInventoryAtPosition, "block");
