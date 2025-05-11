@@ -126,8 +126,8 @@ public class ConfigMinecraft
 	@Config.Name("Investigate non-player Attacks")
 	public boolean investigateNonPlayerAttacks = false;
 
-	@Config.Comment("Enables investigate AI for non-player attacks. Might cause lags.")
-	@Config.Name("Investigate non-player Attacks")
+	@Config.Comment("Fixes dupe when dropping items while disconnecting from a lagging server.")
+	@Config.Name("Fix Drop Disconnect Lag Dupe")
 	public boolean fixDropDisconnectLagDupe = true;
 
 }
