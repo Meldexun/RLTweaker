@@ -79,7 +79,7 @@ public class PatchHopper {
 				if (anchor == null)
 					throw new RuntimeException("Couldn't follow label in getItemHandler");
 				// Move to the first real instruction
-				anchor = anchor.getNext();
+				anchor = ASMUtil.next(m_getItemHandler, anchor).predicate(insn -> !(insn instanceof LabelNode) && !(insn instanceof LineNumberNode) && !(insn instanceof FrameNode), null).find();
 				// Load up a bunch of variables
 				LocalVariableNode lvn_destination = ASMUtil.findLocalVariable(m_getItemHandler, "destination");
 				LocalVariableNode lvn_block = ASMUtil.findLocalVariable(m_getItemHandler, "block");
