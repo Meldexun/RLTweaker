@@ -198,4 +198,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes OTG's chunk generator enabling block state capturing for no reason which can sometimes cause a memory leak.")
 	public boolean otgChunkGeneratorMemoryLeak = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Adds support for APNGs to CustomMainMenu")
+	public boolean apngSupportPatch = true;
 }

@@ -42,6 +42,7 @@ import com.charles445.rltweaker.asm.patch.compat.PatchCraftBukkit;
 import com.charles445.rltweaker.asm.patch.compat.PatchLootManagement;
 import com.charles445.rltweaker.asm.patch.contentcreator.RenderUtilMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.crafttweaker.FastEntityDefinitionPatch;
+import com.charles445.rltweaker.asm.patch.custommainmenu.APNGSupportPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ChunkCacheMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.epicsiegemod.ReducedDamagePatch;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
@@ -89,6 +90,7 @@ public class RLTweakerClassTransformer extends HashMapClassNodeClassTransformer 
 		}
 
 		if (config.aggressiveMotionChecker) PatchAggressiveMotionChecker.registerTransformers(registry);
+		if (config.apngSupportPatch) APNGSupportPatch.registerTransformers(registry);
 		if (config.betterCombatCriticalsFix) PatchBetterCombatCriticalsFix.registerTransformers(registry);
 		if (config.betterCombatMountFix) PatchBetterCombatMountFix.registerTransformers(registry);
 		if (config.contentCreatorRenderUtilMemoryLeak) RenderUtilMemoryLeakPatch.registerTransformers(registry);
