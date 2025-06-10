@@ -18,7 +18,7 @@ public class APNGSupportPatch {
 			method.instructions.insert(ASMUtil.listWithLabel(label -> ASMUtil.listOf(
 					new VarInsnNode(Opcodes.ALOAD, 0),
 					new FieldInsnNode(Opcodes.GETFIELD, "lumien/custommainmenu/lib/textures/TextureApng", "rl", "Lnet/minecraft/util/ResourceLocation;"),
-					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/custommainmenu/HookTextureApng", "bind", "(Lnet/minecraft/util/ResourceLocation;)V", false),
+					new MethodInsnNode(Opcodes.INVOKESTATIC, "com/charles445/rltweaker/hook/custommainmenu/APNGSupportHook", "bind", "(Lnet/minecraft/util/ResourceLocation;)V", false),
 					new InsnNode(Opcodes.ICONST_0),
 					new JumpInsnNode(Opcodes.IFNE, label),
 					new InsnNode(Opcodes.RETURN),
