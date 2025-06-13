@@ -202,4 +202,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Adds support for APNGs to CustomMainMenu")
 	public boolean apngSupportPatch = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Adds support for custom loading screen to CustomMainMenu")
+	public boolean customLoadingScreenPatch = false;
 }

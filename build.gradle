@@ -46,6 +46,7 @@ dependencies {
     buildDependencies 'curse.maven:fancy-menu-367706:4655936'
     buildDependencies 'curse.maven:konkrete-410295:4514895'
     buildDependencies 'curse.maven:open-terrain-generator-265894:5286210'
+    buildDependencies 'curse.maven:custom-main-menu-226406:2857869'
     buildDependencies 'libs:OptifineDeobf:1.12.2-G5'
 }
 

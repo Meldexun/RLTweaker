@@ -1,0 +1,9 @@
+{
+    "shuffle": true,
+    "background":
+    [
+        {
+            "image": "minecraft:textures/gui/options_background.png"
+        }
+    ]
+}
