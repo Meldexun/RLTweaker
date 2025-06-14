@@ -80,8 +80,8 @@ public class APNGSupportHook {
 				});
 		private int frame;
 		private boolean paused;
-		private long prevTime;
-		private long passedTime;
+		private static final long START = System.nanoTime();
+		private long nextFrame = -1;
 
 		public AnimatedTexture(ResourceLocation textureLocation) {
 			this.textureLocation = textureLocation;
@@ -121,7 +121,7 @@ public class APNGSupportHook {
 		public void startAnimation() {
 			if (this.paused) {
 				this.paused = false;
-				this.prevTime = System.nanoTime();
+				this.nextFrame = -1;
 			}
 		}
 
@@ -130,36 +130,39 @@ public class APNGSupportHook {
 		}
 
 		public void updateAnimation() {
-			if (this.paused) return;
-			if (this.prevTime == 0) this.prevTime = System.nanoTime();
-			long time = System.nanoTime();
-			this.passedTime += time - this.prevTime;
-			this.prevTime = time;
-			int frameChanges = 0;
-			while (frameChanges < PRELOAD_FRAME_COUNT) {
-				long frameTime = 1_000_000_000L * (long) this.apng.frames.get(this.frame).delay_num / (long) this.apng.frames.get(this.frame).delay_den;
-				if (this.passedTime < frameTime) {
-					break;
+			if (this.paused) {
+				return;
+			}
+
+			long time = System.nanoTime() - START;
+			if (this.nextFrame < 0) {
+				this.nextFrame = time + this.getFrameTime();
+			} else {
+				if (time < this.nextFrame) {
+					return;
 				}
-				this.passedTime -= frameTime;
 				this.frame = (this.frame + 1) % this.apng.frames.size();
-				try (UnsafeBuffer frameData = this.getFrameData(this.frame)) {
-					CompressedAPNG.Frame frameInfo = this.apng.frames.get(this.frame);
-					for (int y = 0; y < frameInfo.height; y++) {
-						for (int x = 0; x < frameInfo.width; x++) {
-							int c = frameData.getInt((y * frameInfo.width + x) * 4);
-							if (c == 0) continue;
+				this.nextFrame = Math.max(this.nextFrame, time) + this.getFrameTime();
+			}
+
+			try (UnsafeBuffer frameData = this.getFrameData(this.frame)) {
+				CompressedAPNG.Frame frameInfo = this.apng.frames.get(this.frame);
+				for (int y = 0; y < frameInfo.height; y++) {
+					for (int x = 0; x < frameInfo.width; x++) {
+						int c = frameData.getInt((y * frameInfo.width + x) * 4);
+						if (c != 0) {
 							this.textureBuffer.putInt(((frameInfo.y_offset + y) * this.apng.width + (frameInfo.x_offset + x)) * 4, c);
 						}
 					}
 				}
-				frameChanges++;
 			}
-			if (frameChanges > 0) {
-				GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
-				GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, this.apng.width, this.apng.height, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, this.textureBuffer.getBuffer());
-				this.preloadFrameData();
-			}
+			GL11.glBindTexture(GL11.GL_TEXTURE_2D, this.getGlTextureId());
+			GL11.glTexSubImage2D(GL11.GL_TEXTURE_2D, 0, 0, 0, this.apng.width, this.apng.height, GL11.GL_RGBA, GL12.GL_UNSIGNED_INT_8_8_8_8_REV, this.textureBuffer.getBuffer());
+			this.preloadFrameData();
+		}
+
+		private long getFrameTime() {
+			return 1_000_000_000L * (long) this.apng.frames.get(this.frame).delay_num / (long) this.apng.frames.get(this.frame).delay_den;
 		}
 
 		private UnsafeBuffer getFrameData(int frame) {
