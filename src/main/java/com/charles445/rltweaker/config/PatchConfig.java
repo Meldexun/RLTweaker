@@ -206,4 +206,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Adds support for custom loading screen to CustomMainMenu")
 	public boolean customLoadingScreenPatch = false;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Adds support for custom ingame menu to CustomMainMenu")
+	public boolean customIngameMenuPatch = false;
 }
