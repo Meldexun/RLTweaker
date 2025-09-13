@@ -39,7 +39,7 @@ public class BetterSurvivalReflect
 	
 	public BetterSurvivalReflect() throws Exception
 	{
-		c_NunchakuComboProvider = Class.forName("com.mujmajnkraft.bettersurvival.capabilities.nunchakucombo.NunchakuComboProwider");
+		c_NunchakuComboProvider = Class.forName("com.mujmajnkraft.bettersurvival.capabilities.nunchakucombo.NunchakuComboProvider");
 		f_NunchakuComboProvider_NUNCHAKUCOMBO_CAP = ReflectUtil.findField(c_NunchakuComboProvider, "NUNCHAKUCOMBO_CAP");
 		o_NUNCHAKUCOMBO_CAP = (Capability) f_NunchakuComboProvider_NUNCHAKUCOMBO_CAP.get(null);
 		
