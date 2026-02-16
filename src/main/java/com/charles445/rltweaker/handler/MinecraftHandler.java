@@ -461,6 +461,7 @@ public class MinecraftHandler
 			return;
 		if (event.player.world.isRemote)
 			return;
+		event.player.dismountRidingEntity();
 		MinecraftServer server = event.player.getServer();
 		server.futureTaskQueue.add(new FutureTask<>(() -> {
 			WRITE_PLAYER_DATA.invoke(server.getPlayerList(), (EntityPlayerMP) event.player);
