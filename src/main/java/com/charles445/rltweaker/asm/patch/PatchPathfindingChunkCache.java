@@ -17,8 +17,9 @@ public class PatchPathfindingChunkCache {
 		registry.add("net.minecraft.world.ChunkCache", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			try {
 				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerClassTransformer.class.getClassLoader());
-			} catch (ClassNotFoundException e) {
 				return;
+			} catch (ClassNotFoundException e) {
+				// ignore
 			}
 
 			MethodNode m_init = ASMUtil.find(clazzNode, "<init>");
@@ -43,8 +44,9 @@ public class PatchPathfindingChunkCache {
 		registry.add("net.minecraft.pathfinding.PathNavigate", ClassWriter.COMPUTE_MAXS, clazzNode -> {
 			try {
 				Class.forName("org.spongepowered.mod.SpongeMod", false, RLTweakerClassTransformer.class.getClassLoader());
-			} catch (ClassNotFoundException e) {
 				return;
+			} catch (ClassNotFoundException e) {
+				// ignore
 			}
 
 			if (true) {
