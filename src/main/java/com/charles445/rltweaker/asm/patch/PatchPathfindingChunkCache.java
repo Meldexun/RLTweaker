@@ -55,13 +55,13 @@ public class PatchPathfindingChunkCache {
 				if (m_getPathToPos == null)
 					throw new RuntimeException("Couldn't find func_179680_a or getPathToPos");
 
-				TypeInsnNode newNode = (TypeInsnNode) ASMUtil.first(m_getPathToPos).opcode(Opcodes.NEW).find();
+				TypeInsnNode newNode = (TypeInsnNode) ASMUtil.first(m_getPathToPos).opcode(Opcodes.NEW).typeInsn("net/minecraft/world/ChunkCache").find();
 
 				if (newNode == null)
 					throw new RuntimeException("Couldn't find any instantiation in func_179680_a or getPathToPos");
 
 				while (!newNode.desc.equals("net/minecraft/world/ChunkCache")) {
-					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToPos, newNode).opcode(Opcodes.NEW).find();
+					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToPos, newNode).opcode(Opcodes.NEW).typeInsn("net/minecraft/world/ChunkCache").find();
 					if (newNode == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation new in func_179680_a or getPathToPo");
 				}
@@ -81,10 +81,10 @@ public class PatchPathfindingChunkCache {
 			if (true) {
 				MethodNode m_getPathToEntityLiving = ASMUtil.findObf(clazzNode, "func_75494_a", "getPathToEntityLiving");
 
-				TypeInsnNode newNode = (TypeInsnNode) ASMUtil.first(m_getPathToEntityLiving).opcode(Opcodes.NEW).find();
+				TypeInsnNode newNode = (TypeInsnNode) ASMUtil.first(m_getPathToEntityLiving).opcode(Opcodes.NEW).typeInsn("net/minecraft/world/ChunkCache").find();
 
 				while (!newNode.desc.equals("net/minecraft/world/ChunkCache")) {
-					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToEntityLiving, newNode).opcode(Opcodes.NEW).find();
+					newNode = (TypeInsnNode) ASMUtil.next(m_getPathToEntityLiving, newNode).opcode(Opcodes.NEW).typeInsn("net/minecraft/world/ChunkCache").find();
 					if (newNode == null)
 						throw new RuntimeException("Failed to find ChunkCache instantiation new in func_75494_a or getPathToEntityLiving");
 				}
