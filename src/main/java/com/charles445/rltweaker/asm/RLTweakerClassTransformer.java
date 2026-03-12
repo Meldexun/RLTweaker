@@ -47,6 +47,7 @@ import com.charles445.rltweaker.asm.patch.epicsiegemod.ReducedDamagePatch;
 import com.charles445.rltweaker.asm.patch.fancymenu.PatchAnimationLoading;
 import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalOnReloadPatch;
 import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalTargetingCreativePatch;
+import com.charles445.rltweaker.asm.patch.minecraft.FixPacketHandlerContextPatch;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
 import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
 import com.charles445.rltweaker.asm.patch.otg.ChunkGeneratorMemoryLeakPatch;
@@ -97,6 +98,7 @@ public class RLTweakerClassTransformer extends HashMapClassNodeClassTransformer 
 		if (config.doorPathfindingFix) PatchDoorPathfinding.registerTransformers(registry);
 		if (config.epicSiegeChunkCacheMemoryLeak) ChunkCacheMemoryLeakPatch.registerTransformers(registry);
 		if (config.epicSiegeReducedDamage) ReducedDamagePatch.registerTransformers(registry);
+		if (config.fixPacketHandlerContextPatch) FixPacketHandlerContextPatch.registerTransformers(registry);
 		if (config.fixWaystoneScrolls) PatchWaystoneScroll.registerTransformers(registry);
 		if (config.infernalMobsInfernalOnReload) InfernalOnReloadPatch.registerTransformers(registry);
 		if (config.infernalMobsTargetingCreative) InfernalTargetingCreativePatch.registerTransformers(registry);

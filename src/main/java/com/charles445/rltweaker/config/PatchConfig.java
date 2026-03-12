@@ -198,4 +198,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Adds support for custom ingame menu to CustomMainMenu")
 	public boolean customIngameMenuPatch = false;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes the packet handler context sometimes being incorrect when multiple packets from different clients are received at the same time.")
+	public boolean fixPacketHandlerContextPatch = true;
 }
