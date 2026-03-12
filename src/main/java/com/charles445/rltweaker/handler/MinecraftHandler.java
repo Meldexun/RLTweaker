@@ -16,8 +16,11 @@ import com.charles445.rltweaker.network.MessageUpdateEntityMovement;
 import com.charles445.rltweaker.network.NetworkHandler;
 import com.charles445.rltweaker.network.PacketHandler;
 import com.charles445.rltweaker.network.TaskScheduler;
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.SetMultimap;
 
 import meldexun.reflectionutil.ReflectionMethod;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.monster.EntityWitch;
 import net.minecraft.entity.monster.EntityZombie;
@@ -462,9 +465,32 @@ public class MinecraftHandler
 		if (event.player.world.isRemote)
 			return;
 		MinecraftServer server = event.player.getServer();
+		Entity lowestMount = event.player.getLowestRidingEntity();
+		SetMultimap<Entity, Entity> passengerMap = writePassengerMap(lowestMount, HashMultimap.create());
 		server.futureTaskQueue.add(new FutureTask<>(() -> {
+			lowestMount.isDead = false;
+			passengerMap.values().forEach(e -> e.isDead = false);
+			readPassengerMap(lowestMount, passengerMap);
 			WRITE_PLAYER_DATA.invoke(server.getPlayerList(), (EntityPlayerMP) event.player);
+			lowestMount.isDead = true;
+			passengerMap.values().forEach(e -> e.isDead = true);
 			return null;
 		}));
+	}
+
+	private static SetMultimap<Entity, Entity> writePassengerMap(Entity entity, SetMultimap<Entity, Entity> map) {
+		for (Entity passenger : entity.getPassengers()) {
+			map.put(entity, passenger);
+			writePassengerMap(passenger, map);
+		}
+		return map;
+	}
+
+	private static Entity readPassengerMap(Entity entity, SetMultimap<Entity, Entity> map) {
+		for (Entity passenger : map.get(entity)) {
+			passenger.startRiding(entity, true);
+			readPassengerMap(passenger, map);
+		}
+		return entity;
 	}
 }
