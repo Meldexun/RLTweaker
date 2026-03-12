@@ -27,7 +27,7 @@ public class PatchPathfindingChunkCache {
 			if (m_init == null)
 				throw new RuntimeException("Couldn't find init for ChunkCache... that's not good");
 
-			MethodInsnNode toCall = ASMUtil.first(m_init).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("func_72964_e", "getChunkFromChunkCoords").find();
+			MethodInsnNode toCall = ASMUtil.first(m_init).opcode(Opcodes.INVOKEVIRTUAL).methodInsnObf("func_72964_e", "getChunk").find();
 
 			if (toCall == null)
 				throw new RuntimeException("Couldn't find func_72964_e or getChunkFromChunkCoords in ChunkCache init");
