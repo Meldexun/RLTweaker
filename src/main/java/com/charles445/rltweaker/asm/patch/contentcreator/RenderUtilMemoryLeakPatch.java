@@ -4,16 +4,25 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
 import org.objectweb.asm.tree.AbstractInsnNode;
 import org.objectweb.asm.tree.FieldInsnNode;
+import org.objectweb.asm.tree.InsnNode;
 import org.objectweb.asm.tree.MethodNode;
 
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
+import meldexun.asmutil2.ASMUtil;
 import meldexun.asmutil2.IClassTransformerRegistry;
 
 public class RenderUtilMemoryLeakPatch {
 
 	public static void registerTransformers(IClassTransformerRegistry registry) {
 		registry.add("surreal.contentcreator.util.RenderUtil", ClassWriter.COMPUTE_FRAMES, clazzNode -> {
+			MethodNode clinit = ASMUtil.find(clazzNode, "<clinit>");
+			clinit.instructions.insertBefore(ASMUtil.first(clinit).opcode(Opcodes.RETURN).find(), ASMUtil.listOf(
+					new InsnNode(Opcodes.ACONST_NULL),
+					new FieldInsnNode(Opcodes.PUTSTATIC, clazzNode.name, "WORLD", "Lnet/minecraft/world/World;"),
+					new InsnNode(Opcodes.ACONST_NULL),
+					new FieldInsnNode(Opcodes.PUTSTATIC, clazzNode.name, "PLAYER", "Lnet/minecraft/entity/player/EntityPlayer;")));
+
 			for (MethodNode m : clazzNode.methods) {
 				if (!m.name.equals("<clinit>")) {
 					AbstractInsnNode i = m.instructions.getFirst();
