@@ -1,0 +1,41 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+    - name: checkout
+      uses: actions/checkout@v6
+
+    - name: setup-java
+      uses: actions/setup-java@v5
+      with:
+        java-version: '17'
+        distribution: 'temurin'
+
+    - name: setup-gradle
+      uses: gradle/actions/setup-gradle@v6
+
+    - name: build
+      run: ./gradlew build
+
+    - name: mc-publish
+      uses: Kira-NT/mc-publish@v3.3.1
+      with:
+        game-versions: 1.12.2
+        loaders: forge
+        version-type: release
+        changelog: ${{ github.event.release.body }}
+        files: |
+          build/libs/*.jar
+
+        github-token: ${{ secrets.GITHUB_TOKEN }}
+
+        curseforge-id: 734347
+        curseforge-token: ${{ secrets.CURSEFORGE_TOKEN }}
