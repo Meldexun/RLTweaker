@@ -49,6 +49,7 @@ import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalOnReloadPatch;
 import com.charles445.rltweaker.asm.patch.infernalmobs.InfernalTargetingCreativePatch;
 import com.charles445.rltweaker.asm.patch.minecraft.FixPacketHandlerContextPatch;
 import com.charles445.rltweaker.asm.patch.minecraft.PreventStructureRecreationPatch;
+import com.charles445.rltweaker.asm.patch.multimine.MultiMineMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.optifine.FastShaderLoadingPatch;
 import com.charles445.rltweaker.asm.patch.otg.ChunkGeneratorMemoryLeakPatch;
 import com.charles445.rltweaker.asm.patch.otg.FastInternalNamePatch;
@@ -104,6 +105,7 @@ public class RLTweakerClassTransformer extends HashMapClassNodeClassTransformer 
 		if (config.infernalMobsTargetingCreative) InfernalTargetingCreativePatch.registerTransformers(registry);
 		if (config.lessCollisions) PatchLessCollisions.registerTransformers(registry);
 		if (config.lycanitesPetDupeFix) PatchLycanitesDupe.registerTransformers(registry);
+		if (config.multiMineMemoryLeakPatch) MultiMineMemoryLeakPatch.registerTransformers(registry);
 		if (config.optifineFastShaderLoading) FastShaderLoadingPatch.registerTransformers(registry);
 		if (config.otgChunkGeneratorMemoryLeak) ChunkGeneratorMemoryLeakPatch.registerTransformers(registry);
 		if (config.otgFastInternalName) FastInternalNamePatch.registerTransformers(registry);

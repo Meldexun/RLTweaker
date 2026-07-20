@@ -202,4 +202,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes the packet handler context sometimes being incorrect when multiple packets from different clients are received at the same time.")
 	public boolean fixPacketHandlerContextPatch = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("Fixes memory leak caused by MultiMine holding client player and server instance in static fields.")
+	public boolean multiMineMemoryLeakPatch = true;
 }
