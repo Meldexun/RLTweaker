@@ -206,4 +206,8 @@ public class PatchConfig
 	@Config.RequiresMcRestart
 	@Config.Comment("Fixes memory leak caused by MultiMine holding client player and server instance in static fields.")
 	public boolean multiMineMemoryLeakPatch = true;
+	
+	@Config.RequiresMcRestart
+	@Config.Comment("EntityAIHurtByTarget sets the attack target of the entity without checking if it is valid. Usually this doesn't cause issues but it's needed for investigate AI to function properly.")
+	public boolean fixHurtByTargetSettingInvalidTarget = true;
 }
