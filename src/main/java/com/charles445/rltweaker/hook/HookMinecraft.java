@@ -336,19 +336,7 @@ public class HookMinecraft
 	@Nullable
 	public static Chunk cacheGetChunkFromChunkCoords(World world, int chunkX, int chunkZ, ChunkCache chunkCache)
 	{
-		//Don't really mess with chunk cache here as it's not fully initialized
-		
-		if(chunkCache instanceof NullableChunkCache)
-		{
-			if(world.isBlockLoaded(new BlockPos(chunkX << 4, 64, chunkZ << 4)))
-				return world.getChunk(chunkX, chunkZ);
-			
-			return null;
-		}
-		else
-		{
-			return world.getChunk(chunkX, chunkZ);
-		}
+		return world.getChunkProvider().getLoadedChunk(chunkX, chunkZ);
 	}
 
 	public static void preSaveWorld(WorldServer world) {
