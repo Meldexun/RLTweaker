@@ -40,10 +40,11 @@ public class MultiMineMemoryLeakPatch {
 			}
 		});
 
-		registry.add("atomicstryker.multimine.common.MultiMineServer", ClassWriter.COMPUTE_FRAMES, classNode -> {
+		registry.add("atomicstryker.multimine.common.MultiMineServer", 0, classNode -> {
 			for (FieldNode fieldNode : classNode.fields) {
 				if (fieldNode.name.equals("serverInstance")) {
-					fieldNode.access &= ~Opcodes.ACC_PUBLIC;
+					fieldNode.access &= ~Opcodes.ACC_PRIVATE;
+					break;
 				}
 			}
 		});
@@ -54,7 +55,7 @@ public class MultiMineMemoryLeakPatch {
 			onUnloadServer.visibleAnnotations.add(new AnnotationNode("Lnet/minecraftforge/fml/common/Mod$EventHandler;"));
 			onUnloadServer.instructions.insert(ASMUtil.listOf(
 					new InsnNode(Opcodes.ACONST_NULL),
-					new FieldInsnNode(Opcodes.PUTSTATIC, "atomicstryker.multimine.common.MultiMineServer", "serverInstance", "Lnet/minecraft/server/MinecraftServer;"),
+					new FieldInsnNode(Opcodes.PUTSTATIC, "atomicstryker/multimine/common/MultiMineServer", "serverInstance", "Lnet/minecraft/server/MinecraftServer;"),
 					new InsnNode(Opcodes.RETURN)));
 			classNode.methods.add(onUnloadServer);
 		});
