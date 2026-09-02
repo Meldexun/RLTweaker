@@ -43,15 +43,15 @@ public class MultiMineMemoryLeakPatch {
 			}
 		});
 
-		registry.add("atomicstryker.multimine.common.MultiMineServer", ClassWriter.COMPUTE_FRAMES, classNode -> {
-			MethodNode onWorldUnload = new MethodNode(Opcodes.ACC_PUBLIC, "onWorldUnload", "(Lnet/minecraftforge/event/world/WorldEvent$Unload;)V", null, null);
-			onWorldUnload.visibleAnnotations = new ArrayList<>();
-			onWorldUnload.visibleAnnotations.add(new AnnotationNode("Lnet/minecraftforge/fml/common/eventhandler/SubscribeEvent;"));
-			onWorldUnload.instructions.insert(ASMUtil.listOf(
+		registry.add("atomicstryker.multimine.common.MultiMine", ClassWriter.COMPUTE_FRAMES, classNode -> {
+			MethodNode onUnloadServer = new MethodNode(Opcodes.ACC_PUBLIC, "onServerStopping", "(Lnet/minecraftforge/fml/common/event/FMLServerStoppingEvent;)V", null, null);
+			onUnloadServer.visibleAnnotations = new ArrayList<>();
+			onUnloadServer.visibleAnnotations.add(new AnnotationNode("Lnet/minecraftforge/fml/common/Mod$EventHandler;"));
+			onUnloadServer.instructions.insert(ASMUtil.listOf(
 					new InsnNode(Opcodes.ACONST_NULL),
 					new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, "serverInstance", "Lnet/minecraft/server/MinecraftServer;"),
 					new InsnNode(Opcodes.RETURN)));
-			classNode.methods.add(onWorldUnload);
+			classNode.methods.add(onUnloadServer);
 		});
 	}
 
