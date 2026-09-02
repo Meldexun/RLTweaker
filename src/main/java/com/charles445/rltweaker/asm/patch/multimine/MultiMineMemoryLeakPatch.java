@@ -49,7 +49,7 @@ public class MultiMineMemoryLeakPatch {
 			onUnloadServer.visibleAnnotations.add(new AnnotationNode("Lnet/minecraftforge/fml/common/Mod$EventHandler;"));
 			onUnloadServer.instructions.insert(ASMUtil.listOf(
 					new InsnNode(Opcodes.ACONST_NULL),
-					new FieldInsnNode(Opcodes.PUTSTATIC, classNode.name, "serverInstance", "Lnet/minecraft/server/MinecraftServer;"),
+					new FieldInsnNode(Opcodes.PUTSTATIC, "atomicstryker.multimine.common.MultiMineServer", "serverInstance", "Lnet/minecraft/server/MinecraftServer;"),
 					new InsnNode(Opcodes.RETURN)));
 			classNode.methods.add(onUnloadServer);
 		});
