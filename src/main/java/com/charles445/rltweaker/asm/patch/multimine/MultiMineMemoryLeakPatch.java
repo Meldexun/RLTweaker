@@ -5,10 +5,7 @@ import java.util.stream.Collectors;
 
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Opcodes;
-import org.objectweb.asm.tree.AnnotationNode;
-import org.objectweb.asm.tree.FieldInsnNode;
-import org.objectweb.asm.tree.InsnNode;
-import org.objectweb.asm.tree.MethodNode;
+import org.objectweb.asm.tree.*;
 
 import com.charles445.rltweaker.asm.util.TransformUtil;
 
@@ -40,6 +37,14 @@ public class MultiMineMemoryLeakPatch {
 										TransformUtil.createObfFieldInsn(Opcodes.GETFIELD, "net/minecraft/client/Minecraft", "field_71439_g", "Lnet/minecraft/client/entity/EntityPlayerSP;"))); // player
 							}
 						});
+			}
+		});
+
+		registry.add("atomicstryker.multimine.common.MultiMineServer", ClassWriter.COMPUTE_FRAMES, classNode -> {
+			for (FieldNode fieldNode : classNode.fields) {
+				if (fieldNode.name.equals("serverInstance")) {
+					fieldNode.access &= ~Opcodes.ACC_PUBLIC;
+				}
 			}
 		});
 
