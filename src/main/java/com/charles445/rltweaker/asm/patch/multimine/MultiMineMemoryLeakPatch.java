@@ -43,7 +43,6 @@ public class MultiMineMemoryLeakPatch {
 						});
 			}
 		});
-
 		registry.add("atomicstryker.multimine.common.MultiMineServer", 0, classNode -> {
 			for (FieldNode fieldNode : classNode.fields) {
 				if (fieldNode.name.equals("serverInstance")) {
@@ -52,7 +51,6 @@ public class MultiMineMemoryLeakPatch {
 				}
 			}
 		});
-
 		registry.add("atomicstryker.multimine.common.MultiMine", ClassWriter.COMPUTE_FRAMES, classNode -> {
 			MethodNode onUnloadServer = new MethodNode(Opcodes.ACC_PUBLIC, "onServerStopping", "(Lnet/minecraftforge/fml/common/event/FMLServerStoppingEvent;)V", null, null);
 			onUnloadServer.visibleAnnotations = new ArrayList<>();
