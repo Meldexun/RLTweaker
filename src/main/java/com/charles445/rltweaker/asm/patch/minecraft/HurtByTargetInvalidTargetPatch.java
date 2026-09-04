@@ -15,14 +15,14 @@ public class HurtByTargetInvalidTargetPatch {
 		registry.addObf("net.minecraft.entity.ai.EntityAIHurtByTarget", "func_75249_e", "startExecuting", 0, method -> {
 			MethodInsnNode setAttackTarget = ASMUtil.first(method).methodInsnObf("setAttackTarget", "func_70624_b").find();
 			setAttackTarget.setOpcode(Opcodes.INVOKESTATIC);
-			setAttackTarget.owner = "com/charles445/rltweaker/asm/patch/minecraft/InvestigateAIPatch$Hook";
+			setAttackTarget.owner = "com/charles445/rltweaker/asm/patch/minecraft/HurtByTargetInvalidTargetPatch$Hook";
 			setAttackTarget.name = "setAttackTarget";
 			setAttackTarget.desc = "(Lnet/minecraft/entity/EntityCreature;Lnet/minecraft/entity/EntityLivingBase;)V";
 		});
 		registry.addObf("net.minecraft.entity.ai.EntityAIHurtByTarget", "func_179446_a", "setEntityAttackTarget", 0, method -> {
 			MethodInsnNode setAttackTarget = ASMUtil.first(method).methodInsnObf("setAttackTarget", "func_70624_b").find();
 			setAttackTarget.setOpcode(Opcodes.INVOKESTATIC);
-			setAttackTarget.owner = "com/charles445/rltweaker/asm/patch/minecraft/InvestigateAIPatch$Hook";
+			setAttackTarget.owner = "com/charles445/rltweaker/asm/patch/minecraft/HurtByTargetInvalidTargetPatch$Hook";
 			setAttackTarget.name = "setAttackTarget";
 			setAttackTarget.desc = "(Lnet/minecraft/entity/EntityCreature;Lnet/minecraft/entity/EntityLivingBase;)V";
 		});
